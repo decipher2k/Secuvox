@@ -1,0 +1,58 @@
+d:\Secuvox 2.0\bin\Debug\runtimes\win-x86\native\WebView2Loader.dll
+d:\Secuvox 2.0\bin\Debug\runtimes\win-x64\native\WebView2Loader.dll
+d:\Secuvox 2.0\bin\Debug\runtimes\win-arm64\native\WebView2Loader.dll
+d:\Secuvox 2.0\bin\Debug\Secuvox 2.0.exe.config
+d:\Secuvox 2.0\bin\Debug\Secuvox 2.0.exe
+d:\Secuvox 2.0\bin\Debug\Secuvox 2.0.pdb
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.Core.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.WinForms.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.Wpf.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.Core.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.WinForms.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.Wpf.xml
+d:\Secuvox 2.0\obj\Debug\Secuvox 2.0.csproj.AssemblyReference.cache
+d:\Secuvox 2.0\obj\Debug\Secuvox_2._0.Form1.resources
+d:\Secuvox 2.0\obj\Debug\Secuvox_2._0.Properties.Resources.resources
+d:\Secuvox 2.0\obj\Debug\Secuvox 2.0.csproj.GenerateResource.cache
+d:\Secuvox 2.0\obj\Debug\Secuvox 2.0.csproj.CoreCompileInputs.cache
+d:\Secuvox 2.0\obj\Debug\Secuvox .48672AA7.Up2Date
+d:\Secuvox 2.0\obj\Debug\Secuvox 2.0.exe
+d:\Secuvox 2.0\obj\Debug\Secuvox 2.0.pdb
+d:\Secuvox 2.0\bin\Debug\Microsoft.Bcl.AsyncInterfaces.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Configuration.Abstractions.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Configuration.Binder.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Configuration.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Logging.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Options.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Primitives.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.DevToolsProtocolExtension.dll
+d:\Secuvox 2.0\bin\Debug\System.Buffers.dll
+d:\Secuvox 2.0\bin\Debug\System.Memory.dll
+d:\Secuvox 2.0\bin\Debug\System.Numerics.Vectors.dll
+d:\Secuvox 2.0\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+d:\Secuvox 2.0\bin\Debug\System.Text.Encodings.Web.dll
+d:\Secuvox 2.0\bin\Debug\System.Text.Json.dll
+d:\Secuvox 2.0\bin\Debug\System.Threading.Tasks.Extensions.dll
+d:\Secuvox 2.0\bin\Debug\System.ValueTuple.dll
+d:\Secuvox 2.0\bin\Debug\WebView2.DevTools.Dom.dll
+d:\Secuvox 2.0\bin\Debug\Microsoft.Bcl.AsyncInterfaces.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Configuration.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Configuration.Abstractions.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Configuration.Binder.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Logging.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Options.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Extensions.Primitives.xml
+d:\Secuvox 2.0\bin\Debug\Microsoft.Web.WebView2.DevToolsProtocolExtension.xml
+d:\Secuvox 2.0\bin\Debug\System.Buffers.xml
+d:\Secuvox 2.0\bin\Debug\System.Memory.xml
+d:\Secuvox 2.0\bin\Debug\System.Numerics.Vectors.xml
+d:\Secuvox 2.0\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
+d:\Secuvox 2.0\bin\Debug\System.Text.Encodings.Web.xml
+d:\Secuvox 2.0\bin\Debug\System.Text.Json.xml
+d:\Secuvox 2.0\bin\Debug\System.Threading.Tasks.Extensions.xml
+d:\Secuvox 2.0\bin\Debug\System.ValueTuple.xml
+d:\Secuvox 2.0\bin\Debug\WebView2.DevTools.Dom.xml
