@@ -113,6 +113,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="Ude, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\UDE.CSharp.1.1.0\lib\Ude.dll</HintPath>
+    </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WebView2.DevTools.Dom, Version=4.0.1.0, Culture=neutral, PublicKeyToken=3cbe2b7917902aa7, processorArchitecture=MSIL">
       <HintPath>packages\WebView2.DevTools.Dom.4.0.1\lib\net462\WebView2.DevTools.Dom.dll</HintPath>
@@ -140,6 +143,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -154,6 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\secuvox-high-resolution-logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets')" />

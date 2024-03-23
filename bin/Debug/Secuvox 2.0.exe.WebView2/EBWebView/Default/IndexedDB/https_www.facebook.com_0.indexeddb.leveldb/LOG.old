@@ -1,2 +1,3 @@
-2024/03/22-06:56:56.643 6e38 Creating DB d:\Secuvox 2.0\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_www.facebook.com_0.indexeddb.leveldb since it was missing.
-2024/03/22-06:56:56.646 6e38 Reusing MANIFEST d:\Secuvox 2.0\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_www.facebook.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/03/23-17:34:34.416 1c10 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_www.facebook.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/03/23-17:34:34.417 1c10 Recovering log #3
+2024/03/23-17:34:34.428 1c10 Reusing old log D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_www.facebook.com_0.indexeddb.leveldb/000003.log 

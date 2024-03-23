@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Web.WebView2.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -6,14 +7,19 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using WebView2.DevTools.Dom;
 using WebView2.DevTools.Dom.Input;
+using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.CSS;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Secuvox_2._0
@@ -27,8 +33,9 @@ namespace Secuvox_2._0
             if (!System.IO.Directory.Exists(".\\cache"))
                 System.IO.Directory.CreateDirectory(".\\cache");
 
-            webView21.NavigationStarting += WebView21_NavigationStarting;
-            webView21.NavigationCompleted += WebView21_NavigationCompleted;
+
+
+
             webView21.CoreWebView2InitializationCompleted += WebView21_CoreWebView2InitializationCompleted;
             webView21.EnsureCoreWebView2Async();
           
@@ -36,28 +43,224 @@ namespace Secuvox_2._0
             adblock = System.IO.File.ReadAllLines(".\\hosts");
             
             
-           // webView21.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+            
         }
 
-        private void WebView21_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
+    
+
+        async void WebView21_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
         {
+            devToolsContext = await webView21.CoreWebView2.CreateDevToolsContextAsync();
             webView21.CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
-         
-                webView21.CoreWebView2.AddWebResourceRequestedFilter("*", 0);
-       
-        }
 
-        private void CoreWebView2_WebResourceRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs e)
+            webView21.NavigationStarting += WebView21_NavigationStarting;
+            webView21.NavigationCompleted += WebView21_NavigationCompleted;
+            webView21.CoreWebView2.AddWebResourceRequestedFilter("*", 0);
+            webView21.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+        }
+        public class WebClientWithTimeout : WebClient
         {
-            String[] parts = new Uri(e.Request.Uri).Host.Split('.');
-            if(parts.Length>1)
-                if (adblock.Contains(parts[parts.Length - 2] + "." + parts[parts.Length - 1]))
-                    e.Request.Uri = "about:blank";
+            //10 secs default
+            public int Timeout { get; set; } = 500;
+
+            //for sync requests
+            protected override WebRequest GetWebRequest(Uri uri)
+            {
+                try
+                {
+                    var w = base.GetWebRequest(uri);
+                    w.Timeout = Timeout; //10 seconds timeout
+                    return w;
+                }catch (Exception ex) { return null; }
+            }
+
+            //the above will not work for async requests :(
+            //let's create a workaround by hiding the method
+            //and creating our own version of DownloadStringTaskAsync
+            public new async Task<string> DownloadStringTaskAsync(Uri address)
+            {
+                var t = base.DownloadStringTaskAsync(address);
+                if (await Task.WhenAny(t, Task.Delay(Timeout)) != t) //time out!
+                {
+                    CancelAsync();
+                }
+                return await t;
+            }
+        }
+        async void CoreWebView2_WebResourceRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs e)
+        {
+
+            if (e.Request.Headers.Contains("HTTP_REFERER"))
+                e.Request.Headers.RemoveHeader("HTTP_REFERER");
+            if (e.Request.Headers.Contains("Referer"))
+                e.Request.Headers.RemoveHeader("Referer");
+            try
+            {
+                String[] parts = new Uri(e.Request.Uri).Host.Split('.');
+                if (parts.Length > 1)
+                    if (adblock.Contains(new Uri(e.Request.Uri).Host))
+                    {
+                        e.Request.Uri = "about:blank";
+                        return;
+                    }
+            }
+            catch { }
+
+            /*
+
+            //  if (!new Uri(e.Request.Uri).Host.Contains("google."))
+            {
+
+
+
+
+                try
+                {
+                    if (e.Request.Uri.StartsWith("http"))
+                    {
+
+                        HttpRequestMessage httpreq = ConvertRequest(e.Request);
+                        var client = new HttpClient();
+                        var response = await client.SendAsync(httpreq);
+
+                        Stream strmText = await response.Content.ReadAsStreamAsync();
+                        Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+                        cdet.Feed(strmText);
+                        cdet.DataEnd();
+                        //   if (cdet.Charset != null)
+                        {
+
+                            String sText = await response.Content.ReadAsStringAsync();
+
+
+                            if (featuresHover.Checked)
+                            {
+                                foreach (String s in toReplaceHover)
+                                {
+                                    sText = sText.Replace("\"" + s + "\"", "");
+                                    sText = sText.Replace("'" + s + "'", "");
+                                    sText = sText.Replace(s + "=", "");
+                                    sText = sText.Replace(s + " =", "");
+                                    sText = sText.Replace("." + s, "");
+                                }
+                            }
+
+                            if (featuresScroll.Checked)
+                            {
+                                foreach (String s in toReplaceScroll)
+                                {
+                                    sText = sText.Replace("\"" + s + "\"", "");
+                                    sText = sText.Replace("." + s, "");
+                                    sText = sText.Replace(s + "=", "");
+                                    sText = sText.Replace(s + " =", "");
+                                    sText = sText.Replace("." + s, "");
+                                }
+                            }
+
+
+                            if (featuresGeneric.Checked)
+                            {
+                                sText = sText.Replace("\"on\"+", "\"no\"+");
+                                sText = sText.Replace("\"on\" +", "\"no\" +");
+                                sText = sText.Replace("'on'+", "\"no\"+");
+                                sText = sText.Replace("'on' +", "\"no\" +");
+                            }
+
+
+
+
+
+
+                            System.Net.HttpStatusCode sc = response.StatusCode;
+                            var totalBytes = response.Content.Headers.ContentLength;
+                            System.Diagnostics.Debug.Print("##############################   HTTPResponse STATUS and SIZE   ###############################################");
+                            System.Diagnostics.Debug.Print("HttpStatusCode: " + sc.ToString());
+                            System.Diagnostics.Debug.Print("Content.Headers.ContentLength: " + totalBytes.ToString());
+                            System.Diagnostics.Debug.Print("##############################   HTTPResponse STATUS and SIZE   ###############################################");
+
+                            response.EnsureSuccessStatusCode();
+
+                            System.Diagnostics.Debug.Print("************************************   HTTP RECIEVED RESPONSE HEADERS   *******************************************");
+
+                            foreach (var header2 in response.Headers)
+                            {
+                                string headerContent = string.Join(",", header2.Value.ToArray()); ;
+                                System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", headerContent));
+                            }
+                            System.Diagnostics.Debug.Print("************************************   HTTP RECIEVED RESPONSE HEADERS   *******************************************");
+
+                            e.Response = await ConvertResponseAsync(response, sText, cdet.Charset);
+                        }
+
+                    }
+                    else
+                    {
+                        e.Request.Uri = "about:blank";
+                    }
+
+                }
+                catch (Exception ex) { }
+            }
+          */
+           
+          
+            
+          
+
+        }
+        private async Task<CoreWebView2WebResourceResponse> ConvertResponseAsync(HttpResponseMessage aResponse, String content, String charset)
+        {
+            CoreWebView2WebResourceResponse cwv2Response;
+
+            var statCode = (int)aResponse.StatusCode;
+
+            MemoryStream stream = new MemoryStream();
+            { //Default is what I would normally expect.
+                if(charset=="UTF-8")
+                    stream = new MemoryStream(Encoding.UTF8.GetBytes(content ?? ""));
+                else
+                    stream = new MemoryStream(Encoding.ASCII.GetBytes(content ?? ""));
+                cwv2Response = this.webView21.CoreWebView2.Environment.CreateWebResourceResponse(stream, statCode, aResponse.ReasonPhrase, "");
+            }
+
+            CoreWebView2HttpResponseHeaders heads = cwv2Response.Headers;
+
+            foreach (var header in aResponse.Headers)
+            {
+                string headerContent = string.Join(",", header.Value.ToArray()); ;
+                heads.AppendHeader(header.Key, headerContent);
+            }
+
+          //  heads.AppendHeader(@"Content-Disposition", @"attachment");
+
+
+            System.Diagnostics.Debug.Print("************************************   NEW RESPONSE HEADERS   *******************************************");
+
+            foreach (var header2 in cwv2Response.Headers)
+            {
+                System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", header2.Value));
+            }
+            System.Diagnostics.Debug.Print("************************************   NEW RESPONSE HEADERS   *******************************************");
+
+            return cwv2Response;
         }
 
-        String[] adblock;
+        private HttpRequestMessage ConvertRequest(CoreWebView2WebResourceRequest request)
+        {
+            HttpRequestMessage req = new HttpRequestMessage((HttpMethod.Get), request.Uri);
 
-        String[] toReplace = new string[]
+            foreach (var header in request.Headers)
+            {
+                req.Headers.Add(header.Key, header.Value);
+            }
+            return req;
+        }
+
+    
+    
+    String[] adblock;
+
+        String[] toReplaceHover = new string[]
         {
             
            // "on",
@@ -65,51 +268,180 @@ namespace Secuvox_2._0
 "onmouseleave",   
 "onmousemove",
 "onmouseout",
-"onmouseover",
-"onmouseup",        
+"onmouseover",        
 "mouseleave",
 "mousemove",
 "mouseout",
 "mouseover",
-"mouseup",
 "hover",
-"onhover",
+"onhover"
+        };
+
+        String[] toReplaceScroll = new string[]
+             {
+            
+           // "on",
 "onwheel",
 "wheel",
 "scroll",
 "onscroll",
 "scrolled",
 "onscrolled"
-        };
+             };
+        WebView2DevToolsContext devToolsContext;
+        
 
         async void WebView21_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
-            WebView2DevToolsContext devToolsContext;
-            devToolsContext = await webView21.CoreWebView2.CreateDevToolsContextAsync();
+           
+           
             String text = await devToolsContext.GetContentAsync();
+
+
+            int start = text.IndexOf("<head");
+            if (start < 0)
+                start = text.IndexOf("<HEAD");
+
+            text = text.Substring(start);
+            text = "<html>" + text;
+
+            text = text.Replace(" async ", "");
+
             WebView2.DevTools.Dom.HtmlElement[] scripts = await devToolsContext.QuerySelectorAllAsync("script");
 
-
+            text = text.Replace("<a ", "<a rel=\"noreferrer\" ");
 
             foreach (WebView2.DevTools.Dom.HtmlElement script in scripts)
             {
 
-                String sTextOrig = await script.GetInnerTextAsync();
-                String sText = sTextOrig;
-                bool found = true;
+                String outerText=await script.GetAttributeAsync("src");
+                if(outerText!=null) {
+                    String url = "";
+                    if(outerText.Contains("http"))
+                    {
+                        url = outerText;
+                    }
+                    else
+                    {
+                        url = "https://" + new Uri(toolStripTextBox1.Text).Host + "/" + outerText;
+                    }
+                    url = url.Replace("\"", "");
+                    url = url.Replace("///", "/");                   
 
-                foreach (String s in toReplace)
-                {
-                    sText = sText.Replace("\""+s+"\"", "");
-                    sText = sText.Replace("'" + s + "'", "");
-                    sText = sText.Replace("\"on\"+", "\"no\"+");
-                    sText = sText.Replace("\"on\" +", "\"no\" +");
-                    sText = sText.Replace("'on'+", "\"no\"+");
-                    sText = sText.Replace("'on' +", "\"no\" +");
+                   // text = text.Replace(outerText, "about:blank");
+                    String[] host = new Uri(url).Host.Split('.');
+                    if (!adblock.Contains(host[host.Length - 2] + "." + host[host.Length - 1]))
+                    {
+                        try
+                        {
+                            String javascript = new WebClient().DownloadString(url);
 
+
+
+
+                            String sTextOrig = javascript;
+                            String sText = sTextOrig;
+                            bool found = true;
+
+                            if (featuresHover.Checked)
+                            {
+                                foreach (String s in toReplaceHover)
+                                {
+                                    sText = sText.Replace("\"" + s + "\"", "");
+                                    sText = sText.Replace("'" + s + "'", "");
+                                    sText = sText.Replace(s + "=", "");
+                                    sText = sText.Replace(s + " =", "");
+                                    sText = sText.Replace("." + s, "");
+                                }
+                            }
+
+                            if (featuresScroll.Checked)
+                            {
+                                foreach (String s in toReplaceScroll)
+                                {
+                                    sText = sText.Replace("\"" + s + "\"", "");
+                                    sText = sText.Replace("." + s, "");
+                                    sText = sText.Replace(s + "=", "");
+                                    sText = sText.Replace(s + " =", "");
+                                    sText = sText.Replace("." + s, "");
+                                }
+                            }
+
+                            if (featuresGeneric.Checked)
+                            {
+                                sText = sText.Replace("\"on\"+", "\"no\"+");
+                                sText = sText.Replace("\"on\" +", "\"no\" +");
+                                sText = sText.Replace("'on'+", "\"no\"+");
+                                sText = sText.Replace("'on' +", "\"no\" +");
+                            }
+
+                            javascript = sText;
+
+                                       javascript = javascript.Replace("</head", "");
+                                       javascript = javascript.Replace("</HEAD", "");
+                            javascript = javascript.Replace("<BODY", "");
+                            javascript = javascript.Replace("</BODY", "");
+                            javascript = javascript.Replace("<body", "");
+                            javascript = javascript.Replace("</body", "");
+                            javascript = javascript.Replace("<script", "");
+                            javascript = javascript.Replace("</script", "");
+
+
+                            String tag = await script.GetOuterHtmlAsync();
+                            text = text.Replace("</head>", "<script>" + javascript + "</script></head>");
+
+                        }
+                        catch (Exception ex) { }
+                    }
+          
+                
                 }
+                else
+                {
 
 
+
+
+                    String sTextOrig = await script.GetInnerTextAsync();
+                    String sText = sTextOrig;
+                    bool found = true;
+                    try
+                    {
+                        if (featuresHover.Checked)
+                        {
+                            foreach (String s in toReplaceHover)
+                            {
+                                sText = sText.Replace("\"" + s + "\"", "");
+                                sText = sText.Replace("'" + s + "'", "");
+                                sText = sText.Replace("." + s, "");
+                            }
+                        }
+
+                        if (featuresScroll.Checked)
+                        {
+                            foreach (String s in toReplaceScroll)
+                            {
+                                sText = sText.Replace("\"" + s + "\"", "");
+                                sText = sText.Replace("'" + s + "'", "");
+                                sText = sText.Replace("." + s, "");
+
+                            }
+                            sText = sText.Replace("scrollTop", "");
+                            sText = sText.Replace("scrollY", "");
+                        }
+                        if (featuresGeneric.Checked)
+                        {
+                            sText = sText.Replace("\"on\"+", "\"no\"+");
+                            sText = sText.Replace("\"on\" +", "\"no\" +");
+                            sText = sText.Replace("'on'+", "\"no\"+");
+                            sText = sText.Replace("'on' +", "\"no\" +");
+                        }
+
+
+                        if (sText != "")
+                            text = text.Replace(sTextOrig, sText);
+                    }catch (Exception ex) { }
+                }
 
 
                 /* if ((sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
@@ -191,18 +523,54 @@ namespace Secuvox_2._0
 
                  }*/
 
-                if (sText != "")
-                    text = text.Replace(sTextOrig, sText);
             }
-         
-            
+
+
+            if (featuresHover.Checked)
+            {
+                foreach (String s in toReplaceHover)
+                {
+                    text = text.Replace("\"" + s + "\"", "");
+                    text = text.Replace("'" + s + "'", "");
+                    text = text.Replace(s + "=", "");
+                    text = text.Replace(s + " =", "");
+                    text = text.Replace("." + s, "");
+                }
+            }
+
+            if (featuresScroll.Checked)
+            {
+                foreach (String s in toReplaceScroll)
+                {
+                    text = text.Replace("\"" + s + "\"", "");
+                    text = text.Replace("." + s, "");
+                    text = text.Replace(s + "=", "");
+                    text = text.Replace(s + " =", "");
+                    text = text.Replace("." + s, "");
+                }
+            }
+
+            if (featuresGeneric.Checked)
+            {
+                text = text.Replace("\"on\"+", "\"no\"+");
+                text = text.Replace("\"on\" +", "\"no\" +");
+                text = text.Replace("'on'+", "\"no\"+");
+                text = text.Replace("'on' +", "\"no\" +");
+            }
+          
+
             await devToolsContext.SetContentAsync(text);
+            pictureBox1.Visible = false;
 
         }
 
         private void WebView21_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
         {
-       
+            toolStripTextBox1.Text =e.Uri.ToString();
+            // webView21.Visible = false;
+            pictureBox1.Visible = true;
+
+
         }
 
         private String genBodyTag(String bodyTag,  string javascript)
@@ -235,7 +603,54 @@ namespace Secuvox_2._0
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           
+            toolStripTextBox1.Width = this.Width - 200;
+        }
+
+        private void Form1_SizeChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            toolStripTextBox1.Width = this.Width - 200;
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            webView21.GoBack();
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            webView21.GoForward();
+        }
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            webView21.Reload();
+        }
+
+        private void toolStripTextBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toolStripTextBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+            if (e.KeyChar == 13)
+            { 
+                if(toolStripTextBox1.Text.StartsWith("http"))
+                    webView21.CoreWebView2.Navigate(toolStripTextBox1.Text);
+                else
+                    webView21.CoreWebView2.Navigate("https://"+toolStripTextBox1.Text);
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
