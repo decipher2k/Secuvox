@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -16,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using System.Xml.Linq;
 using WebView2.DevTools.Dom;
 using WebView2.DevTools.Dom.Input;
@@ -56,7 +58,11 @@ namespace Secuvox_2._0
             webView21.NavigationStarting += WebView21_NavigationStarting;
             webView21.NavigationCompleted += WebView21_NavigationCompleted;
             webView21.CoreWebView2.AddWebResourceRequestedFilter("*", 0);
-            webView21.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+            //webView21.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+            webView21.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
+            webView21.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
+            
+            //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
         }
         public class WebClientWithTimeout : WebClient
         {
@@ -89,24 +95,24 @@ namespace Secuvox_2._0
         }
         async void CoreWebView2_WebResourceRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs e)
         {
-
-            if (e.Request.Headers.Contains("HTTP_REFERER"))
-                e.Request.Headers.RemoveHeader("HTTP_REFERER");
-            if (e.Request.Headers.Contains("Referer"))
-                e.Request.Headers.RemoveHeader("Referer");
-            try
-            {
-                String[] parts = new Uri(e.Request.Uri).Host.Split('.');
-                if (parts.Length > 1)
-                    if (adblock.Contains(new Uri(e.Request.Uri).Host))
-                    {
-                        e.Request.Uri = "about:blank";
-                        return;
-                    }
-            }
-            catch { }
-
-            /*
+            var d=e.GetDeferral();
+                if (e.Request.Headers.Contains("HTTP_REFERER"))
+                    e.Request.Headers.RemoveHeader("HTTP_REFERER");
+                if (e.Request.Headers.Contains("Referer"))
+                    e.Request.Headers.RemoveHeader("Referer");
+                try
+                {
+                    String[] parts = new Uri(e.Request.Uri).Host.Split('.');
+                    if (parts.Length > 1)
+                        if (adblock.Contains(new Uri(e.Request.Uri).Host))
+                        {
+                            e.Request.Uri = "about:blank";
+                            return;
+                        }
+                }
+                catch { }
+           
+            
 
             //  if (!new Uri(e.Request.Uri).Host.Contains("google."))
             {
@@ -127,11 +133,45 @@ namespace Secuvox_2._0
                         Ude.CharsetDetector cdet = new Ude.CharsetDetector();
                         cdet.Feed(strmText);
                         cdet.DataEnd();
-                        //   if (cdet.Charset != null)
+                        if (cdet.Charset =="UTF-8" || cdet.Charset=="ASCII")
                         {
 
                             String sText = await response.Content.ReadAsStringAsync();
 
+
+                            bool found = false;
+                            foreach (String s in toReplaceHover)
+                                if (sText.Contains(s))
+                                    found = true;
+
+                            foreach (String s in toReplaceScroll)
+                                if (sText.Contains(s))
+                                    found = true;
+
+                            if(sText.Contains("\"on\""))
+                                found = true;
+                            if (sText.Contains("'on'"))
+                                found = true;
+
+                            if (sText.Contains("scrollTop"))
+                                found = true;
+
+                            if (sText.Contains("pageYOffset"))
+                                found = true;
+
+                            if (sText.Contains("scrollArea"))
+                                found = true;
+
+                            if (sText.Contains("getBoundingClientRect().top"))
+                                found = true;
+
+                            if (sText.Contains("offsetTop"))
+                                found = true;
+                          
+
+
+                            if(!found)
+                            { 
 
                             if (featuresHover.Checked)
                             {
@@ -145,64 +185,72 @@ namespace Secuvox_2._0
                                 }
                             }
 
-                            if (featuresScroll.Checked)
-                            {
-                                foreach (String s in toReplaceScroll)
+                                if (featuresScroll.Checked)
                                 {
-                                    sText = sText.Replace("\"" + s + "\"", "");
-                                    sText = sText.Replace("." + s, "");
-                                    sText = sText.Replace(s + "=", "");
-                                    sText = sText.Replace(s + " =", "");
-                                    sText = sText.Replace("." + s, "");
+                                    foreach (String s in toReplaceScroll)
+                                    {
+                                        sText = sText.Replace("\"" + s + "\"", "");
+                                        sText = sText.Replace("." + s, "");
+                                        sText = sText.Replace(s + "=", "");
+                                        sText = sText.Replace(s + " =", "");
+                                        sText = sText.Replace("." + s, "");
+                                        sText = sText.Replace("scrollTop", "a");
+                                        sText = sText.Replace("pageYOffset", "a");
+                                        sText = sText.Replace("scrollArea", "a");
+                                        sText = sText.Replace("getBoundingClientRect().top", "a");
+                                        sText = sText.Replace("offsetTop", "a");
+                                    }
+
+
+                                    if (featuresGeneric.Checked)
+                                    {
+                                        sText = sText.Replace("\"on\"+", "\"no\"+");
+                                        sText = sText.Replace("\"on\" +", "\"no\" +");
+                                        sText = sText.Replace("'on'+", "\"no\"+");
+                                        sText = sText.Replace("'on' +", "\"no\" +");
+                                    }
+
+
+
+
+
+
+                                    System.Net.HttpStatusCode sc = response.StatusCode;
+                                    var totalBytes = response.Content.Headers.ContentLength;
+                                    System.Diagnostics.Debug.Print("##############################   HTTPResponse STATUS and SIZE   ###############################################");
+                                    System.Diagnostics.Debug.Print("HttpStatusCode: " + sc.ToString());
+                                    System.Diagnostics.Debug.Print("Content.Headers.ContentLength: " + totalBytes.ToString());
+                                    System.Diagnostics.Debug.Print("##############################   HTTPResponse STATUS and SIZE   ###############################################");
+
+                                    response.EnsureSuccessStatusCode();
+
+                                    System.Diagnostics.Debug.Print("************************************   HTTP RECIEVED RESPONSE HEADERS   *******************************************");
+
+                                    foreach (var header2 in response.Headers)
+                                    {
+                                        string headerContent = string.Join(",", header2.Value.ToArray()); ;
+                                        System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", headerContent));
+                                    }
+                                    System.Diagnostics.Debug.Print("************************************   HTTP RECIEVED RESPONSE HEADERS   *******************************************");
+
+                                    e.Response = await ConvertResponseAsync(response, sText, cdet.Charset);
                                 }
                             }
 
-
-                            if (featuresGeneric.Checked)
-                            {
-                                sText = sText.Replace("\"on\"+", "\"no\"+");
-                                sText = sText.Replace("\"on\" +", "\"no\" +");
-                                sText = sText.Replace("'on'+", "\"no\"+");
-                                sText = sText.Replace("'on' +", "\"no\" +");
-                            }
-
-
-
-
-
-
-                            System.Net.HttpStatusCode sc = response.StatusCode;
-                            var totalBytes = response.Content.Headers.ContentLength;
-                            System.Diagnostics.Debug.Print("##############################   HTTPResponse STATUS and SIZE   ###############################################");
-                            System.Diagnostics.Debug.Print("HttpStatusCode: " + sc.ToString());
-                            System.Diagnostics.Debug.Print("Content.Headers.ContentLength: " + totalBytes.ToString());
-                            System.Diagnostics.Debug.Print("##############################   HTTPResponse STATUS and SIZE   ###############################################");
-
-                            response.EnsureSuccessStatusCode();
-
-                            System.Diagnostics.Debug.Print("************************************   HTTP RECIEVED RESPONSE HEADERS   *******************************************");
-
-                            foreach (var header2 in response.Headers)
-                            {
-                                string headerContent = string.Join(",", header2.Value.ToArray()); ;
-                                System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", headerContent));
-                            }
-                            System.Diagnostics.Debug.Print("************************************   HTTP RECIEVED RESPONSE HEADERS   *******************************************");
-
-                            e.Response = await ConvertResponseAsync(response, sText, cdet.Charset);
                         }
+                        else
+                        {
+
+                        }
+                     
+                      
 
                     }
-                    else
-                    {
-                        e.Request.Uri = "about:blank";
-                    }
-
                 }
                 catch (Exception ex) { }
             }
-          */
-           
+
+            d.Complete();
           
             
           
@@ -214,24 +262,20 @@ namespace Secuvox_2._0
 
             var statCode = (int)aResponse.StatusCode;
 
+           
+
+          HttpHeaders headers = aResponse.Headers;
+
+          
             MemoryStream stream = new MemoryStream();
             { //Default is what I would normally expect.
-                if(charset=="UTF-8")
+                if (charset == "UTF-8")
                     stream = new MemoryStream(Encoding.UTF8.GetBytes(content ?? ""));
                 else
                     stream = new MemoryStream(Encoding.ASCII.GetBytes(content ?? ""));
-                cwv2Response = this.webView21.CoreWebView2.Environment.CreateWebResourceResponse(stream, statCode, aResponse.ReasonPhrase, "");
+                cwv2Response = this.webView21.CoreWebView2.Environment.CreateWebResourceResponse(stream, statCode, aResponse.ReasonPhrase, headers.ToString());
             }
-
-            CoreWebView2HttpResponseHeaders heads = cwv2Response.Headers;
-
-            foreach (var header in aResponse.Headers)
-            {
-                string headerContent = string.Join(",", header.Value.ToArray()); ;
-                heads.AppendHeader(header.Key, headerContent);
-            }
-
-          //  heads.AppendHeader(@"Content-Disposition", @"attachment");
+            //  heads.AppendHeader(@"Content-Disposition", @"attachment");
 
 
             System.Diagnostics.Debug.Print("************************************   NEW RESPONSE HEADERS   *******************************************");
@@ -293,273 +337,302 @@ namespace Secuvox_2._0
 
         async void WebView21_NavigationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationCompletedEventArgs e)
         {
-           
-           
-            String text = await devToolsContext.GetContentAsync();
 
 
-            int start = text.IndexOf("<head");
-            if (start < 0)
-                start = text.IndexOf("<HEAD");
+            /*      String text = await devToolsContext.GetContentAsync();
+                  if (!(featuresGeneric.Checked == false && featuresScroll.Checked == false && featuresHover.Checked == false))
+                  {
+                      if (text != null)
+                      {
 
-            text = text.Substring(start);
-            text = "<html>" + text;
+                          int start = text.IndexOf("<head");
+                          if (start < 0)
+                              start = text.IndexOf("<HEAD");
 
-            text = text.Replace(" async ", "");
+                          text = text.Substring(start);
+                          text = "<html>" + text;
 
-            WebView2.DevTools.Dom.HtmlElement[] scripts = await devToolsContext.QuerySelectorAllAsync("script");
+                      //    text = text.Replace(" async ", "");
 
-            text = text.Replace("<a ", "<a rel=\"noreferrer\" ");
+                          WebView2.DevTools.Dom.HtmlElement[] scripts = await devToolsContext.QuerySelectorAllAsync("script");
 
-            foreach (WebView2.DevTools.Dom.HtmlElement script in scripts)
-            {
+                          text = text.Replace("<a ", "<a rel=\"noreferrer\" ");
 
-                String outerText=await script.GetAttributeAsync("src");
-                if(outerText!=null) {
-                    String url = "";
-                    if(outerText.Contains("http"))
-                    {
-                        url = outerText;
-                    }
-                    else
-                    {
-                        url = "https://" + new Uri(toolStripTextBox1.Text).Host + "/" + outerText;
-                    }
-                    url = url.Replace("\"", "");
-                    url = url.Replace("///", "/");                   
+                          foreach (WebView2.DevTools.Dom.HtmlElement script in scripts)
+                          {
 
-                   // text = text.Replace(outerText, "about:blank");
-                    String[] host = new Uri(url).Host.Split('.');
-                    if (!adblock.Contains(host[host.Length - 2] + "." + host[host.Length - 1]))
-                    {
-                        try
-                        {
-                            String javascript = new WebClient().DownloadString(url);
+                              String outerText = await script.GetAttributeAsync("src");
+                              if (outerText != null)
+                              {
+                                  String url = "";
+                                  if (outerText.Contains("http"))
+                                  {
+                                      url = outerText;
+                                  }
+                                  else
+                                  {
+                                      url = "https://" + new Uri(toolStripTextBox1.Text).Host + "/" + outerText;
+                                  }
+                                  url = url.Replace("\"", "");
+                                  url = url.Replace("///", "/");
 
-
-
-
-                            String sTextOrig = javascript;
-                            String sText = sTextOrig;
-                            bool found = true;
-
-                            if (featuresHover.Checked)
-                            {
-                                foreach (String s in toReplaceHover)
-                                {
-                                    sText = sText.Replace("\"" + s + "\"", "");
-                                    sText = sText.Replace("'" + s + "'", "");
-                                    sText = sText.Replace(s + "=", "");
-                                    sText = sText.Replace(s + " =", "");
-                                    sText = sText.Replace("." + s, "");
-                                }
-                            }
-
-                            if (featuresScroll.Checked)
-                            {
-                                foreach (String s in toReplaceScroll)
-                                {
-                                    sText = sText.Replace("\"" + s + "\"", "");
-                                    sText = sText.Replace("." + s, "");
-                                    sText = sText.Replace(s + "=", "");
-                                    sText = sText.Replace(s + " =", "");
-                                    sText = sText.Replace("." + s, "");
-                                }
-                            }
-
-                            if (featuresGeneric.Checked)
-                            {
-                                sText = sText.Replace("\"on\"+", "\"no\"+");
-                                sText = sText.Replace("\"on\" +", "\"no\" +");
-                                sText = sText.Replace("'on'+", "\"no\"+");
-                                sText = sText.Replace("'on' +", "\"no\" +");
-                            }
-
-                            javascript = sText;
-
-                                       javascript = javascript.Replace("</head", "");
-                                       javascript = javascript.Replace("</HEAD", "");
-                            javascript = javascript.Replace("<BODY", "");
-                            javascript = javascript.Replace("</BODY", "");
-                            javascript = javascript.Replace("<body", "");
-                            javascript = javascript.Replace("</body", "");
-                            javascript = javascript.Replace("<script", "");
-                            javascript = javascript.Replace("</script", "");
-
-
-                            String tag = await script.GetOuterHtmlAsync();
-                            text = text.Replace("</head>", "<script>" + javascript + "</script></head>");
-
-                        }
-                        catch (Exception ex) { }
-                    }
-          
-                
-                }
-                else
-                {
+                                  // text = text.Replace(outerText, "about:blank");
+                                  try
+                                  {
+                                      String[] host = new Uri(url).Host.Split('.');
+                                      if (!adblock.Contains(host[host.Length - 2] + "." + host[host.Length - 1]))
+                                      {
+                                          try
+                                          {
+                                              String javascript = new WebClient().DownloadString(url);
 
 
 
 
-                    String sTextOrig = await script.GetInnerTextAsync();
-                    String sText = sTextOrig;
-                    bool found = true;
-                    try
-                    {
-                        if (featuresHover.Checked)
-                        {
-                            foreach (String s in toReplaceHover)
-                            {
-                                sText = sText.Replace("\"" + s + "\"", "");
-                                sText = sText.Replace("'" + s + "'", "");
-                                sText = sText.Replace("." + s, "");
-                            }
-                        }
+                                              String sTextOrig = javascript;
+                                              String sText = sTextOrig;
+                                              bool found = true;
 
-                        if (featuresScroll.Checked)
-                        {
-                            foreach (String s in toReplaceScroll)
-                            {
-                                sText = sText.Replace("\"" + s + "\"", "");
-                                sText = sText.Replace("'" + s + "'", "");
-                                sText = sText.Replace("." + s, "");
+                                              if (featuresHover.Checked)
+                                              {
+                                                  foreach (String s in toReplaceHover)
+                                                  {
+                                                      sText = sText.Replace("\"" + s + "\"", "");
+                                                      sText = sText.Replace("'" + s + "'", "");
+                                                      sText = sText.Replace(s + "=", "");
+                                                      sText = sText.Replace(s + " =", "");
+                                                      sText = sText.Replace("." + s, "");
+                                                  }
+                                              }
 
-                            }
-                            sText = sText.Replace("scrollTop", "");
-                            sText = sText.Replace("scrollY", "");
-                        }
-                        if (featuresGeneric.Checked)
-                        {
-                            sText = sText.Replace("\"on\"+", "\"no\"+");
-                            sText = sText.Replace("\"on\" +", "\"no\" +");
-                            sText = sText.Replace("'on'+", "\"no\"+");
-                            sText = sText.Replace("'on' +", "\"no\" +");
-                        }
+                                              if (featuresScroll.Checked)
+                                              {
+                                                  foreach (String s in toReplaceScroll)
+                                                  {
+                                                      sText = sText.Replace("\"" + s + "\"", "");
+                                                      sText = sText.Replace("." + s, "");
+                                                      sText = sText.Replace(s + "=", "");
+                                                      sText = sText.Replace(s + " =", "");
+                                                      sText = sText.Replace("." + s, "");
+                                                      sText = sText.Replace("scrollTop", "a");
+                                                      sText = sText.Replace("pageYOffset", "a");
+                                                      sText = sText.Replace("scrollArea", "a");
+                                                      sText = sText.Replace("getBoundingClientRect().top", "a");
+                                                      sText = sText.Replace("offsetTop", "a");
+
+                                                  }
+                                              }
+
+                                              if (featuresGeneric.Checked)
+                                              {
+                                                  sText = sText.Replace("\"on\"+", "\"no\"+");
+                                                  sText = sText.Replace("\"on\" +", "\"no\" +");
+                                                  sText = sText.Replace("'on'+", "\"no\"+");
+                                                  sText = sText.Replace("'on' +", "\"no\" +");
+                                              }
+
+                                              javascript = sText;
+
+                                              javascript = javascript.Replace("</head", "");
+                                              javascript = javascript.Replace("</HEAD", "");
+                                              javascript = javascript.Replace("<BODY", "");
+                                              javascript = javascript.Replace("</BODY", "");
+                                              javascript = javascript.Replace("<body", "");
+                                              javascript = javascript.Replace("</body", "");
+                                              javascript = javascript.Replace("<script", "");
+                                              javascript = javascript.Replace("</script", "");
 
 
-                        if (sText != "")
-                            text = text.Replace(sTextOrig, sText);
-                    }catch (Exception ex) { }
-                }
+                                              String tag = await script.GetOuterHtmlAsync();
+                                              text = text.Replace("</head>", "<script>" + javascript + "</script></head>");
+
+                                          }
+                                          catch (Exception ex) { }//error text
+                                      }
+
+                                  }
+                                  catch (Exception ex)
+                                  { //error text
+                                  }
+                              }
+                              else
+                              {
 
 
-                /* if ((sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
 
+
+                                  String sTextOrig = await script.GetInnerTextAsync();
+                                  String sText = sTextOrig;
+                                  bool found = true;
+                                  try
+                                  {
+                                      if (featuresHover.Checked)
+                                      {
+                                          foreach (String s in toReplaceHover)
+                                          {
+                                              sText = sText.Replace("\"" + s + "\"", "");
+                                              sText = sText.Replace("'" + s + "'", "");
+                                              sText = sText.Replace(s + "=", "");
+                                              sText = sText.Replace(s + " =", "");
+                                              sText = sText.Replace("." + s, "");
+                                          }
+                                      }
+
+                                      if (featuresScroll.Checked)
+                                      {
+                                          foreach (String s in toReplaceScroll)
+                                          {
+                                              sText = sText.Replace("\"" + s + "\"", "");
+                                              sText = sText.Replace("." + s, "");
+                                              sText = sText.Replace(s + "=", "");
+                                              sText = sText.Replace(s + " =", "");
+                                              sText = sText.Replace("." + s, "");
+                                              sText = sText.Replace("scrollTop", "a");
+                                              sText = sText.Replace("pageYOffset", "a");
+                                              sText = sText.Replace("scrollArea", "a");
+                                              sText = sText.Replace("getBoundingClientRect().top", "a");
+                                              sText = sText.Replace("offsetTop", "a");
+
+
+
+                                          }
+                                      }
+
+                                      if (featuresGeneric.Checked)
+                                      {
+                                          sText = sText.Replace("\"on\"+", "\"no\"+");
+                                          sText = sText.Replace("\"on\" +", "\"no\" +");
+                                          sText = sText.Replace("'on'+", "\"no\"+");
+                                          sText = sText.Replace("'on' +", "\"no\" +");
+                                      }
+
+
+                                      if (sText != "")
+                                          text = text.Replace(sTextOrig, sText);
+                                  }
+                                  catch (Exception ex) { }
+                              }
+            */
+
+            /* if ((sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
+
+             {
+                 found = false;
+                 int start = sTextOrig.IndexOf("attachEvent");
+
+                 int end = start;
+                 while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
                  {
-                     found = false;
-                     int start = sTextOrig.IndexOf("attachEvent");
-
-                     int end = start;
-                     while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
-                     {
-                         end++;
-                     }
-
-                     if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
-                     {
-                         sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
-
-                     }
-
+                     end++;
                  }
-                 found = true;
-                 while (sTextOrig.Contains("attachEventListener") && (sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
+
+                 if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
                  {
-                     found = false;
-                     int start = sTextOrig.IndexOf("attachEventListener");
-
-                     int end = start;
-                     while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
-                     {
-                         end++;
-                     }
-
-                     if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
-                     {
-                         sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
-
-                     }
-
-                 }
-                 found = true;
-                 while (sTextOrig.Contains("addEventListener") &&  (sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
-                 {
-                     found = false;
-                     int start = sTextOrig.IndexOf("addEventListener");
-
-                     int end = start;
-                     while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
-                     {
-                         end++;
-                     }
-
-                     if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
-                     {
-                         sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
-
-                     }
+                     sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
 
                  }
 
-                 found = true;
-                 while (sTextOrig.Contains("addEvent") && (sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
+             }
+             found = true;
+             while (sTextOrig.Contains("attachEventListener") && (sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
+             {
+                 found = false;
+                 int start = sTextOrig.IndexOf("attachEventListener");
+
+                 int end = start;
+                 while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
                  {
-                     found = false;
-                     int start = sTextOrig.IndexOf("addEvent");
+                     end++;
+                 }
 
-                     int end = start;
-                     while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
+                 if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
+                 {
+                     sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
+
+                 }
+
+             }
+             found = true;
+             while (sTextOrig.Contains("addEventListener") &&  (sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
+             {
+                 found = false;
+                 int start = sTextOrig.IndexOf("addEventListener");
+
+                 int end = start;
+                 while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
+                 {
+                     end++;
+                 }
+
+                 if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
+                 {
+                     sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
+
+                 }
+
+             }
+
+             found = true;
+             while (sTextOrig.Contains("addEvent") && (sTextOrig.Contains("\"click\"") || sTextOrig.Contains("\"onclick\"") || sTextOrig.Contains("\"message\"") || sTextOrig.Contains("\"onmessage\"")))
+             {
+                 found = false;
+                 int start = sTextOrig.IndexOf("addEvent");
+
+                 int end = start;
+                 while (sTextOrig[end] != 59 && sTextOrig[end] != 38 && sTextOrig[end] != 124)
+                 {
+                     end++;
+                 }
+
+                 if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
+                 if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
+                 {
+                     sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
+
+                 }
+
+             }*/
+
+            /*         }
+
+
+                     if (featuresHover.Checked)
                      {
-                         end++;
+                         foreach (String s in toReplaceHover)
+                         {
+                             text = text.Replace("\"" + s + "\"", "");
+                             text = text.Replace("'" + s + "'", "");
+                             text = text.Replace(s + "=", "");
+                             text = text.Replace(s + " =", "");
+                             text = text.Replace("." + s, "");
+                         }
                      }
 
-                     if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
-                     if (sTextOrig.Substring(start, end - start).Contains("\"click\"") || sTextOrig.Substring(start, end - start).Contains("\"onclick\"") || sTextOrig.Substring(start, end - start).Contains("\"message\"") || sTextOrig.Substring(start, end - start).Contains("\"onmessage\""))
+                     if (featuresScroll.Checked)
                      {
-                         sTextOrig = sTextOrig.Replace(sTextOrig.Substring(start, end - start), "");
-
+                         foreach (String s in toReplaceScroll)
+                         {
+                             text = text.Replace("\"" + s + "\"", "");
+                             text = text.Replace("." + s, "");
+                             text = text.Replace(s + "=", "");
+                             text = text.Replace(s + " =", "");
+                             text = text.Replace("." + s, "");
+                         }
                      }
 
-                 }*/
+                     if (featuresGeneric.Checked)
+                     {
+                         text = text.Replace("\"on\"+", "\"no\"+");
+                         text = text.Replace("\"on\" +", "\"no\" +");
+                         text = text.Replace("'on'+", "\"no\"+");
+                         text = text.Replace("'on' +", "\"no\" +");
+                     }
+                     await devToolsContext.SetContentAsync(text);
+                 }
 
-            }
 
-
-            if (featuresHover.Checked)
-            {
-                foreach (String s in toReplaceHover)
-                {
-                    text = text.Replace("\"" + s + "\"", "");
-                    text = text.Replace("'" + s + "'", "");
-                    text = text.Replace(s + "=", "");
-                    text = text.Replace(s + " =", "");
-                    text = text.Replace("." + s, "");
-                }
-            }
-
-            if (featuresScroll.Checked)
-            {
-                foreach (String s in toReplaceScroll)
-                {
-                    text = text.Replace("\"" + s + "\"", "");
-                    text = text.Replace("." + s, "");
-                    text = text.Replace(s + "=", "");
-                    text = text.Replace(s + " =", "");
-                    text = text.Replace("." + s, "");
-                }
-            }
-
-            if (featuresGeneric.Checked)
-            {
-                text = text.Replace("\"on\"+", "\"no\"+");
-                text = text.Replace("\"on\" +", "\"no\" +");
-                text = text.Replace("'on'+", "\"no\"+");
-                text = text.Replace("'on' +", "\"no\" +");
-            }
-          
-
-            await devToolsContext.SetContentAsync(text);
+             }
+             */
             pictureBox1.Visible = false;
 
         }
@@ -568,7 +641,7 @@ namespace Secuvox_2._0
         {
             toolStripTextBox1.Text =e.Uri.ToString();
             // webView21.Visible = false;
-            pictureBox1.Visible = true;
+         //   pictureBox1.Visible = true;
 
 
         }
@@ -641,7 +714,14 @@ namespace Secuvox_2._0
 
             if (e.KeyChar == 13)
             { 
-                if(toolStripTextBox1.Text.StartsWith("http"))
+                webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.CacheStorage);
+                webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.WebSql);
+                webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.DiskCache);
+                webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.LocalStorage);
+                webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.ServiceWorkers);
+                webView21.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.IndexedDb);
+
+                if (toolStripTextBox1.Text.StartsWith("http"))
                     webView21.CoreWebView2.Navigate(toolStripTextBox1.Text);
                 else
                     webView21.CoreWebView2.Navigate("https://"+toolStripTextBox1.Text);
@@ -649,6 +729,11 @@ namespace Secuvox_2._0
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void featuresHover_Click(object sender, EventArgs e)
         {
 
         }
