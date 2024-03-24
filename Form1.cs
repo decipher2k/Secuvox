@@ -61,6 +61,7 @@ namespace Secuvox_2._0
             //webView21.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
             webView21.CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
             webView21.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
+            webView21.CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Strict;
             
             //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
         }
@@ -633,15 +634,16 @@ namespace Secuvox_2._0
 
              }
              */
-            pictureBox1.Visible = false;
+           
 
         }
 
         private void WebView21_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
         {
             toolStripTextBox1.Text =e.Uri.ToString();
+            pictureBox1.Visible = false;
             // webView21.Visible = false;
-         //   pictureBox1.Visible = true;
+            // pictureBox1.Visible = true;
 
 
         }

@@ -1,6 +1,6 @@
-2024/03/23-20:07:08.634 8848 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
-2024/03/23-20:07:08.637 8848 Recovering log #3
-2024/03/23-20:07:08.640 8848 Reusing old log D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb/000003.log 
-2024/03/23-20:07:17.207 8848 Level-0 table #5: started
-2024/03/23-20:07:17.225 8848 Level-0 table #5: 16508 bytes OK
-2024/03/23-20:07:17.227 8848 Delete type=0 #3
+2024/03/24-01:48:25.281 5fcc Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
+2024/03/24-01:48:25.285 5fcc Recovering log #3
+2024/03/24-01:48:25.290 5fcc Reusing old log D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb/000003.log 
+2024/03/24-01:48:33.955 5fcc Level-0 table #5: started
+2024/03/24-01:48:33.970 5fcc Level-0 table #5: 16545 bytes OK
+2024/03/24-01:48:33.971 5fcc Delete type=0 #3
