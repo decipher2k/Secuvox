@@ -1,5 +1,2 @@
-2024/03/24-15:28:05.785 3e84 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000001
-2024/03/24-15:28:05.793 3e84 Recovering log #3
-2024/03/24-15:28:05.793 3e84 Level-0 table #3: started
-2024/03/24-15:28:05.800 3e84 Level-0 table #3: 15834 bytes OK
-2024/03/24-15:28:05.809 3e84 Delete type=0 #3
+2024/03/24-16:03:59.944 1104 Creating DB D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb__tmp_for_rebuild since it was missing.
+2024/03/24-16:03:59.957 1104 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Local Storage\leveldb__tmp_for_rebuild/MANIFEST-000001

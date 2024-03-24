@@ -40,7 +40,11 @@
             this.featuresHover = new System.Windows.Forms.ToolStripMenuItem();
             this.featuresScroll = new System.Windows.Forms.ToolStripMenuItem();
             this.featuresGeneric = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.fakeGoogleBotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.adblockerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -121,7 +125,11 @@
             this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.featuresHover,
             this.featuresScroll,
-            this.featuresGeneric});
+            this.featuresGeneric,
+            this.toolStripMenuItem1,
+            this.fakeGoogleBotToolStripMenuItem,
+            this.clearBrowsingDataToolStripMenuItem,
+            this.adblockerToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -158,6 +166,26 @@
             this.featuresGeneric.Text = "Block Generic Events";
             this.featuresGeneric.Click += new System.EventHandler(this.featuresGeneric_Click);
             // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(272, 6);
+            // 
+            // fakeGoogleBotToolStripMenuItem
+            // 
+            this.fakeGoogleBotToolStripMenuItem.CheckOnClick = true;
+            this.fakeGoogleBotToolStripMenuItem.Name = "fakeGoogleBotToolStripMenuItem";
+            this.fakeGoogleBotToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
+            this.fakeGoogleBotToolStripMenuItem.Text = "Fake Google Bot";
+            // 
+            // clearBrowsingDataToolStripMenuItem
+            // 
+            this.clearBrowsingDataToolStripMenuItem.CheckOnClick = true;
+            this.clearBrowsingDataToolStripMenuItem.Name = "clearBrowsingDataToolStripMenuItem";
+            this.clearBrowsingDataToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
+            this.clearBrowsingDataToolStripMenuItem.Text = "Clear Browsing Data";
+            this.clearBrowsingDataToolStripMenuItem.Click += new System.EventHandler(this.clearBrowsingDataToolStripMenuItem_Click);
+            // 
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -166,6 +194,16 @@
             this.panel1.Size = new System.Drawing.Size(2124, 1332);
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
+            // adblockerToolStripMenuItem
+            // 
+            this.adblockerToolStripMenuItem.Checked = true;
+            this.adblockerToolStripMenuItem.CheckOnClick = true;
+            this.adblockerToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.adblockerToolStripMenuItem.Name = "adblockerToolStripMenuItem";
+            this.adblockerToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
+            this.adblockerToolStripMenuItem.Text = "Adblocker";
+            this.adblockerToolStripMenuItem.Click += new System.EventHandler(this.adblockerToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -203,6 +241,10 @@
         private System.Windows.Forms.ToolStripMenuItem featuresScroll;
         private System.Windows.Forms.ToolStripMenuItem featuresGeneric;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem fakeGoogleBotToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearBrowsingDataToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem adblockerToolStripMenuItem;
     }
 }
 

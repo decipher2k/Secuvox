@@ -317,13 +317,16 @@ namespace Secuvox_2._0
                         e.Request.Headers.RemoveHeader("Referer");
                     try
                     {
-                        String[] parts = new Uri(e.Request.Uri).Host.Split('.');
-                        if (parts.Length > 1)
-                            if (Form1.adblock.Contains(new Uri(e.Request.Uri).Host))
-                            {
-                                e.Request.Uri = "about:blank";
-                                return;
-                            }
+                        if (Form1.instance.adblockerToolStripMenuItem.Checked)
+                        {
+                            String[] parts = new Uri(e.Request.Uri).Host.Split('.');
+                            if (parts.Length > 1)
+                                if (Form1.adblock.Contains(new Uri(e.Request.Uri).Host))
+                                {
+                                    e.Request.Uri = "about:blank";
+                                    return;
+                                }
+                        }
                     }
                     catch { }
 
@@ -487,17 +490,21 @@ namespace Secuvox_2._0
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationCompleted += CustomTabPage_NavigationCompleted;
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
-                    //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
+                    if(Form1.instance.fakeGoogleBotToolStripMenuItem.Checked)
+                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                    //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Strict;
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Balanced;
+
+                    if(Form1.instance.clearBrowsingDataToolStripMenuItem.Checked)
+                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllSite);
 
 
 
 
-                    
-                    
+
+
 
 
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://google.com");
@@ -546,7 +553,7 @@ namespace Secuvox_2._0
                         string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
                         string payload = "{\"requestId\":\"" + id + "\"}";
 
-                        
+                        url = url.Replace("http://", "https://");
 
                         //string code = doc.RootElement.GetProperty("responseStatusCode").ToString();
 
@@ -606,11 +613,14 @@ namespace Secuvox_2._0
                                 {
                                     String[] parts = new Uri(url).Host.Split('.');
                                     if (parts.Length > 1)
-                                        if (Form1.adblock.Contains(new Uri(url).Host))
+                                        if (Form1.instance.adblockerToolStripMenuItem.Checked)
                                         {
-                                           url = "about:blank";
-                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
-                                            return;
+                                            if (Form1.adblock.Contains(new Uri(url).Host))
+                                            {
+                                                url = "about:blank";
+                                                await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                                return;
+                                            }
                                         }
                                 }
                                 catch { }
@@ -641,10 +651,10 @@ namespace Secuvox_2._0
                                             if (cdet.Charset == "UTF-8" || cdet.Charset == "ASCII")
                                             {
                                              
-                                                if (cdet.Charset=="UTF-8")
+                                                //if (cdet.Charset=="UTF-8")
                                                     sText= Encoding.UTF8.GetString(stream.ToArray());
-                                                else
-                                                    sText = Encoding.ASCII.GetString(stream.ToArray());
+                                                //else
+                                                  //  sText = Encoding.ASCII.GetString(stream.ToArray());
                                                 if (!sText.StartsWith("<svg "))
                                             {
                                                 bool found = false;
@@ -720,25 +730,25 @@ namespace Secuvox_2._0
                                                             sText = sText.Replace("'on' +", "\"no\" +");
                                                         }
 
-
+                                                        
 
 
                                                     }
-
+                                                    sText = sText.Replace("crossorigin", "anonymous");
 
                                                 }
-                                               if (cdet.Charset == "UTF-8")
+                                             //  if (cdet.Charset == "UTF-8")
                                                    sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
-                                                else
-                                                    sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
+                                               // else
+                                                 //   sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
                                            
                                             }
-                                            else
+                                            /*else
                                             {
                                                 await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                                 return;
                                                 //sText = Convert.ToBase64String(stream.ToArray());
-                                            }
+                                            }*/
 
                                         }
 
@@ -859,6 +869,7 @@ namespace Secuvox_2._0
             tabControl.Dock = DockStyle.Fill;
             tabControl.Visible = true;
             panel1.Controls.Add(tabControl);
+            
            
         }
 
@@ -962,6 +973,16 @@ namespace Secuvox_2._0
                 tabPage.Dispose();
             }
          
+        }
+
+        private void clearBrowsingDataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void adblockerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

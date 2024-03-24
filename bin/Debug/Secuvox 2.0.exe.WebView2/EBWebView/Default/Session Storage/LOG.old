@@ -1,3 +1,2 @@
-2024/03/24-15:28:06.834 3e84 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Session Storage/MANIFEST-000001
-2024/03/24-15:28:06.837 3e84 Recovering log #3
-2024/03/24-15:28:06.842 3e84 Reusing old log D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Session Storage/000003.log 
+2024/03/24-16:03:59.942 2e4c Creating DB D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Session Storage__tmp_for_rebuild since it was missing.
+2024/03/24-16:03:59.955 2e4c Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\Session Storage__tmp_for_rebuild/MANIFEST-000001
