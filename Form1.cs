@@ -29,6 +29,7 @@ using WebView2.DevTools.Dom;
 using WebView2.DevTools.Dom.Input;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.CSS;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.Network;
+using static Secuvox_2._0.Form1.CustomTabControl;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
@@ -37,6 +38,7 @@ namespace Secuvox_2._0
     public partial class Form1 : Form
     {
         CustomTabControl tabControl;
+        public static Form1 instance;
         public Form1()
         {
             InitializeComponent();
@@ -44,7 +46,7 @@ namespace Secuvox_2._0
             if (!System.IO.Directory.Exists(".\\cache"))
                 System.IO.Directory.CreateDirectory(".\\cache");
 
-
+            instance= this; 
 
 
             adblock = System.IO.File.ReadAllLines(".\\hosts");
@@ -124,7 +126,7 @@ namespace Secuvox_2._0
                         using (Bitmap bmp = new Bitmap(GetContentFromResource("cross.png")))
                         {
                             e.Graphics.DrawImage(bmp,
-                                 tabTextArea.X + tabTextArea.Width - 18, (tabTextArea.Height / 2) - 7, 18, 18);
+                                 tabTextArea.X + tabTextArea.Width - 20, (tabTextArea.Height / 2) - 7, 18, 18);
                         }
                     }
                     else
@@ -137,7 +139,7 @@ namespace Secuvox_2._0
                         using (Bitmap bmp = new Bitmap(GetContentFromResource("cross.png")))
                         {
                             e.Graphics.DrawImage(bmp,
-                                tabTextArea.X + tabTextArea.Width - 18, (tabTextArea.Height/2)-7, 18, 18);
+                                tabTextArea.X + tabTextArea.Width - 20, (tabTextArea.Height/2)-7, 18, 18);
                         }
                      //   br.Dispose();
                     }
@@ -193,6 +195,7 @@ namespace Secuvox_2._0
                 WebView2DevToolsContext devToolsContext;
                 public CustomTabPage()
                 {
+                    this.Text = "https://google.com";
                     maxId++;
                     this.id = maxId;
                     webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
@@ -481,6 +484,8 @@ namespace Secuvox_2._0
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationStarting += WebView21_NavigationStarting;
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationCompleted += CustomTabPage_NavigationCompleted;
+
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
@@ -490,9 +495,44 @@ namespace Secuvox_2._0
 
 
 
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://startpage.com");
+
+                    
+                    
+
+
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://google.com");
+                    ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).webView2.Focus();
+
+
 
                     //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
+                }
+
+                async void CustomTabPage_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+                {
+                    if(Form1.instance.tabControl.SelectedTab==((CustomTabControl.CustomTabPage) ((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent))
+                    {
+                        Form1.instance.toolStripTextBox1.Text = ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Source;
+                    
+                    }
+                    ((CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).Text = ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.DocumentTitle;
+                    ((CustomTabControl)((CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).Parent).Refresh();
+
+                    await((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.ExecuteScriptAsync("document.body.addEventListener(\"keydown\",event => { if (event.keyCode === 87 && event.ctrlKey)  window.chrome.webview.postMessage(\"PressedW\"); if (event.keyCode === 84 && event.ctrlKey)  window.chrome.webview.postMessage(\"PressedT\"); });"); ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.WebMessageReceived += (_, args) => {
+                        if (args.WebMessageAsJson.Contains("PressedW"))
+                        {
+                            CustomTabControl.CustomTabPage tabPage = (CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent;
+                            ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(tabPage);
+                            tabPage.Dispose();
+                        }
+                        if (args.WebMessageAsJson.Contains("PressedT"))
+                        {
+                            CustomTabControl.CustomTabPage tabPage = new CustomTabPage();
+                            ((CustomTabControl)Form1.instance.tabControl).TabPages.Add(tabPage);
+                            ((CustomTabControl)Form1.instance.tabControl).SelectedTab = tabPage;
+                        }
+                    };
+
                 }
 
                 async void WebView2_FetchRequestPaused(object sender, CoreWebView2DevToolsProtocolEventReceivedEventArgs e)
@@ -645,11 +685,11 @@ namespace Secuvox_2._0
                                                         {
                                                             foreach (String s in toReplaceHover)
                                                             {
-                                                                sText = sText.Replace("\"" + s + "\"", "\"mousemove\"");
-                                                                sText = sText.Replace("'" + s + "'", "'mousemove'");
-                                                                sText = sText.Replace(s + "=", "mousemove=");
-                                                                sText = sText.Replace(s + " =", "mousemove=");
-                                                                sText = sText.Replace("." + s, ".mousemove");
+                                                                sText = sText.Replace("\"" + s + "\"", "\"onload\"");
+                                                                sText = sText.Replace("'" + s + "'", "'onload'");
+                                                                sText = sText.Replace(s + "=", "onload=");
+                                                                sText = sText.Replace(s + " =", "onload=");
+                                                                sText = sText.Replace("." + s, ".onload");
                                                             }
                                                         }
 
@@ -657,10 +697,10 @@ namespace Secuvox_2._0
                                                         {
                                                             foreach (String s in toReplaceScroll)
                                                             {
-                                                                sText = sText.Replace("\"" + s + "\"", "\"mousemove\"");                                                
-                                                                sText = sText.Replace(s + "=", "mousemove=");
-                                                                sText = sText.Replace(s + " =", "mousemove=");
-                                                                sText = sText.Replace("." + s, ".mousemove");
+                                                                sText = sText.Replace("\"" + s + "\"", "\"onload\"");                                                
+                                                                sText = sText.Replace(s + "=", "onload=");
+                                                                sText = sText.Replace(s + " =", "onload=");
+                                                                sText = sText.Replace("." + s, ".onload");
                                                                 sText = sText.Replace("scrollTop", "top");
                                                                 sText = sText.Replace("pageYOffset", "top");
                                                                 sText = sText.Replace("scrollArea", "getBoundingClientRect()");
@@ -738,8 +778,11 @@ namespace Secuvox_2._0
                         }
                        else
                         {
-
-                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                            try
+                            {
+                                await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                            }
+                            catch  { }
                         }
                     }
                 }
@@ -759,7 +802,27 @@ namespace Secuvox_2._0
         }
 
 
-     
+        public void startNavigate()
+        {
+            if (toolStripTextBox1.Text == "")
+                toolStripTextBox1.Text = "https://google.com";
+            if (!toolStripTextBox1.Text.StartsWith("http"))
+                toolStripTextBox1.Text = "https://" + toolStripTextBox1.Text;
+            try
+            {
+                if (new Uri(toolStripTextBox1.Text).Host.Split('.').Length > 1)
+                {
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(toolStripTextBox1.Text);                    
+                }
+                else
+                {
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://google.com/?q=" + toolStripTextBox1.Text);
+                }
+                Form1.instance.tabControl.SelectedTab.Text= toolStripTextBox1.Text;
+                Form1.instance.tabControl.Refresh();
+                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Focus();
+            } catch { ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://google.com/?q=" + toolStripTextBox1.Text); }
+        }
 
         private String genBodyTag(String bodyTag,  string javascript)
         {
@@ -786,7 +849,7 @@ namespace Secuvox_2._0
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(toolStripTextBox1.Text);
+            startNavigate();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -834,17 +897,22 @@ namespace Secuvox_2._0
 
             if (e.KeyChar == 13)
             {
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.CacheStorage);
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.WebSql);
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.DiskCache);
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.LocalStorage);
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.ServiceWorkers);
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.IndexedDb);
-
-                if (toolStripTextBox1.Text.StartsWith("http"))
-                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(toolStripTextBox1.Text);
+                if (((CustomTabControl)tabControl).TabPages.Count == 0)
+                {
+                    CustomTabControl.CustomTabPage tabPage = new CustomTabControl.CustomTabPage();
+                    ((CustomTabControl)tabControl).TabPages.Add(tabPage);
+                }
                 else
-                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://"+toolStripTextBox1.Text);
+                {
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.CacheStorage);
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.WebSql);
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.DiskCache);
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.LocalStorage);
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.ServiceWorkers);
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.IndexedDb);
+                    startNavigate();
+                }
+            
             }
         }
 
@@ -865,16 +933,7 @@ namespace Secuvox_2._0
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Control && e.KeyCode == Keys.T)
-            {
-                CustomTabControl.CustomTabPage customTabPage = new CustomTabControl.CustomTabPage();
-                tabControl.TabPages.Add(customTabPage);
-
-            }
-            else if(e.Control && e.KeyCode == Keys.W)
-            {
-
-            }
+       
         }
 
         private void featuresScroll_Click(object sender, EventArgs e)
@@ -885,6 +944,24 @@ namespace Secuvox_2._0
         private void featuresGeneric_Click(object sender, EventArgs e)
         {
             doGeneric = !featuresGeneric.Checked;
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.T)
+            {
+                CustomTabControl.CustomTabPage tabPage = new CustomTabPage();
+                ((CustomTabControl)Form1.instance.tabControl).TabPages.Add(tabPage);
+                ((CustomTabControl)Form1.instance.tabControl).SelectedTab = tabPage;
+                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Focus();
+            }
+            else if (e.Control && e.KeyCode == Keys.W)
+            {
+                CustomTabControl.CustomTabPage tabPage = (CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent;
+                ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(tabPage);
+                tabPage.Dispose();
+            }
+         
         }
     }
 }

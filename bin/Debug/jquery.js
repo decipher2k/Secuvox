@@ -10514,7 +10514,7 @@ jQuery.fn.extend( {
 		rect = elem.getBoundingClientRect();
 		win = elem.ownerDocument.defaultView;
 		return {
-			top: rect.top + win.pageYOffset,
+			top: rect.top,
 			left: rect.left + win.pageXOffset
 		};
 	},
