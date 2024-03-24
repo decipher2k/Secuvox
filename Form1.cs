@@ -1,4 +1,5 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Core.DevToolsProtocolExtension;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Policy;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +28,7 @@ using System.Xml.Linq;
 using WebView2.DevTools.Dom;
 using WebView2.DevTools.Dom.Input;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.CSS;
+using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.Network;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
@@ -182,10 +185,10 @@ namespace Secuvox_2._0
             }
 
 
-            public class CustomTabPage:TabPage
+            public class CustomTabPage : TabPage
             {
                 public long id = 0;
-                private static long maxId=0;
+                private static long maxId = 0;
                 public Microsoft.Web.WebView2.WinForms.WebView2 webView2;
                 WebView2DevToolsContext devToolsContext;
                 public CustomTabPage()
@@ -193,8 +196,8 @@ namespace Secuvox_2._0
                     maxId++;
                     this.id = maxId;
                     webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
-                    
-                                
+
+
                     this.Controls.Add(webView2);
                     ((System.ComponentModel.ISupportInitialize)(webView2)).BeginInit();
                     this.webView2.AllowExternalDrop = true;
@@ -208,8 +211,8 @@ namespace Secuvox_2._0
                     this.webView2.ZoomFactor = 1D;
                     ((System.ComponentModel.ISupportInitialize)(webView2)).EndInit();
                     webView2.CoreWebView2InitializationCompleted += WebView21_CoreWebView2InitializationCompleted;
-                    webView2.EnsureCoreWebView2Async();          
-                    
+                    webView2.EnsureCoreWebView2Async();
+
                 }
 
 
@@ -264,13 +267,13 @@ namespace Secuvox_2._0
                     //  heads.AppendHeader(@"Content-Disposition", @"attachment");
 
 
-       
+
 
                     foreach (var header2 in cwv2Response.Headers)
                     {
                         System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", header2.Value));
                     }
-   
+
 
                     return cwv2Response;
                 }
@@ -342,69 +345,71 @@ namespace Secuvox_2._0
 
                                     String sText = await response.Content.ReadAsStringAsync();
 
-
-                                    bool found = false;
-                                    foreach (String s in toReplaceHover)
-                                        if (sText.Contains(s))
-                                            found = true;
-
-                                    foreach (String s in toReplaceScroll)
-                                        if (sText.Contains(s))
-                                            found = true;
-
-                                    if (sText.Contains("\"on\""))
-                                        found = true;
-                                    if (sText.Contains("'on'"))
-                                        found = true;
-
-                                    if (sText.Contains("scrollTop"))
-                                        found = true;
-
-                                    if (sText.Contains("pageYOffset"))
-                                        found = true;
-
-                                    if (sText.Contains("scrollArea"))
-                                        found = true;
-
-                                    if (sText.Contains("getBoundingClientRect().top"))
-                                        found = true;
-
-                                    if (sText.Contains("offsetTop"))
-                                        found = true;
-
-
-
-                                    if (!found)
+                                    if (!sText.StartsWith("<svg "))
                                     {
+                                        bool found = false;
+                                        foreach (String s in toReplaceHover)
+                                            if (sText.Contains(s))
+                                                found = true;
 
-                                        if (!Form1.doHover)
+                                        foreach (String s in toReplaceScroll)
+                                            if (sText.Contains(s))
+                                                found = true;
+
+                                        if (sText.Contains("\"on\""))
+                                            found = true;
+                                        if (sText.Contains("'on'"))
+                                            found = true;
+
+                                        if (sText.Contains("scrollTop"))
+                                            found = true;
+
+                                        if (sText.Contains("pageYOffset"))
+                                            found = true;
+
+                                        if (sText.Contains("scrollArea"))
+                                            found = true;
+
+                                        if (sText.Contains("getBoundingClientRect().top"))
+                                            found = true;
+
+                                        if (sText.Contains("offsetTop"))
+                                            found = true;
+
+
+
+                                        if (found)
                                         {
-                                            foreach (String s in toReplaceHover)
-                                            {
-                                                sText = sText.Replace("\"" + s + "\"", "");
-                                                sText = sText.Replace("'" + s + "'", "");
-                                                sText = sText.Replace(s + "=", "");
-                                                sText = sText.Replace(s + " =", "");
-                                                sText = sText.Replace("." + s, "");
-                                            }
-                                        }
 
-                                        if (!Form1.doScroll)
-                                        {
-                                            foreach (String s in toReplaceScroll)
+                                            if (!Form1.doHover)
                                             {
-                                                sText = sText.Replace("\"" + s + "\"", "");
-                                                sText = sText.Replace("." + s, "");
-                                                sText = sText.Replace(s + "=", "");
-                                                sText = sText.Replace(s + " =", "");
-                                                sText = sText.Replace("." + s, "");
-                                                sText = sText.Replace("scrollTop", "a");
-                                                sText = sText.Replace("pageYOffset", "a");
-                                                sText = sText.Replace("scrollArea", "a");
-                                                sText = sText.Replace("getBoundingClientRect().top", "a");
-                                                sText = sText.Replace("offsetTop", "a");
+                                                foreach (String s in toReplaceHover)
+                                                {
+                                                    sText = sText.Replace("\"" + s + "\"", "");
+                                                    sText = sText.Replace("'" + s + "'", "");
+                                                    sText = sText.Replace(s + "=", "");
+                                                    sText = sText.Replace(s + " =", "");
+                                                    sText = sText.Replace("." + s, "");
+                                                }
                                             }
 
+                                            if (!Form1.doScroll)
+                                            {
+                                                foreach (String s in toReplaceScroll)
+                                                {
+                                                    sText = sText.Replace("\"" + s + "\"", "");
+                                                    sText = sText.Replace("." + s, "");
+                                                    sText = sText.Replace(s + "=", "");
+                                                    sText = sText.Replace(s + " =", "");
+                                                    sText = sText.Replace("." + s, "");
+                                                    sText = sText.Replace("scrollTop", "a");
+                                                    sText = sText.Replace("pageYOffset", "a");
+                                                    sText = sText.Replace("scrollArea", "a");
+                                                    sText = sText.Replace("getBoundingClientRect().top", "a");
+                                                    sText = sText.Replace("offsetTop", "a");
+                                                }
+
+                                            }
 
                                             if (!Form1.doGeneric)
                                             {
@@ -421,35 +426,34 @@ namespace Secuvox_2._0
 
                                             System.Net.HttpStatusCode sc = response.StatusCode;
                                             var totalBytes = response.Content.Headers.ContentLength;
-                                            
+
                                             System.Diagnostics.Debug.Print("HttpStatusCode: " + sc.ToString());
                                             System.Diagnostics.Debug.Print("Content.Headers.ContentLength: " + totalBytes.ToString());
-                                            
+
 
                                             response.EnsureSuccessStatusCode();
 
-                                            
+
 
                                             foreach (var header2 in response.Headers)
                                             {
                                                 string headerContent = string.Join(",", header2.Value.ToArray()); ;
                                                 System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", headerContent));
                                             }
-                                            
+
+                                            sText = sText.Replace("<html", "<HTML");
+                                            sText = sText.Substring(sText.IndexOf("<HTML"));
 
                                             e.Response = await ConvertResponseAsync(response, sText, cdet.Charset);
                                         }
                                     }
 
                                 }
-                                else
-                                {
-
-                                }
-
 
 
                             }
+
+
                         }
                         catch (Exception ex) { }
                     }
@@ -464,16 +468,249 @@ namespace Secuvox_2._0
                 async void WebView21_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
                 {
                     devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationStarting += WebView21_NavigationStarting;                    
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
-                    //webView21.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                    await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Network.enable", "{}");
+                    await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.enable", "{\"patterns\":[{\"urlPattern\":\"*\"}]}");
+                    
+                    
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.GetDevToolsProtocolEventReceiver("Fetch.requestPaused").DevToolsProtocolEventReceived += WebView2_FetchRequestPaused;
+
+                    //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.WebResourceRequested += CoreWebView2_WebResourceRequested;
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationStarting += WebView21_NavigationStarting;
+                    //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
+                    //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Strict;
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://stern.de");
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://startpage.com");
 
                     //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
+                }
+
+                async void WebView2_FetchRequestPaused(object sender, CoreWebView2DevToolsProtocolEventReceivedEventArgs e)
+                {
+                    //if (e.ParameterObjectAsJson.Contains("responseStatusCode"))
+                    {
+                        var doc = JsonDocument.Parse(e.ParameterObjectAsJson);
+                        var id = doc.RootElement.GetProperty("requestId").ToString();
+                        string type = doc.RootElement.GetProperty("resourceType").ToString();
+                        string url = doc.RootElement.GetProperty("request").GetProperty("url").ToString();
+                        string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
+                        string payload = "{\"requestId\":\"" + id + "\"}";
+
+                        //string code = doc.RootElement.GetProperty("responseStatusCode").ToString();
+
+                        if (type!="Image" /* && !string.IsNullOrWhiteSpace(code) && code == "200"*/)
+                        {
+
+                            try
+                            {
+                                byte[] bytes= { };
+                                if (method == "GET")
+                                {
+                                    bytes = new WebClient().DownloadData(url);
+                                }
+                                else if (method == "POST")
+                                {
+                                    string myParameters = doc.RootElement.GetProperty("request").GetProperty("postData").ToString();
+                                    string URI = url;
+
+
+                                    WebClient wc = new WebClient();
+                                    
+                                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                                        string HtmlResult = wc.UploadString(URI, myParameters);
+                                        bytes=Encoding.ASCII.GetBytes(HtmlResult);
+                                    
+                                    
+                                }
+                                MemoryStream stream = new MemoryStream(bytes);
+
+                               
+                                    //String bodyResponse = 
+
+
+
+
+
+                                    try
+                                {
+                                    String[] parts = new Uri(url).Host.Split('.');
+                                    if (parts.Length > 1)
+                                        if (Form1.adblock.Contains(new Uri(url).Host))
+                                        {
+                                           url = "about:blank";
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            return;
+                                        }
+                                }
+                                catch { }
+
+                                String sText = "";
+
+                                //  if (!new Uri(e.Request.Uri).Host.Contains("google."))
+                                {
+
+
+
+                                   
+                                    try
+                                    {
+                                        if (url.StartsWith("http"))
+                                        {
+
+
+                                           
+                                            Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+                                            cdet.Feed(stream);
+                                            cdet.DataEnd();
+                                            if (cdet.Charset == "UTF-8" || cdet.Charset == "ASCII")
+                                            {
+                                             
+                                                if (cdet.Charset=="UTF-8")
+                                                    sText= Encoding.UTF8.GetString(stream.ToArray());
+                                                else
+                                                    sText = Encoding.ASCII.GetString(stream.ToArray());
+                                                if (!sText.StartsWith("<svg "))
+                                            {
+                                                bool found = false;
+                                                foreach (String s in toReplaceHover)
+                                                    if (sText.Contains(s))
+                                                        found = true;
+
+                                                foreach (String s in toReplaceScroll)
+                                                    if (sText.Contains(s))
+                                                        found = true;
+
+                                                if (sText.Contains("\"on\""))
+                                                    found = true;
+                                                if (sText.Contains("'on'"))
+                                                    found = true;
+
+                                                if (sText.Contains("scrollTop"))
+                                                    found = true;
+
+                                                if (sText.Contains("pageYOffset"))
+                                                    found = true;
+
+                                                if (sText.Contains("scrollArea"))
+                                                    found = true;
+
+                                                if (sText.Contains("getBoundingClientRect().top"))
+                                                    found = true;
+
+                                                if (sText.Contains("offsetTop"))
+                                                    found = true;
+
+
+
+                                                    if (found)
+                                                    {
+
+                                                        if (!Form1.doHover)
+                                                        {
+                                                            foreach (String s in toReplaceHover)
+                                                            {
+                                                                sText = sText.Replace("\"" + s + "\"", "");
+                                                                sText = sText.Replace("'" + s + "'", "");
+                                                                sText = sText.Replace(s + "=", "");
+                                                                sText = sText.Replace(s + " =", "");
+                                                                sText = sText.Replace("." + s, "");
+                                                            }
+                                                        }
+
+                                                        if (!Form1.doScroll)
+                                                        {
+                                                            foreach (String s in toReplaceScroll)
+                                                            {
+                                                                sText = sText.Replace("\"" + s + "\"", "");                                                
+                                                                sText = sText.Replace(s + "=", s + "={}");
+                                                                sText = sText.Replace(s + " =", "");
+                                                                sText = sText.Replace("." + s, "");
+                                                                sText = sText.Replace("scrollTop", "top+2048");
+                                                                sText = sText.Replace("pageYOffset", "top+2048");
+                                                                sText = sText.Replace("scrollArea", "top+2048");
+                                                                sText = sText.Replace("getBoundingClientRect().top", "top+2048");
+                                                                sText = sText.Replace("offsetTop", "top+2048");
+                                                            }
+
+                                                        }
+
+                                                        if (!Form1.doGeneric)
+                                                        {
+                                                            sText = sText.Replace("\"on\"+", "\"no\"+");
+                                                            sText = sText.Replace("\"on\" +", "\"no\" +");
+                                                            sText = sText.Replace("'on'+", "\"no\"+");
+                                                            sText = sText.Replace("'on' +", "\"no\" +");
+                                                        }
+
+
+
+
+                                                    }
+
+
+                                                }
+                                               if (cdet.Charset == "UTF-8")
+                                                   sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
+                                                else
+                                                    sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
+                                           
+                                            }
+                                            else
+                                            {
+                                                await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                                return;
+                                                //sText = Convert.ToBase64String(stream.ToArray());
+                                            }
+
+                                        }
+
+                                    }
+                                    catch { }
+                                }
+
+
+                                String headers = "[";
+                                    foreach(JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                    {
+
+                                        String name=header.Name;
+                                        String value=header.Value.ToString();
+                                        if(name=="DONE" && value=="TRUE")
+                                        {
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                            return;
+                                        }
+                                        headers=headers+"{\"name\":\""+name+"\",\"value\":\""+value.Replace("\"","\\\"")+"\"},";
+                                        
+                                    }
+                                   // headers = headers + "{\"name\":\"" + "DONE" + "\",\"value\":\"" + "TRUE" + "\"},";
+                                    headers = headers.Substring(0,headers.Length - 1);
+                                    headers = headers + "]";
+                                    
+
+                                    // string payload1 = "{\"requestId\":\"" + id.Split('-')[id.Split('-').Length-1] + "\",\"responseCode\":200,\"responseHeaders\":" + header + ",\"body\":\"" + bodyResponse + "\"}";
+                                    string payload1 = "{\"requestId\":\"" +id+ "\",\"responseCode\":200,\"body\":\""+ sText + "\",\"headers\":"+headers+ "}";
+
+
+                                    //String payload2 = "{\"requestId\":\"" + id + "\",\"headers\":" + headers + ",\"url\":\"" + url + "\",\"method\":\"GET\",\"interceptResponse\":false}";
+                                     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.fulfillRequest", payload1);
+                                   
+                                 
+
+                                
+                            }catch { }
+                           
+
+
+                        }
+                       else
+                        {
+
+                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                        }
+                    }
                 }
             }
             
@@ -524,10 +761,10 @@ namespace Secuvox_2._0
         private void Form1_Load(object sender, EventArgs e)
         {
             toolStripTextBox1.Width = this.Width - 200;
-            CustomTabControl tabControl1 = new CustomTabControl();
-            tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Visible = true;
-            panel1.Controls.Add(tabControl1);
+            tabControl = new CustomTabControl();
+            tabControl.Dock = DockStyle.Fill;
+            tabControl.Visible = true;
+            panel1.Controls.Add(tabControl);
            
         }
 
@@ -587,12 +824,36 @@ namespace Secuvox_2._0
 
         private void featuresHover_Click(object sender, EventArgs e)
         {
-
+            doHover=!featuresHover.Checked;
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.Control && e.KeyCode == Keys.T)
+            {
+                CustomTabControl.CustomTabPage customTabPage = new CustomTabControl.CustomTabPage();
+                tabControl.TabPages.Add(customTabPage);
+
+            }
+            else if(e.Control && e.KeyCode == Keys.W)
+            {
+
+            }
+        }
+
+        private void featuresScroll_Click(object sender, EventArgs e)
+        {
+            doScroll = !featuresScroll.Checked;
+        }
+
+        private void featuresGeneric_Click(object sender, EventArgs e)
+        {
+            doGeneric = !featuresGeneric.Checked;
         }
     }
 }

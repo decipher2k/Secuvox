@@ -146,6 +146,7 @@
             this.featuresScroll.Name = "featuresScroll";
             this.featuresScroll.Size = new System.Drawing.Size(275, 34);
             this.featuresScroll.Text = "Block Scroll";
+            this.featuresScroll.Click += new System.EventHandler(this.featuresScroll_Click);
             // 
             // featuresGeneric
             // 
@@ -155,6 +156,7 @@
             this.featuresGeneric.Name = "featuresGeneric";
             this.featuresGeneric.Size = new System.Drawing.Size(275, 34);
             this.featuresGeneric.Text = "Block Generic Events";
+            this.featuresGeneric.Click += new System.EventHandler(this.featuresGeneric_Click);
             // 
             // panel1
             // 
@@ -173,10 +175,12 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Secuvox Browser";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
