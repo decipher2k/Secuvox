@@ -211,7 +211,10 @@ namespace Secuvox_2._0
                     this.webView2.ZoomFactor = 1D;
                     ((System.ComponentModel.ISupportInitialize)(webView2)).EndInit();
                     webView2.CoreWebView2InitializationCompleted += WebView21_CoreWebView2InitializationCompleted;
-                    webView2.EnsureCoreWebView2Async();
+                    var op = new CoreWebView2EnvironmentOptions("--disable-web-security");
+                    var env = CoreWebView2Environment.CreateAsync(null, null, op);
+                    
+                    webView2.EnsureCoreWebView2Async(env.Result);
 
                 }
 
@@ -240,6 +243,8 @@ namespace Secuvox_2._0
            // "on",
 "onwheel",
 "wheel",
+"mousewheel",
+"onmousewheel",
 "scroll",
 "onscroll",
 "scrolled",
@@ -482,6 +487,9 @@ namespace Secuvox_2._0
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Strict;
+
+
+
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://startpage.com");
 
                     //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
@@ -498,6 +506,8 @@ namespace Secuvox_2._0
                         string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
                         string payload = "{\"requestId\":\"" + id + "\"}";
 
+                        
+
                         //string code = doc.RootElement.GetProperty("responseStatusCode").ToString();
 
                         if (type!="Image" /* && !string.IsNullOrWhiteSpace(code) && code == "200"*/)
@@ -508,7 +518,16 @@ namespace Secuvox_2._0
                                 byte[] bytes= { };
                                 if (method == "GET")
                                 {
-                                    bytes = new WebClient().DownloadData(url);
+                                    WebClient wc=new WebClient();
+                                    foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                    {
+
+                                        String name = header.Name;
+                                        String value = header.Value.ToString();
+                                        wc.Headers.Add(name, value);
+
+                                    }
+                                    bytes = wc.DownloadData(url);
                                 }
                                 else if (method == "POST")
                                 {
@@ -517,13 +536,23 @@ namespace Secuvox_2._0
 
 
                                     WebClient wc = new WebClient();
-                                    
-                                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                                    foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                    {
+
+                                        String name = header.Name;
+                                        String value = header.Value.ToString();
+                                        wc.Headers.Add(name, value);
+
+                                    }
+                                    //wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                                        
                                         string HtmlResult = wc.UploadString(URI, myParameters);
                                         bytes=Encoding.ASCII.GetBytes(HtmlResult);
                                     
                                     
                                 }
+
+                                
                                 MemoryStream stream = new MemoryStream(bytes);
 
                                
@@ -547,16 +576,21 @@ namespace Secuvox_2._0
                                 catch { }
 
                                 String sText = "";
+                                if (url.Contains("jquery"))
+                                {
+                                    sText = System.IO.File.ReadAllText(".\\jquery.js");
+                                    sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
+                                }
 
                                 //  if (!new Uri(e.Request.Uri).Host.Contains("google."))
                                 {
 
 
 
-                                   
+
                                     try
                                     {
-                                        if (url.StartsWith("http"))
+                                        if (url.StartsWith("http") && !url.Contains("jquery"))
                                         {
 
 
@@ -611,11 +645,11 @@ namespace Secuvox_2._0
                                                         {
                                                             foreach (String s in toReplaceHover)
                                                             {
-                                                                sText = sText.Replace("\"" + s + "\"", "");
-                                                                sText = sText.Replace("'" + s + "'", "");
-                                                                sText = sText.Replace(s + "=", "");
-                                                                sText = sText.Replace(s + " =", "");
-                                                                sText = sText.Replace("." + s, "");
+                                                                sText = sText.Replace("\"" + s + "\"", "\"mousemove\"");
+                                                                sText = sText.Replace("'" + s + "'", "'mousemove'");
+                                                                sText = sText.Replace(s + "=", "mousemove=");
+                                                                sText = sText.Replace(s + " =", "mousemove=");
+                                                                sText = sText.Replace("." + s, ".mousemove");
                                                             }
                                                         }
 
@@ -623,15 +657,17 @@ namespace Secuvox_2._0
                                                         {
                                                             foreach (String s in toReplaceScroll)
                                                             {
-                                                                sText = sText.Replace("\"" + s + "\"", "");                                                
-                                                                sText = sText.Replace(s + "=", s + "={}");
-                                                                sText = sText.Replace(s + " =", "");
-                                                                sText = sText.Replace("." + s, "");
-                                                                sText = sText.Replace("scrollTop", "top+2048");
-                                                                sText = sText.Replace("pageYOffset", "top+2048");
-                                                                sText = sText.Replace("scrollArea", "top+2048");
-                                                                sText = sText.Replace("getBoundingClientRect().top", "top+2048");
-                                                                sText = sText.Replace("offsetTop", "top+2048");
+                                                                sText = sText.Replace("\"" + s + "\"", "\"mousemove\"");                                                
+                                                                sText = sText.Replace(s + "=", "mousemove=");
+                                                                sText = sText.Replace(s + " =", "mousemove=");
+                                                                sText = sText.Replace("." + s, ".mousemove");
+                                                                sText = sText.Replace("scrollTop", "top");
+                                                                sText = sText.Replace("pageYOffset", "top");
+                                                                sText = sText.Replace("scrollArea", "getBoundingClientRect()");
+                                                                //sText = sText.Replace("getBoundingClientRect().top", "");
+                                                                sText = sText.Replace("offsetTop", "top");
+                                                                sText = sText.Replace("scroll\"+", "on\"+");
+                                                                sText = sText.Replace("scroll\" +", "on\"+");
                                                             }
 
                                                         }
@@ -676,16 +712,11 @@ namespace Secuvox_2._0
                                     {
 
                                         String name=header.Name;
-                                        String value=header.Value.ToString();
-                                        if(name=="DONE" && value=="TRUE")
-                                        {
-                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
-                                            return;
-                                        }
+                                        String value=header.Value.ToString();                                       
                                         headers=headers+"{\"name\":\""+name+"\",\"value\":\""+value.Replace("\"","\\\"")+"\"},";
                                         
                                     }
-                                   // headers = headers + "{\"name\":\"" + "DONE" + "\",\"value\":\"" + "TRUE" + "\"},";
+                                    headers = headers + "{\"Access-Control-Allow-Origin\":\"" + "*" + "\",\"value\":\"" + "TRUE" + "\"},";
                                     headers = headers.Substring(0,headers.Length - 1);
                                     headers = headers + "]";
                                     
