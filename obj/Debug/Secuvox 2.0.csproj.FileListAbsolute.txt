@@ -115,3 +115,9 @@ D:\Secuvox\obj\Debug\Secuvox .48672AA7.Up2Date
 D:\Secuvox\obj\Debug\Secuvox 2.0.exe
 D:\Secuvox\obj\Debug\Secuvox 2.0.pdb
 D:\Secuvox\bin\Debug\Ude.dll
+D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Abstractions.dll
+D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Logging.dll
+D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Tokens.dll
+D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Abstractions.xml
+D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Logging.xml
+D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Tokens.xml
