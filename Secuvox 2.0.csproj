@@ -162,6 +162,9 @@
   <ItemGroup>
     <None Include="Resources\secuvox-high-resolution-logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="cross.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.2365.46\build\Microsoft.Web.WebView2.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
