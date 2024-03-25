@@ -352,11 +352,11 @@ namespace Secuvox_2._0
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationCompleted += CustomTabPage_NavigationCompleted;
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
-                  
+                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
 
 
 
-                    
+
 
                     bool blocked = false;
                     foreach (String op in Form1.instance.optList)
@@ -415,6 +415,24 @@ namespace Secuvox_2._0
 
 
                     //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
+                }
+
+                private void CoreWebView2_NewWindowRequested(object sender, CoreWebView2NewWindowRequestedEventArgs e)
+                {
+                    if (e.Uri.ToString().Contains("google"))
+                    {
+                        ((CustomTabControl.CustomTabPage)Form1.instance.tabControl.SelectedTab).webView2.CoreWebView2.Navigate(e.Uri);
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        Form1.instance.toolStripTextBox1.Text = e.Uri;
+                        CustomTabControl.CustomTabPage tabPage = new CustomTabPage();
+                        ((CustomTabControl)Form1.instance.tabControl).TabPages.Add(tabPage);
+                        ((CustomTabControl)Form1.instance.tabControl).SelectedTab = tabPage;
+                        e.Handled = true;
+                    }
+                    
                 }
 
                 async void CustomTabPage_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -882,10 +900,30 @@ namespace Secuvox_2._0
                 SizeMode=TabSizeMode.Fixed;
                 ItemSize = new System.Drawing.Size(200, 25);
                 CustomTabPage customTabPage = new CustomTabPage();
+                TabIndexChanged += CustomTabControl_TabIndexChanged;
+                Selected += CustomTabControl_Selected;
+                
                 customTabPage.Text = "<none>";
                 //SetStyle(ControlStyles.UserPaint, true);
                 this.DrawMode = TabDrawMode.OwnerDrawFixed;
                 TabPages.Add(customTabPage);
+            }
+
+            private void CustomTabControl_Selected(object sender, TabControlEventArgs e)
+            {
+                try
+                {
+                    if (((CustomTabPage)Form1.instance.tabControl.SelectedTab != null))
+                   {
+                        if (((CustomTabPage)Form1.instance.tabControl.SelectedTab).webView2 != null && ((CustomTabPage)Form1.instance.tabControl.SelectedTab).webView2.CoreWebView2 != null)
+                            Form1.instance.toolStripTextBox1.Text = ((CustomTabPage)Form1.instance.tabControl.SelectedTab).webView2.CoreWebView2.Source;
+                    }
+                }catch { }
+            }
+
+            private void CustomTabControl_TabIndexChanged(object sender, EventArgs e)
+            {
+                Form1.instance.toolStripTextBox1.Text = ((CustomTabPage)Form1.instance.tabControl.SelectedTab).webView2.CoreWebView2.Source;
             }
         }
 
