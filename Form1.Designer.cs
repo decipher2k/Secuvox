@@ -46,6 +46,7 @@
             this.clearBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.adblockerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,13 +54,14 @@
             // 
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripDropDownButton1,
+            this.toolStripSeparator2,
             this.toolStripButton1,
             this.toolStripButton3,
             this.toolStripSeparator1,
             this.toolStripButton2,
             this.toolStripTextBox1,
-            this.toolStripButton4,
-            this.toolStripDropDownButton1});
+            this.toolStripButton4});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(2124, 33);
@@ -165,7 +167,7 @@
             this.paranoidToolStripMenuItem.CheckOnClick = true;
             this.paranoidToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.paranoidToolStripMenuItem.Name = "paranoidToolStripMenuItem";
-            this.paranoidToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.paranoidToolStripMenuItem.Size = new System.Drawing.Size(240, 34);
             this.paranoidToolStripMenuItem.Text = "CSS Scroll Block";
             this.paranoidToolStripMenuItem.Click += new System.EventHandler(this.paranoidToolStripMenuItem_Click);
             // 
@@ -221,6 +223,11 @@
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 33);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
@@ -265,6 +272,7 @@
         private System.Windows.Forms.ToolStripMenuItem clearBrowsingDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem adblockerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem paranoidToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
 
