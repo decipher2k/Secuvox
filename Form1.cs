@@ -370,8 +370,21 @@ namespace Secuvox_2._0
                     }
                     if (!blocked)
                     {
-                        if (Form1.instance.fakeGoogleBotToolStripMenuItem.Checked)
-                            ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                        try
+                        {
+                            if (Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host))
+                            {
+                                if (Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].googleBot)
+                                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                            }
+                            else
+                            {
+                                ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                            }
+                        } catch(Exception ex)
+                        {
+                            int a = 1;
+                        } 
                     }
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
@@ -895,6 +908,7 @@ namespace Secuvox_2._0
                         featuresHover.Checked = !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover;
                         featuresScroll.Checked = !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll;                        
                         paranoidToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS;
+                        fakeGoogleBotToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot;
                     }
                     else
                     {
@@ -903,6 +917,7 @@ namespace Secuvox_2._0
                         featuresHover.Checked = true;
                         featuresScroll.Checked = true;                        
                         paranoidToolStripMenuItem.Checked = true;
+                        fakeGoogleBotToolStripMenuItem.Checked = true;  
                     }
 
                  
@@ -1078,19 +1093,22 @@ namespace Secuvox_2._0
 
         private void setSettings()
         {
-            if (!Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+            try
             {
-                pageSettings.settings.Add(new Uri(toolStripTextBox1.Text).Host, new Settings.PerPageSettings());
-            }
-            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover = !featuresHover.Checked;
-            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doGeneric = !featuresGeneric.Checked;
-            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll = !featuresScroll.Checked;
-            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS = paranoidToolStripMenuItem.Checked;
-            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
-            saveData();
-            ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
-            //pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
-
+                if (!Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+                {
+                    pageSettings.settings.Add(new Uri(toolStripTextBox1.Text).Host, new Settings.PerPageSettings());
+                }
+                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover = !featuresHover.Checked;
+                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doGeneric = !featuresGeneric.Checked;
+                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll = !featuresScroll.Checked;
+                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS = paranoidToolStripMenuItem.Checked;
+                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
+                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
+                saveData();
+                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
+                
+            }catch { }
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -1195,6 +1213,8 @@ namespace Secuvox_2._0
             var env = CoreWebView2Environment.CreateAsync(null, null, op);
 
             page.webView2.EnsureCoreWebView2Async(env.Result);
+            setSettings();
+            
         }
     }
 }
