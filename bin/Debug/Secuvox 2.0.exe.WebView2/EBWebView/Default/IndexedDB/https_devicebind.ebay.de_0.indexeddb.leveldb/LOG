@@ -1,3 +1,2 @@
-2024/03/24-17:04:35.473 5204 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_devicebind.ebay.de_0.indexeddb.leveldb/MANIFEST-000001
-2024/03/24-17:04:35.475 5204 Recovering log #3
-2024/03/24-17:04:35.475 5204 Reusing old log D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_devicebind.ebay.de_0.indexeddb.leveldb/000003.log 
+2024/03/25-03:16:00.633 89d4 Creating DB D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_devicebind.ebay.de_0.indexeddb.leveldb since it was missing.
+2024/03/25-03:16:00.637 89d4 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\IndexedDB\https_devicebind.ebay.de_0.indexeddb.leveldb/MANIFEST-000001

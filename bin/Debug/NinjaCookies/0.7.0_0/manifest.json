@@ -1,0 +1,43 @@
+{
+   "background": {
+      "scripts": [ "background.js" ]
+   },
+   "browser_action": {
+      "default_icon": {
+         "16": "icons/default-16.png",
+         "24": "icons/default-24.png",
+         "32": "icons/default-32.png"
+      },
+      "default_popup": "html/popup.html",
+      "default_title": "Ninja Cookie"
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "content_script.js" ],
+      "match_about_blank": true,
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_start"
+   } ],
+   "default_locale": "en",
+   "description": "__MSG_extensionDescription__",
+   "homepage_url": "https://ninja-cookie.com/",
+   "icons": {
+      "128": "icons/pending-128.png",
+      "16": "icons/pending-16.png",
+      "32": "icons/pending-32.png",
+      "48": "icons/pending-48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnzKBDQHHkKJBFZQYQIdjNaMIpq+pG3grD/UyATYri8hQ1GufNYNJBm8kh2OwOz9d84bYEP6ALrtXIGvQZpTW2kkuSRoARJV4H/y/0pjjwoatrZBUlL5kF+YsDQz+Cg78Sm0NmtR5lcvRl/Oahgf7vZ+vt194TSlpaZDyB5C1YVbBH6zuE5G6QqESfzIvu1jpvgWrUtAzqCjKJ/a8Jq5vnbUeBZAEh+7BFZD23F1SMHxs5fFcUZGHTRxgTGXt96bzWppBg2cLj/ztZ3tSBEw/sTdeI6iffIgCpNPaQHFj1C3GV+6woTZF/pvEfoxugo6llAO08vUQJneDvvmWI/F+BQIDAQAB",
+   "manifest_version": 2,
+   "name": "__MSG_extensionName__",
+   "options_ui": {
+      "chrome_style": false,
+      "open_in_tab": true,
+      "page": "html/options.html"
+   },
+   "permissions": [ "*://ninja-cookie.gitlab.io/*", "storage", "tabs", "webNavigation" ],
+   "update_url": "https://edge.microsoft.com/extensionwebstorebase/v1/crx",
+   "version": "0.7.0",
+   "version_name": "v0.7.0",
+   "web_accessible_resources": [ "icons/default-32.png", "icons/pending-32.png", "icons/matched-32.png", "icons/done-32.png", "icons/info-32.png", "icons/warning-32.png", "icons/failed-32.png" ]
+}

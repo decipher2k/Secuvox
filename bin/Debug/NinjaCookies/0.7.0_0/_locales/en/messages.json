@@ -1,0 +1,1214 @@
+{
+   "checkNoMatch": {
+      "description": "No DOM elements matching the provided CSS selectors were found",
+      "message": "Unable to find expected element(s) in the page.",
+      "reference": "modules/actions/adblock.js:207 modules/actions/check.js:129\nmodules/actions/while.js:36"
+   },
+   "checkTimeout": {
+      "message": "Expected element(s) has not been added to the page.",
+      "reference": "modules/actions/adblock.js:221 modules/actions/check.js:144"
+   },
+   "days": {
+      "message": "days",
+      "reference": "modules/popup/social.js:46"
+   },
+   "defaultReportMessage": {
+      "description": "The default message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nA cookie banner appeared in a tab where Ninja Cookie is not running.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:156"
+   },
+   "defaultStatus": {
+      "description": "The status text when Ninja Cookie is not running in a tab.",
+      "message": "Ninja Cookie is not running on this tab.",
+      "reference": "modules/background/state.js:136"
+   },
+   "defaultStatusAlt": {
+      "description": "The default status alternative text",
+      "message": "Not running",
+      "reference": "modules/background/state.js:142"
+   },
+   "defaultStatusDesc": {
+      "description": "The description of the status when Ninja Cookie is not running.",
+      "message": "On special pages (such as settings page, etc.) Ninja Cookie is not needed and thus not running.\u003Cbr/>\nIf you just installed/activated Ninja Cookie, reloading the page might help.",
+      "reference": "modules/background/state.js:138"
+   },
+   "disabledReportMessage": {
+      "description": "The default disabled message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nAn error occured in a disabled tab.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/disabled.js:33"
+   },
+   "disabledStatus": {
+      "description": "The disabled status text",
+      "message": "Ninja Cookie is disabled for this tab.",
+      "reference": "modules/background/disabled.js:14"
+   },
+   "disabledStatusAlt": {
+      "description": "The disabled status alternative text",
+      "message": "Disabled",
+      "reference": "modules/background/disabled.js:20"
+   },
+   "disabledStatusDesc": {
+      "description": "The disabled status description",
+      "message": "Ninja Cookie is currently disabled. You can turn it on using the 'Enable Ninja Cookie' button.",
+      "reference": "modules/background/disabled.js:16"
+   },
+   "doneReportMessage": {
+      "description": "The default done message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nI came across a website with a badly setup cookie banner.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n    Matched rule(s): $MATCHED$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:81"
+   },
+   "doneStatus": {
+      "description": "The text status when Ninja Cookie has correctly setup a cookie banner. > Green Dot",
+      "message": "The cookie banner has been setup by Ninja Cookie.",
+      "reference": "modules/background/state.js:61"
+   },
+   "doneStatusAlt": {
+      "description": "The done status alternative text > Green dot",
+      "message": "Cookie banner setup done",
+      "reference": "modules/background/state.js:67"
+   },
+   "doneStatusDesc": {
+      "description": "The description of the status when Ninja Cookie has correctly setup a cookie banner. > Green Dot",
+      "message": "Cookies that are not essential for the proper functioning of the website have been refused by Ninja Cookie in the cookie banner.",
+      "reference": "modules/background/state.js:63"
+   },
+   "eventTimeout": {
+      "message": "Expected event(s) did not happen.",
+      "reference": "modules/actions/event.js:23"
+   },
+   "extensionDescription": {
+      "description": "Description of the extension",
+      "message": "Opt out of non-essential cookies and automatically remove cookie popups.",
+      "reference": "modules/background/i18n.js:10"
+   },
+   "extensionName": {
+      "description": "Name of the extension",
+      "message": "Ninja Cookie",
+      "reference": "modules/background/i18n.js:8"
+   },
+   "externalReportMessage": {
+      "description": "The default External message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nAn error occured in an external tab.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n    Matched rule(s): $MATCHED$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/external.js:33"
+   },
+   "externalStatus": {
+      "description": "The external status text",
+      "message": "This tab has been opened by Ninja Cookie to setup the cookie banner of another tab.",
+      "reference": "modules/background/external.js:13"
+   },
+   "externalStatusAlt": {
+      "message": "External execution",
+      "reference": "modules/background/external.js:19"
+   },
+   "externalStatusDesc": {
+      "description": "The external status text",
+      "message": "Ninja Cookie opened this tab because it needs to setup the cookie banner of the site you were visiting.\u003Cbr/>\nThis tab will be closed automatically when the setup is complete.",
+      "reference": "modules/background/external.js:15"
+   },
+   "externalTimeout": {
+      "message": "External window has been running for too long.",
+      "reference": "modules/background/external.js:132 modules/background/external.js:182"
+   },
+   "externalWindowUnloaded": {
+      "message": "External window has been unloaded too early.",
+      "reference": "modules/background/external.js:86 modules/background/external.js:101"
+   },
+   "failedReportMessage": {
+      "description": "The default failed message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nI came across a website with a badly setup cookie banner.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n    Matched rule(s): $MATCHED$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:131"
+   },
+   "failedStatus": {
+      "description": "The failed reason text > Red dot",
+      "message": "An error has occurred. The cookie banner setup has not been fully done on this page.",
+      "reference": "modules/background/state.js:111"
+   },
+   "failedStatusAlt": {
+      "description": "The failed status alternative text > Red dot",
+      "message": "Cookie banner setup failed",
+      "reference": "modules/background/state.js:117"
+   },
+   "failedStatusDesc": {
+      "description": "The description of the text displayed when an error has occured. > Red dot",
+      "message": "Ninja Cookie has detected one or more cookie banners on this page but has not been able to fully set them up.\u003Cbr/>\nYou can report this error by using the 'Report a bug' button.",
+      "reference": "modules/background/state.js:113"
+   },
+   "focusNotExternal": {
+      "message": "Cannot focus non-external window.",
+      "reference": "modules/background/focus.js:8"
+   },
+   "holidayChristmas": {
+      "message": "Happy holiday season and a merry Christmas!",
+      "reference": "modules/background/sticker.js:103"
+   },
+   "holidayDataProtectionDay": {
+      "message": "Happy Data Protection day!",
+      "reference": "modules/background/sticker.js:29"
+   },
+   "holidayEducationDay": {
+      "message": "Happy Education day!",
+      "reference": "modules/background/sticker.js:22"
+   },
+   "holidayNewYear": {
+      "message": "Happy New Year!",
+      "reference": "modules/background/sticker.js:110"
+   },
+   "holidayValentinesDay": {
+      "message": "Happy Valentine's day!",
+      "reference": "modules/background/sticker.js:36"
+   },
+   "holidayWomensDay": {
+      "message": "International Women's Day",
+      "reference": "modules/background/sticker.js:43"
+   },
+   "hours": {
+      "message": "hours",
+      "reference": "modules/popup/social.js:44"
+   },
+   "infoReportMessage": {
+      "description": "The default info message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nI came across a website with a badly setup cookie banner.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n    Matched rule(s): $MATCHED$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:106"
+   },
+   "infoStatus": {
+      "description": "The text status when Ninja Cookie cannot set a cookie banner. > Yellow Dot",
+      "message": "Cookie banner doesn't offer settings.",
+      "reference": "modules/background/state.js:86"
+   },
+   "infoStatusAlt": {
+      "description": "The info status alternative text. > Yellow dot",
+      "message": "Cookie banner hidden",
+      "reference": "modules/background/state.js:92"
+   },
+   "infoStatusDesc": {
+      "description": "The description of the message displayed when a cookie banner cannot be set with Ninja Cookie rules. > Yellow dot",
+      "message": "The cookie banner doesn't allow any settings and Ninja Cookie couldn't set it up. It has been hidden.",
+      "reference": "modules/background/state.js:88"
+   },
+   "internalFrameUnloaded": {
+      "message": "Internal frame has been unloaded too early.",
+      "reference": "modules/actions/internal.js:69"
+   },
+   "internalTimeout": {
+      "message": "Internal frame has been running for too long.",
+      "reference": "modules/actions/internal.js:46"
+   },
+   "licenseBadFormat": {
+      "description": "The error message shown when a license key with a bad format is provided",
+      "message": "License key '$LICENSE$' is invalid.\u003Cbr/>\nExpected format is XXXXXXX-XXXXXXX-XXXXXXX",
+      "placeholders": {
+         "license": {
+            "content": "$1",
+            "example": "0123456-789ABCD-EF01234"
+         }
+      },
+      "reference": "modules/options/license.js:61"
+   },
+   "licenseDailyFee": {
+      "description": "The daily fee associated to a license subscription",
+      "message": "$AMOUNT$/day",
+      "placeholders": {
+         "amount": {
+            "content": "$1",
+            "example": "$2.00"
+         }
+      },
+      "reference": "modules/options/license.js:145"
+   },
+   "licenseErrorBadMethod": {
+      "message": "Internal error",
+      "reference": "modules/options/license.js:92"
+   },
+   "licenseErrorBadParameter": {
+      "message": "Internal error",
+      "reference": "modules/options/license.js:93"
+   },
+   "licenseErrorInternal": {
+      "message": "Internal error",
+      "reference": "modules/options/license.js:94"
+   },
+   "licenseErrorMissingParameter": {
+      "message": "Internal error",
+      "reference": "modules/options/license.js:96"
+   },
+   "licenseErrorNotFound": {
+      "message": "Unknown license key",
+      "reference": "modules/options/license.js:95"
+   },
+   "licenseErrorUnknown": {
+      "message": "Unknown error",
+      "reference": "modules/options/license.js:97"
+   },
+   "licenseExpiryDateFuture": {
+      "description": "The expiry date of license subscription (in the future)",
+      "message": "Expires on $DATE$ at $TIME$",
+      "placeholders": {
+         "date": {
+            "content": "$1",
+            "example": "11/17/2020"
+         },
+         "time": {
+            "content": "$2",
+            "example": "11:07:38 AM"
+         }
+      },
+      "reference": "modules/options/license.js:122"
+   },
+   "licenseExpiryDatePast": {
+      "description": "The expiry date of license subscription (in the past)",
+      "message": "Expired on $DATE$ at $TIME$",
+      "placeholders": {
+         "date": {
+            "content": "$1",
+            "example": "11/17/2020"
+         },
+         "time": {
+            "content": "$2",
+            "example": "11:07:38 AM"
+         }
+      },
+      "reference": "modules/options/license.js:127"
+   },
+   "licenseMonthlyFee": {
+      "description": "The monthly fee associated to a license subscription",
+      "message": "$AMOUNT$/month",
+      "placeholders": {
+         "amount": {
+            "content": "$1",
+            "example": "$2.00"
+         }
+      },
+      "reference": "modules/options/license.js:155"
+   },
+   "licenseStartDate": {
+      "description": "The creation date of license subscription",
+      "message": "Started on $DATE$ at $TIME$",
+      "placeholders": {
+         "date": {
+            "content": "$1",
+            "example": "11/17/2020"
+         },
+         "time": {
+            "content": "$2",
+            "example": "11:07:38 AM"
+         }
+      },
+      "reference": "modules/options/license.js:105"
+   },
+   "licenseStatusActive": {
+      "message": "Active",
+      "reference": "modules/options/license.js:86"
+   },
+   "licenseStatusInactive": {
+      "message": "Inactive",
+      "reference": "modules/options/license.js:87"
+   },
+   "licenseWeeklyFee": {
+      "description": "The weekly fee associated to a license subscription",
+      "message": "$AMOUNT$/week",
+      "placeholders": {
+         "amount": {
+            "content": "$1",
+            "example": "$2.00"
+         }
+      },
+      "reference": "modules/options/license.js:150"
+   },
+   "licenseYearlyFee": {
+      "description": "The yearly fee associated to a license subscription",
+      "message": "$AMOUNT$/year",
+      "placeholders": {
+         "amount": {
+            "content": "$1",
+            "example": "$2.00"
+         }
+      },
+      "reference": "modules/options/license.js:160"
+   },
+   "matchedReportMessage": {
+      "description": "The default matched message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nI came across a website with a never-ending cookie banner setup.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n    Matched rule(s): $MATCHED$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:31"
+   },
+   "matchedStatus": {
+      "description": "The status text when Ninja Cookie is setting up cookie banners. > Blue dot",
+      "message": "The cookie banner is being setup on this webpage.",
+      "reference": "modules/background/state.js:11"
+   },
+   "matchedStatusAlt": {
+      "description": "The matched status alternative text",
+      "message": "Cookie banner detected",
+      "reference": "modules/background/state.js:17"
+   },
+   "matchedStatusDesc": {
+      "description": "The description of the status when Ninja Cookie is setting up cookie banners. > Blue dot",
+      "message": "Ninja Cookie has detected one or more cookie banners on this webpage and is setting them up.",
+      "reference": "modules/background/state.js:13"
+   },
+   "messagePremiumPromotionAfterAWeek": {
+      "message": "\u003Cp>If you want Ninja Cookie to ignore a cookie banner on a specific website, you can do so by \u003Ca href=\"https://ninja-cookie.com/#premium\" target=\"_blank\">becoming a Ninja Cookie Premium user\u003C/a>.\u003C/p>\n\u003Cp>By doing so, you will be supporting the development and improvement of the project. And you can \u003Cb>chose the amount of your Premium subscription\u003C/b> based on what you can and want to give!\u003C/p>",
+      "reference": "modules/background/sticker.js:325"
+   },
+   "messagePremiumPromotionEveryMonth": {
+      "message": "\u003Cp>Did you checked out the Ninja Cookie Premium features? You could, for example, disable this sticker. \u003Ca href=\"https://ninja-cookie.com/#premium\" target=\"_blank\">Check them all out\u003C/a>!\u003C/p>\n\u003Cp>You can \u003Cb>chose the amount of your Premium subscription\u003C/b> based on what you can and want to give!\u003C/p>",
+      "reference": "modules/background/sticker.js:326"
+   },
+   "messageUpdate": {
+      "message": "\u003Cp>\u003Cb>Great news :\u003C/b> Ninja Cookie is growing up and is now offering you new features by \u003Ca href=\"https://ninja-cookie.com/#premium\" target=\"_blank\">becoming Premium\u003C/a>!\u003C/p>\n\u003Cp>You can, for example, disable this sticker or whitelist websites. You can \u003Cb>chose the amount of your Ninja Cookie Premium subscription\u003C/b> based on what you can and want to give us.\u003C/p>",
+      "reference": "modules/background/sticker.js:324"
+   },
+   "messageWelcome": {
+      "message": "\u003Cp>Hi, I'm Ninja Cookie! I'll be at your side when you browse the web. I'll take care of cookie banners for you by refusing the use of cookies that aren't essential to the proper functioning of websites.\u003C/p>\n\u003Cp>You'll find me in the toolbar of your browser, next to the other extensions. There you'll find options and more information about cookie banners I'll setup.\u003Cspan class=\"premium-message\"> You can also use extra features by \u003Ca href=\"https://ninja-cookie.com/#premium\" target=\"_blank\">becoming Premium\u003C/a> for \u003Cb>the amount of your choice\u003C/b>!\u003C/span>\u003C/p>\n\u003Cp>\u003Cb>Click me, and I'll disappear!\u003C/b>\u003C/p>",
+      "reference": "modules/background/sticker.js:323"
+   },
+   "minutes": {
+      "message": "minutes",
+      "reference": "modules/popup/social.js:42"
+   },
+   "pendingReportMessage": {
+      "description": "The default pending message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nI came across a website with a cookie banner.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:184"
+   },
+   "pendingStatus": {
+      "description": "The status text when Ninja Cookie has not detected any cookie banners. > No dot",
+      "message": "No cookie banner has been detected on this webpage.",
+      "reference": "modules/background/state.js:164"
+   },
+   "pendingStatusAlt": {
+      "description": "The pending status alternative text",
+      "message": "No Cookie banner detected",
+      "reference": "modules/background/state.js:170"
+   },
+   "pendingStatusDesc": {
+      "description": "The description of the status when Ninja Cookie has not detected any cookie banners.",
+      "message": "Ninja Cookie didn't detect any cookie banners on this webpage.",
+      "reference": "modules/background/state.js:166"
+   },
+   "popupDesc": {
+      "message": "Do you think something is wrong, report a bug and we'll work on it!",
+      "reference": "modules/popup/i18n.js:20"
+   },
+   "popupDisable": {
+      "message": "Disable Ninja Cookie",
+      "reference": "modules/popup/i18n.js:14"
+   },
+   "popupDisableHostname": {
+      "description": "The disable option for a specific website",
+      "message": "Disable on $HOSTNAME$",
+      "placeholders": {
+         "hostname": {
+            "content": "$1",
+            "example": "google.com"
+         }
+      },
+      "reference": "modules/popup/disabled.js:12"
+   },
+   "popupDisableTab30min": {
+      "message": "Disable on this tab for 30 minutes",
+      "reference": "modules/popup/i18n.js:15"
+   },
+   "popupDisableTabForever": {
+      "message": "Disable on this tab forever",
+      "reference": "modules/popup/i18n.js:16"
+   },
+   "popupEnable": {
+      "message": "Enable Ninja Cookie",
+      "reference": "modules/popup/i18n.js:17"
+   },
+   "popupReportBtn": {
+      "message": "Report a bug",
+      "reference": "modules/popup/i18n.js:21"
+   },
+   "popupSettings": {
+      "message": "Settings",
+      "reference": "modules/popup/i18n.js:13"
+   },
+   "popupShareFacebookTitle": {
+      "message": "Share on Facebook",
+      "reference": "modules/popup/i18n.js:29"
+   },
+   "popupShareReviewTitle": {
+      "message": "Give us a review",
+      "reference": "modules/popup/i18n.js:31"
+   },
+   "popupShareTweeterTitle": {
+      "message": "Share on Twitter",
+      "reference": "modules/popup/i18n.js:30"
+   },
+   "popupSocialDesc": {
+      "message": "Follow us",
+      "reference": "modules/popup/i18n.js:47"
+   },
+   "popupSocialFacebookTitle": {
+      "message": "Like our Facebook page",
+      "reference": "modules/popup/i18n.js:49"
+   },
+   "popupSocialTwitterTitle": {
+      "message": "Follow us on Twitter",
+      "reference": "modules/popup/i18n.js:50"
+   },
+   "popupSocialWebsite": {
+      "message": "Go to our website",
+      "reference": "modules/popup/i18n.js:48"
+   },
+   "popupStatsBanner": {
+      "message": "Cookie banners setup:",
+      "reference": "modules/popup/i18n.js:25"
+   },
+   "popupStatsDesc": {
+      "description": "The message explaining stats and saving factor",
+      "message": "The Ninja is setting up cookie banners faster than most. In average, it would take \u003Cb>$FACTOR$ times longer\u003C/b> to do it manually.\u003Cbr/>\nThe Ninja spent \u003Cb>$TIME$ $UNIT$ working on your cookie banners\u003C/b>, but you saved more time than that!",
+      "placeholders": {
+         "factor": {
+            "content": "$1",
+            "example": "5"
+         },
+         "time": {
+            "content": "$2",
+            "example": "12"
+         },
+         "unit": {
+            "content": "$3",
+            "example": "seconds"
+         }
+      },
+      "reference": "modules/popup/social.js:71"
+   },
+   "popupStatsTime": {
+      "message": "Time saved:",
+      "reference": "modules/popup/i18n.js:26"
+   },
+   "popupSubscription": {
+      "message": "Go Premium now!",
+      "reference": "modules/popup/i18n.js:34"
+   },
+   "popupSubscriptionSubtitle": {
+      "description": "The message shown under the subscription button",
+      "message": "Subscribe to Ninja Cookie Premium features from \u003Cb>$AMOUNT$/month\u003C/b>!",
+      "placeholders": {
+         "amount": {
+            "content": "$1",
+            "example": "0€"
+         }
+      },
+      "reference": "modules/popup/i18n.js:38"
+   },
+   "popupSuggestBtn": {
+      "message": "Suggest an idea",
+      "reference": "modules/popup/i18n.js:22"
+   },
+   "popupTitle": {
+      "message": "Ninja Cookie - Popup",
+      "reference": "modules/popup/i18n.js:10"
+   },
+   "popupTweeterContent": {
+      "description": "The prefilled content of a Tweet",
+      "message": "$ACCOUNT$ has rejected the use of non-essential cookies and removed $COUNT$ cookie pop-ups for me, saving me $TIME$ $UNIT$! Go check #NinjaCookie out here https://ninja-cookie.com/ and install it, it's free!",
+      "placeholders": {
+         "account": {
+            "content": "$1",
+            "example": "@ninjacookie"
+         },
+         "count": {
+            "content": "$2",
+            "example": "12"
+         },
+         "time": {
+            "content": "$3",
+            "example": "50"
+         },
+         "unit": {
+            "content": "$4",
+            "example": "seconds"
+         }
+      },
+      "reference": "modules/popup/social.js:87"
+   },
+   "reportUrl": {
+      "description": "The URL of the report form",
+      "message": "https://ninja-cookie.com/xi0afmxvshsypdl49li4ngfa0rpa03/",
+      "reference": "modules/popup/buttons.js:53"
+   },
+   "scriptError": {
+      "message": "An error occured during script execution.",
+      "reference": "modules/actions/script.js:86"
+   },
+   "scriptRunUntrusted": {
+      "description": "The message displayed before running script from untrusted origin",
+      "message": "A script from untrusted source asks to be run for Ninja Cookie to complete the cookie banner setup.\n\nRunning untrusted script can be dangerous. Do you want to continue ?\n\nContent: '$CONTENT$'\nOrigin: $URL$",
+      "placeholders": {
+         "content": {
+            "content": "$1",
+            "example": "alert('You have been p0wned')"
+         },
+         "url": {
+            "content": "$2",
+            "example": "https://127.0.0.1:8080/cmp.json"
+         }
+      },
+      "reference": "modules/actions/script.js:43"
+   },
+   "scriptTimeout": {
+      "message": "Script has been running for too long.",
+      "reference": "modules/actions/script.js:73"
+   },
+   "scriptUnauthorized": {
+      "message": "Untrusted script has not been authorized to run.",
+      "reference": "modules/actions/script.js:50"
+   },
+   "seconds": {
+      "message": "seconds",
+      "reference": "modules/popup/social.js:40"
+   },
+   "settingsABLists": {
+      "message": "Alternative lists",
+      "reference": "modules/options/i18n.js:61"
+   },
+   "settingsABListsCustom": {
+      "message": "Alternative custom lists",
+      "reference": "modules/options/i18n.js:69"
+   },
+   "settingsABListsCustomAlreadyExists": {
+      "description": "The error message shown when a custom Ad Blocker list is already in the default lists",
+      "message": "Ad Block list '$URL$' is already included into the default lists selected.",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://www.fanboy.co.nz/fanboy-cookiemonster.txt"
+         }
+      },
+      "reference": "modules/options/rules.js:322"
+   },
+   "settingsABListsCustomBadURL": {
+      "description": "The error message shown when a custom Ad Blocker list is not a valid URL",
+      "message": "Ad Block list '$URL$' is not a valid URL",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "foobar"
+         }
+      },
+      "reference": "modules/options/rules.js:76"
+   },
+   "settingsABListsCustomButton": {
+      "message": "Add",
+      "reference": "modules/options/i18n.js:73"
+   },
+   "settingsABListsCustomDesc": {
+      "message": "\u003Cp>The Ninja is able to load Ad Block lists from wherever you want.\u003C/p>\n\u003Cp>Feel free to add \u003Ca href=\"https://adblockplus.org/subscriptions\" target=\"_blank\">lists from the community\u003C/a> or your own lists here.\u003C/p>\n\u003Cp>Please be aware that Ninja Cookie can only handle \u003Ca href=\"https://adblockplus.org/filter-cheatsheet#elementhiding\" target=\"_blank\">cosmetics rules\u003C/a> at the moment : its goal isn't to be yet another ad blocker.\u003C/p>",
+      "reference": "modules/options/i18n.js:70"
+   },
+   "settingsABListsCustomLoadError": {
+      "description": "The error message shown when a custom Ad Blocker list loading fails",
+      "message": "Ad Block list '$URL$' could not be loaded",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://www.fanboy.co.nz/fanboy-cookiemonster.txt"
+         }
+      },
+      "reference": "modules/options/rules.js:97"
+   },
+   "settingsABListsCustomPlaceholder": {
+      "message": "Comma-separated list of URLs",
+      "reference": "modules/options/i18n.js:71 modules/options/i18n.js:72"
+   },
+   "settingsABListsDefault": {
+      "message": "Alternative default lists",
+      "reference": "modules/options/i18n.js:65"
+   },
+   "settingsABListsDefaultDesc": {
+      "message": "\u003Cp>By default, the Ninja will use a predefined set of Ad Block lists :\u003C/p>\n\u003Cul>\n\u003Cli>\u003Ca href=\"https://easylist.to/#easylist-cookie-list\" target=\"_blank\">Easylist Cookie List\u003C/a>\u003C/li>\n\u003Cli>\u003Ca href=\"https://www.i-dont-care-about-cookies.eu/#install\" target=\"_blank\">I don't care about cookies\u003C/a>\u003C/li>\n\u003C/ul>\n\u003Cp>These lists have been chosen for their efficiency. You can disable them and chose your own lists.\u003C/p>",
+      "reference": "modules/options/i18n.js:66"
+   },
+   "settingsABListsDefaultNone": {
+      "message": "None (no bug!)",
+      "reference": "modules/options/i18n.js:68"
+   },
+   "settingsABListsDefaultStable": {
+      "message": "Stable (default)",
+      "reference": "modules/options/i18n.js:67"
+   },
+   "settingsABListsDesc": {
+      "message": "The Ninja doesn't know how to handle all the cookie banners (yet!). During its training, it is possible to use \u003Ca href=\"https://help.getadblock.com/support/solutions/articles/6000066909-introduction-to-filter-lists\" target=\"_blank\">Ad Block lists\u003C/a> to hide the cookie banner he doesn't know about.",
+      "reference": "modules/options/i18n.js:62"
+   },
+   "settingsABListsEnabled": {
+      "message": "Enable alternative lists as complement of Ninja Cookie lists",
+      "reference": "modules/options/i18n.js:63"
+   },
+   "settingsABListsEnabledDesc": {
+      "message": "Enable/Disable the use of Ad Block lists.",
+      "reference": "modules/options/i18n.js:64"
+   },
+   "settingsAdvanced": {
+      "message": "Advanced",
+      "reference": "modules/options/i18n.js:18"
+   },
+   "settingsCancel": {
+      "message": "Cancel",
+      "reference": "modules/options/i18n.js:109"
+   },
+   "settingsCanceled": {
+      "message": "Settings restored",
+      "reference": "modules/options/buttons.js:101"
+   },
+   "settingsDebug": {
+      "message": "Debugging options",
+      "reference": "modules/options/i18n.js:77"
+   },
+   "settingsDebugDesc": {
+      "message": "These debug options are for very advanced users. They allow you to monitor Ninja Cookie's actions via the console.",
+      "reference": "modules/options/i18n.js:78"
+   },
+   "settingsDisplay": {
+      "message": "Display settings",
+      "reference": "modules/options/i18n.js:22"
+   },
+   "settingsGeneral": {
+      "message": "General",
+      "reference": "modules/options/i18n.js:17"
+   },
+   "settingsHeader": {
+      "message": "Ninja Cookie settings",
+      "reference": "modules/options/i18n.js:14"
+   },
+   "settingsLicense": {
+      "message": "License Key",
+      "reference": "modules/options/i18n.js:85"
+   },
+   "settingsLicenseDesc": {
+      "message": "\u003Cp>\u003Cb>Ninja Cookie is free\u003C/b> and we want to keep it that way. This is why you can get extra features for a small fee or even for free!\u003C/p>\n\u003Cp>If you like what we're doing, please consider \u003Ca href=\"https://ninja-cookie.com/#premium\" target=\"_blank\">subscribing to a paid license key\u003C/a>. Otherwise you can always get a \u003Ca href=\"https://ninja-cookie.com/#premium\" target=\"_blank\">30-days free license key\u003C/a>.\u003C/p>",
+      "reference": "modules/options/i18n.js:86"
+   },
+   "settingsLicenseKey": {
+      "message": "Your license key here",
+      "reference": "modules/options/i18n.js:87"
+   },
+   "settingsLicenseKeyButton": {
+      "message": "Validate",
+      "reference": "modules/options/i18n.js:91"
+   },
+   "settingsLicenseKeyDesc": {
+      "message": "Add your Premium license key here",
+      "reference": "modules/options/i18n.js:88"
+   },
+   "settingsLicenseKeyError": {
+      "description": "The message shown after a license key has been added but is not active",
+      "message": "The license key '$LICENSE$' has been set but is not active.",
+      "placeholders": {
+         "license": {
+            "content": "$1",
+            "example": "0123456-789ABCD-EF01234"
+         }
+      },
+      "reference": "modules/options/license.js:251"
+   },
+   "settingsLicenseKeyPlaceholder": {
+      "message": "XXXXXXX-XXXXXXX-XXXXXXX",
+      "reference": "modules/options/i18n.js:89 modules/options/i18n.js:90"
+   },
+   "settingsLicenseKeyRemoved": {
+      "message": "To disable your subscription, go to the \u003Ca href=\"https://ninja-cookie.com/unsubscribe/\" target=\"_blank\">Ninja Cookie website\u003C/a>",
+      "reference": "modules/options/license.js:239"
+   },
+   "settingsLive": {
+      "message": "Show Ninja Cookie's actions live",
+      "reference": "modules/options/i18n.js:31"
+   },
+   "settingsLiveDesc": {
+      "message": "Show/Hide what the Ninja is doing when working on a cookie banner.",
+      "reference": "modules/options/i18n.js:32"
+   },
+   "settingsLoading": {
+      "message": "Loading",
+      "reference": "modules/options/i18n.js:42 modules/options/i18n.js:58\nmodules/options/i18n.js:74 modules/options/i18n.js:92"
+   },
+   "settingsLog": {
+      "message": "Enable log",
+      "reference": "modules/options/i18n.js:81"
+   },
+   "settingsLogDesc": {
+      "message": "Enable/Disable logging of rules-related information.",
+      "reference": "modules/options/i18n.js:82"
+   },
+   "settingsLogo": {
+      "message": "Ninja Cookie logo",
+      "reference": "modules/options/i18n.js:13"
+   },
+   "settingsNCLists": {
+      "message": "Ninja Cookie lists",
+      "reference": "modules/options/i18n.js:45"
+   },
+   "settingsNCListsCustom": {
+      "message": "Ninja Cookie custom lists",
+      "reference": "modules/options/i18n.js:53"
+   },
+   "settingsNCListsCustomAlreadyExists": {
+      "description": "The error message shown when a custom Ninja Cookie list is already in the default lists",
+      "message": "Ninja Cookie list '$URL$' is already included into the default lists selected.",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://ninja-cookie.gitlab.io/rules/cmp.json"
+         }
+      },
+      "reference": "modules/options/rules.js:314"
+   },
+   "settingsNCListsCustomBadURL": {
+      "description": "The error message shown when a custom Ninja Cookie list is not a valid URL",
+      "message": "Ninja Cookie list '$URL$' is not a valid URL",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "foobar"
+         }
+      },
+      "reference": "modules/options/rules.js:37"
+   },
+   "settingsNCListsCustomButton": {
+      "message": "Add",
+      "reference": "modules/options/i18n.js:57"
+   },
+   "settingsNCListsCustomDesc": {
+      "message": "\u003Cp>The Ninja is able to load rules lists from wherever you want.\u003C/p>\n\u003Cp>You can also write your own rules. Check the \u003Ca href=\"https://ninja-cookie.gitlab.io/ninja-cookie/\">documentation\u003C/a> for more information. Adding community rules lists will be possible soon.\u003C/p>",
+      "reference": "modules/options/i18n.js:54"
+   },
+   "settingsNCListsCustomLoadError": {
+      "description": "The error message shown when a custom Ninja Cookie list loading fails",
+      "message": "Ninja Cookie list '$URL$' could not be loaded",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://ninja-cookie.gitlab.io/rules/cmp.json"
+         }
+      },
+      "reference": "modules/options/rules.js:58"
+   },
+   "settingsNCListsCustomPlaceholder": {
+      "message": "Comma-separated list of URLs",
+      "reference": "modules/options/i18n.js:55 modules/options/i18n.js:56"
+   },
+   "settingsNCListsDefault": {
+      "message": "Default Ninja Cookie lists",
+      "reference": "modules/options/i18n.js:47"
+   },
+   "settingsNCListsDefaultBeta": {
+      "message": "Beta (some bugs)",
+      "reference": "modules/options/i18n.js:51"
+   },
+   "settingsNCListsDefaultDesc": {
+      "message": "\u003Cp>By default, the Ninja will use predefined lists of rules.\u003C/p>\n\u003Cp>A new rule is release in '\u003Ccode>Beta\u003C/code>' list, then '\u003Ccode>Release Candidate\u003C/code>' list and finally in '\u003Ccode>Stable\u003C/code>' list. It gives the developers some time to improve and verify that each new rule is working properly before sending it to all the users.\u003C/p>\n\u003Cp>If you want to help improve the new rules or if you want to have the latest rules and you don't mind encountering few bugs, feel free to change your default lists.\u003C/p>",
+      "reference": "modules/options/i18n.js:48"
+   },
+   "settingsNCListsDefaultNone": {
+      "message": "None (no bug!)",
+      "reference": "modules/options/i18n.js:52"
+   },
+   "settingsNCListsDefaultRC": {
+      "message": "Release Candidate (few bugs)",
+      "reference": "modules/options/i18n.js:50"
+   },
+   "settingsNCListsDefaultStable": {
+      "message": "Stable (default)",
+      "reference": "modules/options/i18n.js:49"
+   },
+   "settingsNCListsDesc": {
+      "message": "The Ninja uses a list of rules that explains how to handle cookie banners. These lists are downloaded and updated automatically.",
+      "reference": "modules/options/i18n.js:46"
+   },
+   "settingsNotReseted": {
+      "message": "Settings NOT reset!",
+      "reference": "modules/options/buttons.js:110"
+   },
+   "settingsPremium": {
+      "message": "Premium",
+      "reference": "modules/options/i18n.js:19"
+   },
+   "settingsPremiumTooltip": {
+      "message": "This is a premium feature",
+      "reference": "modules/options/license.js:37"
+   },
+   "settingsReset": {
+      "message": "Reset",
+      "reference": "modules/options/i18n.js:110"
+   },
+   "settingsResetConfirm": {
+      "message": "Are you sure you want to reset your settings? All custom settings will be lost.",
+      "reference": "modules/options/buttons.js:105"
+   },
+   "settingsReseted": {
+      "message": "Settings reset!",
+      "reference": "modules/options/buttons.js:108"
+   },
+   "settingsSave": {
+      "message": "Save",
+      "reference": "modules/options/i18n.js:108"
+   },
+   "settingsSaved": {
+      "message": "Settings saved!",
+      "reference": "modules/options/buttons.js:96"
+   },
+   "settingsSticker": {
+      "message": "Show Ninja Cookie status sticker",
+      "reference": "modules/options/i18n.js:23"
+   },
+   "settingsStickerDesc": {
+      "message": "Show/Hide the status sticker displayed every time the Ninja is working on a cookie banner. The toolbar icon will still change based on status and extra information can still be obtained by clicking on the toolbar icon.",
+      "reference": "modules/options/i18n.js:24"
+   },
+   "settingsStickerPosition": {
+      "message": "Sticker position",
+      "reference": "modules/options/i18n.js:25"
+   },
+   "settingsStickerPositionBottomLeft": {
+      "message": "Bottom left corner",
+      "reference": "modules/options/i18n.js:29"
+   },
+   "settingsStickerPositionBottomRight": {
+      "message": "Bottom right corner",
+      "reference": "modules/options/i18n.js:30"
+   },
+   "settingsStickerPositionDesc": {
+      "message": "Chose where the sticker will be displayed on the page.",
+      "reference": "modules/options/i18n.js:26"
+   },
+   "settingsStickerPositionTopLeft": {
+      "message": "Top left corner",
+      "reference": "modules/options/i18n.js:27"
+   },
+   "settingsStickerPositionTopRight": {
+      "message": "Top right corner",
+      "reference": "modules/options/i18n.js:28"
+   },
+   "settingsSubscription": {
+      "message": "Go Premium now!",
+      "reference": "modules/options/i18n.js:95"
+   },
+   "settingsSubscriptionABListsCustom": {
+      "description": "The message shown after a Ad Blocker custom list has been added through subscription process",
+      "message": "The Ad Block list '$URL$' is being added.\u003Cbr/>\nPress 'Save' before exiting or any modification will be lost.",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://www.fanboy.co.nz/fanboy-cookiemonster.txt"
+         }
+      },
+      "reference": "modules/options/subscribe.js:74"
+   },
+   "settingsSubscriptionLicenseKey": {
+      "description": "The message shown after a license key has been added through subscription process",
+      "message": "The license key '$LICENSE$' is being set.\u003Cbr/>\nPress 'Save' before exiting or any modification will be lost.",
+      "placeholders": {
+         "license": {
+            "content": "$1",
+            "example": "0123456-789ABCD-EF01234"
+         }
+      },
+      "reference": "modules/options/subscribe.js:40"
+   },
+   "settingsSubscriptionNCListsCustom": {
+      "description": "The message shown after a Ninja Cookie custom list has been added through subscription process",
+      "message": "The Ninja Cookie list '$URL$' is being added.\u003Cbr/>\nPress 'Save' before exiting or any modification will be lost.",
+      "placeholders": {
+         "url": {
+            "content": "$1",
+            "example": "https://ninja-cookie.gitlab.io/rules/cmp.json"
+         }
+      },
+      "reference": "modules/options/subscribe.js:57"
+   },
+   "settingsSubscriptionSubtitle": {
+      "description": "The message shown under the license info",
+      "message": "Subscribe to Ninja Cookie Premium features from \u003Cb>$AMOUNT$/month\u003C/b>!",
+      "placeholders": {
+         "amount": {
+            "content": "$1",
+            "example": "0€"
+         }
+      },
+      "reference": "modules/options/i18n.js:99"
+   },
+   "settingsTitle": {
+      "message": "Ninja Cookie - Settings",
+      "reference": "modules/options/i18n.js:10"
+   },
+   "settingsTrustAll": {
+      "message": "Trust all scripts origins (dangerous)",
+      "reference": "modules/options/i18n.js:79"
+   },
+   "settingsTrustAllDesc": {
+      "message": "If you are using custom rules lists, they may need to run small scripts to do their job. You will be asked whether you trust their origin before running them. Activating this option will assume that you trust them all. This is dangerous and can lead to security breaches. Use with caution.",
+      "reference": "modules/options/i18n.js:80"
+   },
+   "settingsWhitelist": {
+      "message": "Whitelist",
+      "reference": "modules/options/i18n.js:35"
+   },
+   "settingsWhitelistAdd": {
+      "message": "Add a domain to whitelist",
+      "reference": "modules/options/i18n.js:37"
+   },
+   "settingsWhitelistAddButton": {
+      "message": "Add",
+      "reference": "modules/options/i18n.js:41"
+   },
+   "settingsWhitelistAddDesc": {
+      "message": "Add here the domain you want to add to the whitelist using the following format: ***.com",
+      "reference": "modules/options/i18n.js:38"
+   },
+   "settingsWhitelistAddPlaceholder": {
+      "message": "Your domain here",
+      "reference": "modules/options/i18n.js:39 modules/options/i18n.js:40"
+   },
+   "settingsWhitelistAlreadyExists": {
+      "description": "The error message displayed when trying to add domain already in the list",
+      "message": "Domain '$DOMAIN$' is already in the whitelist.",
+      "placeholders": {
+         "domain": {
+            "content": "$1",
+            "example": "marmiton.org"
+         }
+      },
+      "reference": "modules/options/disabled.js:147"
+   },
+   "settingsWhitelistBadDomain": {
+      "description": "The error message displayed when trying to add an invalid domain name",
+      "message": "Domain '$DOMAIN$' is not valid.",
+      "placeholders": {
+         "domain": {
+            "content": "$1",
+            "example": "foobar"
+         }
+      },
+      "reference": "modules/options/disabled.js:40"
+   },
+   "settingsWhitelistDesc": {
+      "message": "Add/Remove a domain name to the whitelist",
+      "reference": "modules/options/i18n.js:36"
+   },
+   "storageNoMatch": {
+      "message": "Stored value is not expected.",
+      "reference": "modules/actions/storage.js:54"
+   },
+   "storageNotEmpty": {
+      "message": "Stored value is not empty.",
+      "reference": "modules/actions/storage.js:46"
+   },
+   "storageNotMissing": {
+      "message": "Stored value exists.",
+      "reference": "modules/actions/storage.js:36"
+   },
+   "suggestMessage": {
+      "description": "The default message displayed in the suggestion form",
+      "message": "Dear Ninja Cookie support,\n\nI came up with a great idea :\n    \u003Cyour idea here>\n\nPlease consider it.\nRegards,",
+      "reference": "modules/popup/buttons.js:68"
+   },
+   "suggestUrl": {
+      "description": "The URL of the suggestion form",
+      "message": "https://ninja-cookie.com/nbanjaoiew5kapwju30ej1yy1a6rqy/",
+      "reference": "modules/popup/buttons.js:66"
+   },
+   "unknownAction": {
+      "description": "An unknown action type is executed",
+      "message": "Action of type '$TYPE$' is unknown",
+      "placeholders": {
+         "type": {
+            "content": "$1",
+            "example": "foo"
+         }
+      },
+      "reference": "modules/actions.js:201"
+   },
+   "urlBadParameter": {
+      "message": "Bad parameter provided to URL matching action.",
+      "reference": "modules/actions/url.js:20"
+   },
+   "urlNoMatch": {
+      "message": "Current window URL is not expected.",
+      "reference": "modules/actions/url.js:30"
+   },
+   "warningReportMessage": {
+      "description": "The default warning message displayed in the report form",
+      "message": "Dear Ninja Cookie support,\n\nI came across a website with a badly setup cookie banner.\nHere are the technical information you need :\n    URL: $URL$\n    Version: $VERSION$\n    User-Agent: $USERAGENT$\n    Matched rule(s): $MATCHED$\n\nPlease have a look at it.\nRegards,",
+      "placeholders": {
+         "matched": {
+            "content": "$4",
+            "example": "[]"
+         },
+         "url": {
+            "content": "$1",
+            "example": "https://google.com/"
+         },
+         "userAgent": {
+            "content": "$3",
+            "example": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36"
+         },
+         "version": {
+            "content": "$2",
+            "example": "0.2.4"
+         }
+      },
+      "reference": "modules/background/state.js:56"
+   },
+   "warningStatus": {
+      "description": "The text status when Ninja Cookie has hidden automatically a cookie banner. > Orange Dot",
+      "message": "Cookie banner has been detected and hidden automatically.",
+      "reference": "modules/background/state.js:36"
+   },
+   "warningStatusAlt": {
+      "description": "The warning status alternative text > Orange dot",
+      "message": "Cookie banner hidden automatically",
+      "reference": "modules/background/state.js:42"
+   },
+   "warningStatusDesc": {
+      "description": "The description of the message displayed when a cookie banner is detected but Ninja Cookie does not know how to set it up. The cookie banner is  hidden with the alternative rules. > Orange dot",
+      "message": "Ninja Cookie has detected a cookie banner on this web page but doesn't know how to set it up.\u003Cbr/>\nIt has been hidden by using the alternative rule lists. You can disable this in the settings.",
+      "reference": "modules/background/state.js:38"
+   },
+   "years": {
+      "message": "years",
+      "reference": "modules/popup/social.js:48"
+   }
+}

@@ -43,8 +43,9 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.fakeGoogleBotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.adblockerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.paranoidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -151,6 +152,8 @@
             this.featuresScroll.Checked = true;
             this.featuresScroll.CheckOnClick = true;
             this.featuresScroll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.featuresScroll.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.paranoidToolStripMenuItem});
             this.featuresScroll.Name = "featuresScroll";
             this.featuresScroll.Size = new System.Drawing.Size(275, 34);
             this.featuresScroll.Text = "Block Scroll";
@@ -173,7 +176,9 @@
             // 
             // fakeGoogleBotToolStripMenuItem
             // 
+            this.fakeGoogleBotToolStripMenuItem.Checked = true;
             this.fakeGoogleBotToolStripMenuItem.CheckOnClick = true;
+            this.fakeGoogleBotToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fakeGoogleBotToolStripMenuItem.Name = "fakeGoogleBotToolStripMenuItem";
             this.fakeGoogleBotToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
             this.fakeGoogleBotToolStripMenuItem.Text = "Fake Google Bot";
@@ -186,6 +191,16 @@
             this.clearBrowsingDataToolStripMenuItem.Text = "Clear Browsing Data";
             this.clearBrowsingDataToolStripMenuItem.Click += new System.EventHandler(this.clearBrowsingDataToolStripMenuItem_Click);
             // 
+            // adblockerToolStripMenuItem
+            // 
+            this.adblockerToolStripMenuItem.Checked = true;
+            this.adblockerToolStripMenuItem.CheckOnClick = true;
+            this.adblockerToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.adblockerToolStripMenuItem.Name = "adblockerToolStripMenuItem";
+            this.adblockerToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
+            this.adblockerToolStripMenuItem.Text = "Extra Adblocker";
+            this.adblockerToolStripMenuItem.Click += new System.EventHandler(this.adblockerToolStripMenuItem_Click);
+            // 
             // panel1
             // 
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -195,15 +210,14 @@
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
-            // adblockerToolStripMenuItem
+            // paranoidToolStripMenuItem
             // 
-            this.adblockerToolStripMenuItem.Checked = true;
-            this.adblockerToolStripMenuItem.CheckOnClick = true;
-            this.adblockerToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.adblockerToolStripMenuItem.Name = "adblockerToolStripMenuItem";
-            this.adblockerToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
-            this.adblockerToolStripMenuItem.Text = "Adblocker";
-            this.adblockerToolStripMenuItem.Click += new System.EventHandler(this.adblockerToolStripMenuItem_Click);
+            this.paranoidToolStripMenuItem.Checked = true;
+            this.paranoidToolStripMenuItem.CheckOnClick = true;
+            this.paranoidToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.paranoidToolStripMenuItem.Name = "paranoidToolStripMenuItem";
+            this.paranoidToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.paranoidToolStripMenuItem.Text = "CSS Scroll Block";
             // 
             // Form1
             // 
@@ -245,6 +259,7 @@
         private System.Windows.Forms.ToolStripMenuItem fakeGoogleBotToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearBrowsingDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem adblockerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem paranoidToolStripMenuItem;
     }
 }
 
