@@ -2,6 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Core.DevToolsProtocolExtension;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,6 +33,7 @@ using System.Xml.Linq;
 using WebView2.DevTools.Dom;
 using WebView2.DevTools.Dom.Input;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.CSS;
+using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.FedCm;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.Network;
 using static Secuvox_2._0.Form1.CustomTabControl;
 using static System.Net.Mime.MediaTypeNames;
@@ -911,7 +913,7 @@ namespace Secuvox_2._0
             tabControl.Visible = true;
             panel1.Controls.Add(tabControl);
             toolStripTextBox1.Width = this.Width - 300;
-
+            loadData();
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
@@ -958,9 +960,28 @@ namespace Secuvox_2._0
                 {                    
                     startNavigate();
                 }
-            
             }
         }
+
+
+        private void saveData()
+        {
+            String data= JsonConvert.SerializeObject(pageSettings, Formatting.Indented);
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Secuvox"))
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Secuvox");
+            System.IO.File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Secuvox\\pageSetings.json",data);
+        }
+
+        private void loadData()
+        {
+            if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Secuvox"))
+                if (System.IO.File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Secuvox\\pageSetings.json"))
+                {
+                    String data = System.IO.File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Secuvox\\pageSetings.json");
+                    pageSettings=(Settings)JsonConvert.DeserializeObject<Settings>(data);
+                }
+        }
+
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
@@ -984,6 +1005,8 @@ namespace Secuvox_2._0
             pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll = !featuresScroll.Checked;
             pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS = paranoidToolStripMenuItem.Checked;
             pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
+            saveData();
+            ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
             //pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
 
         }
