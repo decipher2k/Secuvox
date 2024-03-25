@@ -323,51 +323,7 @@ namespace Secuvox_2._0
 "scrolled",
 "onscrolled"
                      };
-                private async Task<CoreWebView2WebResourceResponse> ConvertResponseAsync(HttpResponseMessage aResponse, String content, String charset)
-                {
-                    CoreWebView2WebResourceResponse cwv2Response;
-
-                    var statCode = (int)aResponse.StatusCode;
-
-
-
-                    HttpHeaders headers = aResponse.Headers;
-
-
-                    MemoryStream stream = new MemoryStream();
-                    { //Default is what I would normally expect.
-                        if (charset == "UTF-8")
-                            stream = new MemoryStream(Encoding.UTF8.GetBytes(content ?? ""));
-                        else
-                            stream = new MemoryStream(Encoding.ASCII.GetBytes(content ?? ""));
-                        cwv2Response = this.webView2.CoreWebView2.Environment.CreateWebResourceResponse(stream, statCode, aResponse.ReasonPhrase, headers.ToString());
-                    }
-                    //  heads.AppendHeader(@"Content-Disposition", @"attachment");
-
-
-
-
-                    foreach (var header2 in cwv2Response.Headers)
-                    {
-                        System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", header2.Value));
-                    }
-
-
-                    return cwv2Response;
-                }
-
-                private HttpRequestMessage ConvertRequest(CoreWebView2WebResourceRequest request)
-                {
-                    HttpRequestMessage req = new HttpRequestMessage((HttpMethod.Get), request.Uri);
-
-                    foreach (var header in request.Headers)
-                    {
-                        req.Headers.Add(header.Key, header.Value);
-                    }
-                    return req;
-                }
-
-
+          
                 private void WebView21_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
                 {
                     CurrentUri = e.Uri.ToString();
@@ -383,6 +339,7 @@ namespace Secuvox_2._0
                 {
                     try
                     {
+                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
                         devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Network.enable", "{}");
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.enable", "{\"patterns\":[{\"urlPattern\":\"*\"}]}");
@@ -397,7 +354,7 @@ namespace Secuvox_2._0
                         //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
 
-
+                        
                         String host = "";
                         try
                         {
@@ -656,61 +613,76 @@ namespace Secuvox_2._0
 
                                 String sText = "";
 
+
                                 Stream strmText = null;
-                                if (method == "GET")
+
+                                try
                                 {
-                                    HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Get, url);
-
-                                    foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                    if (method == "GET")
                                     {
+                                        HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Get, url);
 
-                                        String name = header.Name;
-                                        String value = header.Value.ToString();
-                                        if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
-                                            httpreq.Headers.Add(name, value);
+                                        foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                        {
 
+                                            String name = header.Name;
+                                            String value = header.Value.ToString();
+                                            if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
+                                                httpreq.Headers.Add(name, value);
+
+                                        }
+                                        httpreq.Headers.Add("DNT", "1");
+                                        var client = new HttpClient();
+                                        var response = await client.SendAsync(httpreq);
+
+                                        sText = await response.Content.ReadAsStringAsync();
+                                        strmText = await response.Content.ReadAsStreamAsync();
                                     }
-                                    httpreq.Headers.Add("DNT", "1");
-                                    var client = new HttpClient();
-                                    var response = await client.SendAsync(httpreq);
-
-                                    sText = await response.Content.ReadAsStringAsync();
-                                    strmText = await response.Content.ReadAsStreamAsync();
-                                } else if (method == "POST")
-                                {
-                                    HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Post, url);
-                                    String s = doc.RootElement.GetProperty("request").GetProperty("postData").ToString();
-                                    httpreq.Content = new StringContent(s);
-                                    foreach (JsonProperty postdata in doc.RootElement.GetProperty("request").GetProperty("postData").EnumerateObject())
+                                    else if (method == "POST")
                                     {
+                                        HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Post, url);
+                                        String s = doc.RootElement.GetProperty("request").GetProperty("postData").ToString();
+                                        httpreq.Content = new StringContent(s);
+                                        foreach (JsonProperty postdata in doc.RootElement.GetProperty("request").GetProperty("postData").EnumerateObject())
+                                        {
 
-                                        String name = postdata.Name;
-                                        String value = postdata.Value.ToString();
-                                        httpreq.Properties.Add(name, value);
+                                            String name = postdata.Name;
+                                            String value = postdata.Value.ToString();
+                                            httpreq.Properties.Add(name, value);
 
+                                        }
+                                        foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                        {
+
+                                            String name = header.Name;
+                                            String value = header.Value.ToString();
+                                            if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
+                                                httpreq.Headers.Add(name, value);
+
+                                        }
+                                        httpreq.Headers.Add("DNT", "1");
+
+                                        var client = new HttpClient();
+                                        var response = await client.SendAsync(httpreq);
+
+                                        sText = await response.Content.ReadAsStringAsync();
+                                        strmText = await response.Content.ReadAsStreamAsync();
                                     }
-                                    foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                    else
                                     {
-
-                                        String name = header.Name;
-                                        String value = header.Value.ToString();
-                                        if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
-                                            httpreq.Headers.Add(name, value);
-
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                     }
-                                    httpreq.Headers.Add("DNT", "1");
-
-                                    var client = new HttpClient();
-                                    var response = await client.SendAsync(httpreq);
-
-                                    sText = await response.Content.ReadAsStringAsync();
-                                    strmText = await response.Content.ReadAsStreamAsync();
                                 }
-                                else
+                                catch 
                                 {
-                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                    try
+                                    {
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                    }catch {
+                                        return;
+                                    }
+                                    return;
                                 }
-
 
 
 
@@ -881,12 +853,12 @@ namespace Secuvox_2._0
                                                                 if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                                     Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
                                                                 {
-                                                                    sText = sText.Replace("sticky", "");
+                                                                    /*sText = sText.Replace("sticky", "");
                                                                     sText = sText.Replace("calc(", "(");
                                                                     sText = sText.Replace("data-scroll", "");
                                                                     sText = sText.Replace(".observe", "");
                                                                     sText = sText.Replace("scroll-", "");
-                                                                    sText = sText.Replace("scrollPosition", "");
+                                                                    sText = sText.Replace("scrollPosition", "");*/
                                                                 }
 
                                                             }
@@ -894,7 +866,7 @@ namespace Secuvox_2._0
                                                         }
 
                                                         if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                            Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
+                                                            !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
                                                         {
                                                             sText = sText.Replace("\"on\"+", "\"no\"+");
                                                             sText = sText.Replace("\"on\" +", "\"no\" +");
@@ -906,7 +878,10 @@ namespace Secuvox_2._0
 
 
                                                     }
-                                                    catch { }
+                                                    catch {
+                                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+
+                                                    }
                                                 sText = sText.Replace("crossorigin", "anonymous");
                                                     if (cdet.Charset == "UTF-8")
                                                     {
@@ -958,8 +933,8 @@ namespace Secuvox_2._0
 
                             catch
                             {
-                                await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
-                                return;
+                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                    return;
                             }
 
                              /* {
@@ -975,19 +950,7 @@ namespace Secuvox_2._0
 
                                     String name = header.Name;
                                     String value = header.Value.ToString();
-                                    headers = headers + "{\"name\":\"" + name + "\",\"value\":\"" + value.Replace("\"", "\\\"") + "\"},";
-
-                                    if(name=="Cookie")
-                                    {
-                                        String[] cookies = value.Split(';');
-                                        foreach(String cookie in cookies)
-                                        {
-                                            String[] aCookie = cookie.Split('=');
-                                            webView2.CoreWebView2.CookieManager.CreateCookie(aCookie[0], aCookie[1], new Uri(url).Host, "/");
-                                        }
-                                        
-
-                                    }
+                                    headers = headers + "{\"name\":\"" + name + "\",\"value\":\"" + value.Replace("\"", "\\\"") + "\"},";                                    
 
                                 }
                                 headers = headers + "{\"Access-Control-Allow-Origin\":\"" + "*" + "\",\"value\":\"" + "TRUE" + "\"},";
@@ -1008,17 +971,20 @@ namespace Secuvox_2._0
                                 {
                                     try
                                     {
-                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
-                                    }catch { }
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                    }
+                                    catch { }
                                 }
                             }
-                            catch
+                            catch(Exception ex)
                             {
                                 try
                                 {
-                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
                                 }
-                                catch { }
+                                catch (Exception ex1)
+                                { 
+                                }
                                 return;
                             }
 
@@ -1038,7 +1004,7 @@ namespace Secuvox_2._0
                     }
                     else
                     {
-                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
 
                     }
 
@@ -1081,7 +1047,7 @@ namespace Secuvox_2._0
         }
 
 
-        public void startNavigate()
+        public async void startNavigate()
         {
             if (toolStripTextBox1.Text == "")
                 toolStripTextBox1.Text = "https://google.com";
@@ -1089,6 +1055,7 @@ namespace Secuvox_2._0
                 toolStripTextBox1.Text = "https://" + toolStripTextBox1.Text;
             try
             {
+                await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
                 String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
                 String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
                 if (host.Split('.').Length > 1)
@@ -1213,8 +1180,9 @@ namespace Secuvox_2._0
             ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.GoForward();
         }
 
-        private void toolStripButton2_Click(object sender, EventArgs e)
+        private async void toolStripButton2_Click(object sender, EventArgs e)
         {
+            await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
             ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
         }
 
@@ -1285,7 +1253,7 @@ namespace Secuvox_2._0
             "snapchat.com"
         };
 
-        private void setSettings()
+        private async void setSettings()
         {
             try
             {
@@ -1302,6 +1270,7 @@ namespace Secuvox_2._0
                 pageSettings.settings[host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
                 pageSettings.settings[host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
                 saveData();
+                await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage|CoreWebView2BrowsingDataKinds.ServiceWorkers);
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
                 
             }catch { }
