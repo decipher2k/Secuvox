@@ -121,9 +121,5 @@ D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Tokens.dll
 D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Abstractions.xml
 D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Logging.xml
 D:\Secuvox\bin\Debug\Microsoft.IdentityModel.Tokens.xml
-D:\Secuvox\bin\Debug\AntiXssLibrary.dll
-D:\Secuvox\bin\Debug\HtmlSanitizationLibrary.dll
-D:\Secuvox\bin\Debug\AntiXssLibrary.xml
-D:\Secuvox\bin\Debug\HtmlSanitizationLibrary.xml
 D:\Secuvox\bin\Debug\Newtonsoft.Json.dll
 D:\Secuvox\bin\Debug\Newtonsoft.Json.xml
