@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using System.Web.UI;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using System.Windows.Markup;
@@ -352,8 +353,26 @@ namespace Secuvox_2._0
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
                   
-                    if(Form1.instance.fakeGoogleBotToolStripMenuItem.Checked)
-                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
+
+
+                    
+
+                    bool blocked = false;
+                    foreach (String op in Form1.instance.optList)
+                    {
+                        try
+                        {
+                            if (new Uri(Form1.instance.toolStripTextBox1.Text).Host.Contains(op))
+                                blocked = true;
+                        }
+                        catch { }
+                    }
+                    if (!blocked)
+                    {
+                        if (Form1.instance.fakeGoogleBotToolStripMenuItem.Checked)
+                            ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                    }
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
@@ -426,14 +445,28 @@ namespace Secuvox_2._0
                 }
                 async void WebView2_FetchRequestPaused(object sender, CoreWebView2DevToolsProtocolEventReceivedEventArgs e)
                 {
-                    //if (e.ParameterObjectAsJson.Contains("responseStatusCode"))
+                    var doc = JsonDocument.Parse(e.ParameterObjectAsJson);
+                    var id = doc.RootElement.GetProperty("requestId").ToString();
+                    string type = doc.RootElement.GetProperty("resourceType").ToString();
+                    string url = doc.RootElement.GetProperty("request").GetProperty("url").ToString();
+                    string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
+                    string payload = "{\"requestId\":\"" + id + "\"}";
+                    bool blocked=false;
+                    if (Form1.instance.toolStripTextBox1.Text != "")
                     {
-                        var doc = JsonDocument.Parse(e.ParameterObjectAsJson);
-                        var id = doc.RootElement.GetProperty("requestId").ToString();
-                        string type = doc.RootElement.GetProperty("resourceType").ToString();
-                        string url = doc.RootElement.GetProperty("request").GetProperty("url").ToString();
-                        string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
-                        string payload = "{\"requestId\":\"" + id + "\"}";
+                        foreach (String op in Form1.instance.optList)
+                        {
+                            try
+                            {
+                                if (new Uri(Form1.instance.toolStripTextBox1.Text).Host.Contains(op))
+                                    blocked = true;
+                            }catch { }
+                        }
+                    }
+                    
+                    if (!blocked)
+                    {
+                     
 
                         url = url.Replace("http://", "https://");
 
@@ -819,6 +852,12 @@ namespace Secuvox_2._0
                         
 
                     }
+                    else
+                    {
+                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+
+                    }
+
 
                 }
            
@@ -865,7 +904,37 @@ namespace Secuvox_2._0
                         featuresScroll.Checked = true;                        
                         paranoidToolStripMenuItem.Checked = true;
                     }
-                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(toolStripTextBox1.Text);                    
+
+                 
+                        CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)this.tabControl.SelectedTab;
+
+                        page.webView2.Dispose();
+                        page.webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
+
+
+                        page.Controls.Add(page.webView2);
+                        ((System.ComponentModel.ISupportInitialize)(page.webView2)).BeginInit();
+                        page.webView2.AllowExternalDrop = true;
+                        page.webView2.CreationProperties = null;
+                        page.webView2.DefaultBackgroundColor = System.Drawing.Color.White;
+                        page.webView2.Dock = System.Windows.Forms.DockStyle.Fill;
+                        page.webView2.Location = new System.Drawing.Point(3, 3);
+                        page.webView2.Name = "webView21";
+                        page.webView2.Size = new System.Drawing.Size(2110, 1288);
+                        page.webView2.TabIndex = 4;
+
+                        ((System.ComponentModel.ISupportInitialize)(page.webView2)).EndInit();
+                        page.webView2.CoreWebView2InitializationCompleted += page.WebView21_CoreWebView2InitializationCompleted;
+
+
+
+                        var op = new CoreWebView2EnvironmentOptions("--disable-web-security");
+                        op.AreBrowserExtensionsEnabled = true;
+
+                        var env = CoreWebView2Environment.CreateAsync(null, null, op);
+
+                        page.webView2.EnsureCoreWebView2Async(env.Result);
+                    
                 }
                 else
                 {
@@ -993,6 +1062,19 @@ namespace Secuvox_2._0
             setSettings();
 
         }
+
+        public List<String> optList = new List<String>()
+        {
+            "facebook.com",
+            "x.com",
+            "twitter.com",
+            "instagram.com",
+            "tiktok.com",
+            "discord.com",
+            "discordapp.com",
+            "threads.com",
+            "snapchat.com"
+        };
 
         private void setSettings()
         {
