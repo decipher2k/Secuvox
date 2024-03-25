@@ -39,6 +39,9 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.fakeGoogleBotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.adblockerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            this.optOutThisPageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.clearBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -53,9 +56,6 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeTabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.optOutThisPageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -166,8 +166,26 @@
             this.adblockerToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.adblockerToolStripMenuItem.Name = "adblockerToolStripMenuItem";
             this.adblockerToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
-            this.adblockerToolStripMenuItem.Text = "Extra Adblocker";
+            this.adblockerToolStripMenuItem.Text = "Addons";
             this.adblockerToolStripMenuItem.Click += new System.EventHandler(this.adblockerToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem3
+            // 
+            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(272, 6);
+            // 
+            // optOutThisPageToolStripMenuItem
+            // 
+            this.optOutThisPageToolStripMenuItem.CheckOnClick = true;
+            this.optOutThisPageToolStripMenuItem.Name = "optOutThisPageToolStripMenuItem";
+            this.optOutThisPageToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
+            this.optOutThisPageToolStripMenuItem.Text = "Opt-Out this Page";
+            this.optOutThisPageToolStripMenuItem.Click += new System.EventHandler(this.optOutThisPageToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(272, 6);
             // 
             // clearBrowsingDataToolStripMenuItem
             // 
@@ -287,24 +305,6 @@
             this.closeTabToolStripMenuItem.Size = new System.Drawing.Size(159, 32);
             this.closeTabToolStripMenuItem.Text = "Close Tab";
             this.closeTabToolStripMenuItem.Click += new System.EventHandler(this.closeTabToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(272, 6);
-            // 
-            // toolStripMenuItem3
-            // 
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(272, 6);
-            // 
-            // optOutThisPageToolStripMenuItem
-            // 
-            this.optOutThisPageToolStripMenuItem.CheckOnClick = true;
-            this.optOutThisPageToolStripMenuItem.Name = "optOutThisPageToolStripMenuItem";
-            this.optOutThisPageToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
-            this.optOutThisPageToolStripMenuItem.Text = "Opt-Out this Page";
-            this.optOutThisPageToolStripMenuItem.Click += new System.EventHandler(this.optOutThisPageToolStripMenuItem_Click);
             // 
             // Form1
             // 

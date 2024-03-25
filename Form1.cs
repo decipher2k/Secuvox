@@ -398,15 +398,20 @@ namespace Secuvox_2._0
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
 
 
-
-
+                        String host = "";
+                        try
+                        {
+                            String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
+                            host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
+                        }
+                        catch { }
 
                         bool blocked = false;
                         foreach (String op in Form1.instance.optList)
                         {
                             try
                             {
-                                if (new Uri(Form1.instance.toolStripTextBox1.Text).Host.Contains(op))
+                                if (host.Contains(op))
                                     blocked = true;
                             }
                             catch { }
@@ -415,9 +420,9 @@ namespace Secuvox_2._0
                         {
                             try
                             {
-                                if (Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host))
+                                if (Form1.pageSettings.settings.ContainsKey(host))
                                 {
-                                    if (Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].googleBot)
+                                    if (Form1.pageSettings.settings[host].googleBot)
                                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
                                 }
                                 else
@@ -436,9 +441,14 @@ namespace Secuvox_2._0
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Balanced;
 
-
-                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\ublockOrigin\\1.56.0_0\\");
-                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\NinjaCookies\\0.7.0_0\\");
+                        if (Form1.pageSettings.settings.ContainsKey(host))
+                        {
+                            if (Form1.pageSettings.settings[host].ExtraAdblock)
+                            {
+                                await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\ublockOrigin\\1.56.0_0\\");
+                                await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\NinjaCookies\\0.7.0_0\\");
+                            }
+                        }
 
                         //     if (Form1.instance.clearBrowsingDataToolStripMenuItem.Checked)
                         //       await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllSite);
@@ -560,16 +570,20 @@ namespace Secuvox_2._0
                     string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
                     string payload = "{\"requestId\":\"" + id + "\"}";
                     bool blocked=false;
-
-
+                    String host = "";
+                    try
+                    {
+                        String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
+                        host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
+                    }
+                    catch { }
                     if (Form1.instance.toolStripTextBox1.Text != "")
                     {
                         foreach (String op in Form1.instance.optList)
                         {
                             try
                             {
-                                String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
-                                String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
+                               
                                 if (host.Contains(op))
                                     blocked = true;
                             }catch { }
@@ -580,8 +594,7 @@ namespace Secuvox_2._0
                     {
                         try
                         {
-                            String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
-                            String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
+                           
                             if (host.Contains(optOut))
                                 blocked = true;
                         }
@@ -709,7 +722,7 @@ namespace Secuvox_2._0
 
                                 try
                                 {
-                                    if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                    if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                         Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].ExtraAdblock)
                                     {
                                         String[] parts = new Uri(url).Host.Split('.');
@@ -818,7 +831,7 @@ namespace Secuvox_2._0
                                                 {
                                                     try
                                                     {
-                                                        if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                        if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                             !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doHover)
                                                         {
                                                             foreach (String s in toReplaceHover)
@@ -837,7 +850,7 @@ namespace Secuvox_2._0
                                                             }
                                                         }
 
-                                                        if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                        if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                             !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doScroll)
                                                         {
                                                             foreach (String s in toReplaceScroll)
@@ -865,7 +878,7 @@ namespace Secuvox_2._0
                                                                 sText = sText.Replace("clientHeight", "top");
                                                                 sText = sText.Replace("scrollTop", "top");
                                                                 sText = sText.Replace("#scrollArea", "");
-                                                                if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                                if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                                     Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
                                                                 {
                                                                     sText = sText.Replace("sticky", "");
@@ -880,7 +893,7 @@ namespace Secuvox_2._0
 
                                                         }
 
-                                                        if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                        if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                             Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
                                                         {
                                                             sText = sText.Replace("\"on\"+", "\"no\"+");
@@ -1076,17 +1089,19 @@ namespace Secuvox_2._0
                 toolStripTextBox1.Text = "https://" + toolStripTextBox1.Text;
             try
             {
-                if (new Uri(toolStripTextBox1.Text).Host.Split('.').Length > 1)
+                String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
+                String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
+                if (host.Split('.').Length > 1)
                 {
-                    //if (Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
-                    if (Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+                    //if (Form1.pageSettings.settings.ContainsKey(host))
+                    if (Form1.pageSettings.settings.ContainsKey(host))
                     {
-                        adblockerToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock;
-                        featuresGeneric.Checked= !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doGeneric;
-                        featuresHover.Checked = !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover;
-                        featuresScroll.Checked = !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll;                        
-                        paranoidToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS;
-                        fakeGoogleBotToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot;
+                        adblockerToolStripMenuItem.Checked = Form1.pageSettings.settings[host].ExtraAdblock;
+                        featuresGeneric.Checked= !Form1.pageSettings.settings[host].doGeneric;
+                        featuresHover.Checked = !Form1.pageSettings.settings[host].doHover;
+                        featuresScroll.Checked = !Form1.pageSettings.settings[host].doScroll;                        
+                        paranoidToolStripMenuItem.Checked = Form1.pageSettings.settings[host].blockCSS;
+                        fakeGoogleBotToolStripMenuItem.Checked = Form1.pageSettings.settings[host].googleBot;
                     }
                     else
                     {
@@ -1274,16 +1289,18 @@ namespace Secuvox_2._0
         {
             try
             {
-                if (!Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+                String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
+                String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
+                if (!Form1.pageSettings.settings.ContainsKey(host))
                 {
-                    pageSettings.settings.Add(new Uri(toolStripTextBox1.Text).Host, new Settings.PerPageSettings());
+                    pageSettings.settings.Add(host, new Settings.PerPageSettings());
                 }
-                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover = !featuresHover.Checked;
-                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doGeneric = !featuresGeneric.Checked;
-                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll = !featuresScroll.Checked;
-                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS = paranoidToolStripMenuItem.Checked;
-                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
-                pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
+                pageSettings.settings[host].doHover = !featuresHover.Checked;
+                pageSettings.settings[host].doGeneric = !featuresGeneric.Checked;
+                pageSettings.settings[host].doScroll = !featuresScroll.Checked;
+                pageSettings.settings[host].blockCSS = paranoidToolStripMenuItem.Checked;
+                pageSettings.settings[host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
+                pageSettings.settings[host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
                 saveData();
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
                 
