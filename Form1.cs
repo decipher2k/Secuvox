@@ -59,9 +59,26 @@ namespace Secuvox_2._0
 
         }
 
+        public static Settings pageSettings=new Settings();
 
+        [Serializable]
+        public class Settings
+        {
+            public Dictionary<String,PerPageSettings> settings = new Dictionary<String,PerPageSettings>();
+            [Serializable]
+            public class PerPageSettings
+            {
+                public bool doScroll = false;
+                public bool doHover = false;
+                public bool doGeneric = false;
+                public bool googleBot = true;
+                public bool blockCSS = true;
+                public bool ExtraAdblock = true;
+            }
+        }
 
-     
+      
+
         public static string CurrentUri = "";
 
         public class WebClientWithTimeout : WebClient
@@ -317,175 +334,8 @@ namespace Secuvox_2._0
 
                 }
 
-                async void CoreWebView2_WebResourceRequested(object sender, Microsoft.Web.WebView2.Core.CoreWebView2WebResourceRequestedEventArgs e)
-                {
-                    var d = e.GetDeferral();
-                    if (e.Request.Headers.Contains("HTTP_REFERER"))
-                        e.Request.Headers.RemoveHeader("HTTP_REFERER");
-                    if (e.Request.Headers.Contains("Referer"))
-                        e.Request.Headers.RemoveHeader("Referer");
-                    try
-                    {
-                        if (Form1.instance.adblockerToolStripMenuItem.Checked)
-                        {
-                            String[] parts = new Uri(e.Request.Uri).Host.Split('.');
-                            if (parts.Length > 1)
-                                if (Form1.adblock.Contains(new Uri(e.Request.Uri).Host))
-                                {
-                                    e.Request.Uri = "about:blank";
-                                    return;
-                                }
-                        }
-                    }
-                    catch { }
 
-
-
-                    //  if (!new Uri(e.Request.Uri).Host.Contains("google."))
-                    {
-
-
-
-
-                        try
-                        {
-                            if (e.Request.Uri.StartsWith("http"))
-                            {
-
-                                HttpRequestMessage httpreq = ConvertRequest(e.Request);
-                                var client = new HttpClient();
-                                var response = await client.SendAsync(httpreq);
-
-                                Stream strmText = await response.Content.ReadAsStreamAsync();
-                                Ude.CharsetDetector cdet = new Ude.CharsetDetector();
-                                cdet.Feed(strmText);
-                                cdet.DataEnd();
-                                if (cdet.Charset !=null)
-                                {
-
-                                    String sText = await response.Content.ReadAsStringAsync();
-
-                                    if (!sText.StartsWith("<svg "))
-                                    {
-                                        bool found = false;
-                                        foreach (String s in toReplaceHover)
-                                            if (sText.Contains(s))
-                                                found = true;
-
-                                        foreach (String s in toReplaceScroll)
-                                            if (sText.Contains(s))
-                                                found = true;
-
-                                        if (sText.Contains("\"on\""))
-                                            found = true;
-                                        if (sText.Contains("'on'"))
-                                            found = true;
-
-                                        if (sText.Contains("scrollTop"))
-                                            found = true;
-
-                                        if (sText.Contains("pageYOffset"))
-                                            found = true;
-
-                                        if (sText.Contains("scrollArea"))
-                                            found = true;
-
-                                        if (sText.Contains("getBoundingClientRect().top"))
-                                            found = true;
-
-                                        if (sText.Contains("offsetTop"))
-                                            found = true;
-
-
-
-                                        if (found)
-                                        {
-
-                                            if (!Form1.doHover)
-                                            {
-                                                foreach (String s in toReplaceHover)
-                                                {
-                                                    sText = sText.Replace("\"" + s + "\"", "");
-                                                    sText = sText.Replace("'" + s + "'", "");
-                                                    sText = sText.Replace(s + "=", "");
-                                                    sText = sText.Replace(s + " =", "");
-                                                    sText = sText.Replace("." + s, "");
-                                                }
-                                            }
-
-                                            if (!Form1.doScroll)
-                                            {
-                                                foreach (String s in toReplaceScroll)
-                                                {
-                                                    sText = sText.Replace("\"" + s + "\"", "");
-                                                    sText = sText.Replace("." + s, "");
-                                                    sText = sText.Replace(s + "=", "");
-                                                    sText = sText.Replace(s + " =", "");
-                                                    sText = sText.Replace("." + s, "");
-                                                    sText = sText.Replace("scrollTop", "a");
-                                                    sText = sText.Replace("pageYOffset", "a");
-                                                    sText = sText.Replace("scrollArea", "a");
-                                                    sText = sText.Replace("getBoundingClientRect().top", "a");
-                                                    sText = sText.Replace("offsetTop", "a");
-                                                }
-
-                                            }
-
-                                            if (!Form1.doGeneric)
-                                            {
-                                                sText = sText.Replace("\"on\"+", "\"no\"+");
-                                                sText = sText.Replace("\"on\" +", "\"no\" +");
-                                                sText = sText.Replace("'on'+", "\"no\"+");
-                                                sText = sText.Replace("'on' +", "\"no\" +");
-                                            }
-
-
-
-
-
-
-                                            System.Net.HttpStatusCode sc = response.StatusCode;
-                                            var totalBytes = response.Content.Headers.ContentLength;
-
-                                            System.Diagnostics.Debug.Print("HttpStatusCode: " + sc.ToString());
-                                            System.Diagnostics.Debug.Print("Content.Headers.ContentLength: " + totalBytes.ToString());
-
-
-                                            response.EnsureSuccessStatusCode();
-
-
-
-                                            foreach (var header2 in response.Headers)
-                                            {
-                                                string headerContent = string.Join(",", header2.Value.ToArray()); ;
-                                                System.Diagnostics.Debug.WriteLine(String.Concat("Key: ", header2.Key, "  Value: ", headerContent));
-                                            }
-
-                                            sText = sText.Replace("<html", "<HTML");
-                                            sText = sText.Substring(sText.IndexOf("<HTML"));
-
-                                            e.Response = await ConvertResponseAsync(response, sText, cdet.Charset);
-                                        }
-                                    }
-
-                                }
-
-
-                            }
-
-
-                        }
-                        catch (Exception ex) { }
-                    }
-
-                    d.Complete();
-
-
-
-
-                }
-
-                async void WebView21_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
+                public async void WebView21_CoreWebView2InitializationCompleted(object sender, Microsoft.Web.WebView2.Core.CoreWebView2InitializationCompletedEventArgs e)
                 {
                     devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
                     await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Network.enable", "{}");
@@ -499,8 +349,10 @@ namespace Secuvox_2._0
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).NavigationCompleted += CustomTabPage_NavigationCompleted;
 
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
+                  
                     if(Form1.instance.fakeGoogleBotToolStripMenuItem.Checked)
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
@@ -520,8 +372,10 @@ namespace Secuvox_2._0
 
 
 
-
-                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://google.com");
+                    if(Form1.instance.toolStripTextBox1.Text=="")
+                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://google.com");
+                    else
+                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate(Form1.instance.toolStripTextBox1.Text);
                     ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).webView2.Focus();
 
 
@@ -548,6 +402,7 @@ namespace Secuvox_2._0
                         }
                         if (args.WebMessageAsJson.Contains("PressedT"))
                         {
+                            Form1.instance.toolStripTextBox1.Text = "https://google.com";
                             CustomTabControl.CustomTabPage tabPage = new CustomTabPage();
                             ((CustomTabControl)Form1.instance.tabControl).TabPages.Add(tabPage);
                             ((CustomTabControl)Form1.instance.tabControl).SelectedTab = tabPage;
@@ -686,7 +541,8 @@ namespace Secuvox_2._0
 
                                 try
                                 {
-                                    if (Form1.instance.adblockerToolStripMenuItem.Checked)
+                                    if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                        Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].ExtraAdblock)
                                     {
                                         String[] parts = new Uri(url).Host.Split('.');
                                         if (parts.Length > 1)
@@ -791,7 +647,8 @@ namespace Secuvox_2._0
                                                 
                                                 {
 
-                                                    if (!Form1.doHover)
+                                                    if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                        !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doHover)
                                                     {
                                                         foreach (String s in toReplaceHover)
                                                         {
@@ -803,7 +660,8 @@ namespace Secuvox_2._0
                                                         }
                                                     }
 
-                                                    if (!Form1.doScroll)
+                                                    if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                        !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doScroll)
                                                     {
                                                         foreach (String s in toReplaceScroll)
                                                         {
@@ -827,7 +685,8 @@ namespace Secuvox_2._0
                                                             sText = sText.Replace("clientHeight", "top");
                                                             sText = sText.Replace("scrollTop", "top");
                                                             sText = sText.Replace("#scrollArea", "");
-                                                            if (Form1.instance.paranoidToolStripMenuItem.Checked)
+                                                            if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                                Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
                                                             {
                                                                 sText = sText.Replace("sticky", "");
                                                                 sText = sText.Replace("calc(", "(");
@@ -841,7 +700,8 @@ namespace Secuvox_2._0
 
                                                     }
 
-                                                    if (!Form1.doGeneric)
+                                                    if (!Form1.pageSettings.settings.ContainsKey(new Uri(Form1.instance.toolStripTextBox1.Text).Host) ||
+                                                        Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
                                                     {
                                                         sText = sText.Replace("\"on\"+", "\"no\"+");
                                                         sText = sText.Replace("\"on\" +", "\"no\" +");
@@ -986,6 +846,23 @@ namespace Secuvox_2._0
             {
                 if (new Uri(toolStripTextBox1.Text).Host.Split('.').Length > 1)
                 {
+                    //if (Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+                    if (Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+                    {
+                        adblockerToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock;
+                        featuresGeneric.Checked= !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doGeneric;
+                        featuresHover.Checked = !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover;
+                        featuresScroll.Checked = !Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll;                        
+                        paranoidToolStripMenuItem.Checked = Form1.pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS;
+                    }
+                    else
+                    {
+                        adblockerToolStripMenuItem.Checked = true;
+                        featuresGeneric.Checked = true;
+                        featuresHover.Checked = true;
+                        featuresScroll.Checked = true;                        
+                        paranoidToolStripMenuItem.Checked = true;
+                    }
                     ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(toolStripTextBox1.Text);                    
                 }
                 else
@@ -1033,18 +910,18 @@ namespace Secuvox_2._0
             tabControl.Dock = DockStyle.Fill;
             tabControl.Visible = true;
             panel1.Controls.Add(tabControl);
-            
-           
+            toolStripTextBox1.Width = this.Width - 300;
+
         }
 
         private void Form1_SizeChanged(object sender, EventArgs e)
         {
-            
+          
         }
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            toolStripTextBox1.Width = this.Width - 200;
+            toolStripTextBox1.Width = this.Width - 300;
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -1092,7 +969,23 @@ namespace Secuvox_2._0
 
         private void featuresHover_Click(object sender, EventArgs e)
         {
-            doHover=!featuresHover.Checked;
+            setSettings();
+
+        }
+
+        private void setSettings()
+        {
+            if (!Form1.pageSettings.settings.ContainsKey(new Uri(toolStripTextBox1.Text).Host))
+            {
+                pageSettings.settings.Add(new Uri(toolStripTextBox1.Text).Host, new Settings.PerPageSettings());
+            }
+            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doHover = !featuresHover.Checked;
+            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doGeneric = !featuresGeneric.Checked;
+            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].doScroll = !featuresScroll.Checked;
+            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].blockCSS = paranoidToolStripMenuItem.Checked;
+            pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
+            //pageSettings.settings[new Uri(toolStripTextBox1.Text).Host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
+
         }
 
         private void panel1_Paint(object sender, PaintEventArgs e)
@@ -1107,18 +1000,19 @@ namespace Secuvox_2._0
 
         private void featuresScroll_Click(object sender, EventArgs e)
         {
-            doScroll = !featuresScroll.Checked;
+            setSettings();
         }
 
         private void featuresGeneric_Click(object sender, EventArgs e)
         {
-            doGeneric = !featuresGeneric.Checked;
+            setSettings();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.T)
             {
+                toolStripTextBox1.Text = "https://google.com";
                 CustomTabControl.CustomTabPage tabPage = new CustomTabPage();
                 ((CustomTabControl)Form1.instance.tabControl).TabPages.Add(tabPage);
                 ((CustomTabControl)Form1.instance.tabControl).SelectedTab = tabPage;
@@ -1126,9 +1020,12 @@ namespace Secuvox_2._0
             }
             else if (e.Control && e.KeyCode == Keys.W)
             {
-                CustomTabControl.CustomTabPage tabPage = (CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent;
-                ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(tabPage);
-                tabPage.Dispose();
+                CustomTabControl.CustomTabPage tabPage = (CustomTabControl.CustomTabPage)tabControl.SelectedTab;
+                if (tabPage != null)
+                {
+                    ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(tabPage);
+                    tabPage.Dispose();
+                }
             }
          
         }
@@ -1140,7 +1037,59 @@ namespace Secuvox_2._0
 
         private void adblockerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            setSettings();
+        }
 
+        private void Form1_MaximumSizeChanged(object sender, EventArgs e)
+        {
+            toolStripTextBox1.Width = this.Width - 300;
+        }
+
+        private void Form1_MaximizedBoundsChanged(object sender, EventArgs e)
+        {
+            toolStripTextBox1.Width = this.Width - 300;
+        }
+
+        private void Form1_LocationChanged(object sender, EventArgs e)
+        {
+            toolStripTextBox1.Width = this.Width - 300;
+        }
+
+        private void paranoidToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setSettings();
+        }
+
+        private void fakeGoogleBotToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CustomTabControl.CustomTabPage page=(CustomTabControl.CustomTabPage)this.tabControl.SelectedTab;
+
+            page.webView2.Dispose();
+            page.webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
+
+
+            page.Controls.Add(page.webView2);
+            ((System.ComponentModel.ISupportInitialize)(page.webView2)).BeginInit();
+            page.webView2.AllowExternalDrop = true;
+            page.webView2.CreationProperties = null;
+            page.webView2.DefaultBackgroundColor = System.Drawing.Color.White;
+            page.webView2.Dock = System.Windows.Forms.DockStyle.Fill;
+            page.webView2.Location = new System.Drawing.Point(3, 3);
+            page.webView2.Name = "webView21";
+            page.webView2.Size = new System.Drawing.Size(2110, 1288);
+            page.webView2.TabIndex = 4;
+
+            ((System.ComponentModel.ISupportInitialize)(page.webView2)).EndInit();
+            page.webView2.CoreWebView2InitializationCompleted += page.WebView21_CoreWebView2InitializationCompleted;
+
+
+
+            var op = new CoreWebView2EnvironmentOptions("--disable-web-security");
+            op.AreBrowserExtensionsEnabled = true;
+
+            var env = CoreWebView2Environment.CreateAsync(null, null, op);
+
+            page.webView2.EnsureCoreWebView2Async(env.Result);
         }
     }
 }

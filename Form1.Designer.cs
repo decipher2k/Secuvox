@@ -39,13 +39,13 @@
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.featuresHover = new System.Windows.Forms.ToolStripMenuItem();
             this.featuresScroll = new System.Windows.Forms.ToolStripMenuItem();
+            this.paranoidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.featuresGeneric = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.fakeGoogleBotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearBrowsingDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.adblockerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.paranoidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,6 +159,16 @@
             this.featuresScroll.Text = "Block Scroll";
             this.featuresScroll.Click += new System.EventHandler(this.featuresScroll_Click);
             // 
+            // paranoidToolStripMenuItem
+            // 
+            this.paranoidToolStripMenuItem.Checked = true;
+            this.paranoidToolStripMenuItem.CheckOnClick = true;
+            this.paranoidToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.paranoidToolStripMenuItem.Name = "paranoidToolStripMenuItem";
+            this.paranoidToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.paranoidToolStripMenuItem.Text = "CSS Scroll Block";
+            this.paranoidToolStripMenuItem.Click += new System.EventHandler(this.paranoidToolStripMenuItem_Click);
+            // 
             // featuresGeneric
             // 
             this.featuresGeneric.Checked = true;
@@ -182,6 +192,7 @@
             this.fakeGoogleBotToolStripMenuItem.Name = "fakeGoogleBotToolStripMenuItem";
             this.fakeGoogleBotToolStripMenuItem.Size = new System.Drawing.Size(275, 34);
             this.fakeGoogleBotToolStripMenuItem.Text = "Fake Google Bot";
+            this.fakeGoogleBotToolStripMenuItem.Click += new System.EventHandler(this.fakeGoogleBotToolStripMenuItem_Click);
             // 
             // clearBrowsingDataToolStripMenuItem
             // 
@@ -210,15 +221,6 @@
             this.panel1.TabIndex = 3;
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
-            // paranoidToolStripMenuItem
-            // 
-            this.paranoidToolStripMenuItem.Checked = true;
-            this.paranoidToolStripMenuItem.CheckOnClick = true;
-            this.paranoidToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.paranoidToolStripMenuItem.Name = "paranoidToolStripMenuItem";
-            this.paranoidToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
-            this.paranoidToolStripMenuItem.Text = "CSS Scroll Block";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
@@ -230,7 +232,10 @@
             this.KeyPreview = true;
             this.Name = "Form1";
             this.Text = "Secuvox Browser";
+            this.MaximizedBoundsChanged += new System.EventHandler(this.Form1_MaximizedBoundsChanged);
+            this.MaximumSizeChanged += new System.EventHandler(this.Form1_MaximumSizeChanged);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.LocationChanged += new System.EventHandler(this.Form1_LocationChanged);
             this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
