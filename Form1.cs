@@ -808,17 +808,15 @@ namespace Secuvox_2._0
                                                         {
                                                             foreach (String s in toReplaceHover)
                                                             {
-                                                                sText = sText.Replace("\"" + s + "\"", "\"onload\"");
-                                                                sText = sText.Replace("'" + s + "'", "'onload'");
-                                                                sText = sText.Replace(s + "=", "onload=");
-                                                                sText = sText.Replace(s + " =", "onload=");
-                                                                sText = sText.Replace("." + s, ".onload");
-                                                                sText = sText.Replace(".clientY", "");
-                                                                sText = sText.Replace(".screenY", "");
-                                                                sText = sText.Replace(".offsetY ", "");
-                                                                sText = sText.Replace(".clientY", "");
-                                                                sText = sText.Replace(".pageY", "");
+                                                                sText = ReplaceRegex("[\"'])(\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);                            
+                                                                sText = ReplaceRegex(s + "(\\s*?)=", "onload=",sText);
+                                                                sText = ReplaceRegex("\\.(\\s*?)"+s + "(\\s*?)=", "onload=", sText);
 
+                                                                sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
+                                                                sText = ReplaceRegex("\\.(\\s*?)" + "screenY", "", sText);
+                                                                sText = ReplaceRegex("\\.(\\s*?)" + "offsetY", "", sText);
+                                                                sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
+                                                                sText = ReplaceRegex("\\.(\\s*?)" + "pageY", "", sText);
                                                             }
                                                         }
 
@@ -827,38 +825,33 @@ namespace Secuvox_2._0
                                                         {
                                                             foreach (String s in toReplaceScroll)
                                                             {
-                                                                sText = sText.Replace("\"" + s + "\"", "\"onload\"");
-                                                                sText = sText.Replace("'" + s + "'", "\"onload\"");
-                                                                sText = sText.Replace(s + "=", "onload=");
-                                                                sText = sText.Replace(s + " =", "onload=");
-                                                                sText = sText.Replace("." + s, ".onload");
+                                                                sText = ReplaceRegex("[\"'](\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
+                                                                sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", ".onload=", sText);
+                                                                sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
+                                                                
 
+                                                                sText = ReplaceRegex("scrollTop", "top", sText);
+                                                                sText = ReplaceRegex("pageYOffset", "top", sText);
+                                                                sText = ReplaceRegex("scrollArea", "", sText);
+                                                                sText = ReplaceRegex("getBoundingClientRect\\(\\)", "getPosition()", sText);
+                                                                sText = ReplaceRegex("getClientRects\\(\\)", "getPosition()", sText);
 
-
-
-                                                                sText = sText.Replace("scrollTop", "top");
-                                                                sText = sText.Replace("pageYOffset", "top");
-                                                                sText = sText.Replace("scrollArea", "");
-                                                                sText = sText.Replace("getBoundingClientRect()", "getPosition()");
-                                                                sText = sText.Replace("getClientRects()", "getPosition()");
-
-                                                                sText = sText.Replace("offsetTop", "top");
-                                                                sText = sText.Replace("scrollY", "top");
-                                                                sText = sText.Replace("scroll\"+", "on\"+");
-                                                                sText = sText.Replace("scroll\" +", "on\"+");
-                                                                sText = sText.Replace("scrollHeight", "top");
-                                                                sText = sText.Replace("clientHeight", "top");
-                                                                sText = sText.Replace("scrollTop", "top");
-                                                                sText = sText.Replace("#scrollArea", "");
+                                                                sText = ReplaceRegex("offsetTop", "top", sText);
+                                                                sText = ReplaceRegex("scrollY", "top", sText);
+                                                                sText = ReplaceRegex("scroll(\\s*?)[\"']\\+", "on\"+", sText);
+                                                                sText = ReplaceRegex("scrollHeight", "top", sText);
+                                                                sText = ReplaceRegex("clientHeight", "top", sText);
+                                                                sText = ReplaceRegex("scrollTop", "top", sText);
+                                                                sText = ReplaceRegex("\\#scrollArea", "", sText);
                                                                 if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                                     Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
                                                                 {
-                                                                    /*sText = sText.Replace("sticky", "");
-                                                                    sText = sText.Replace("calc(", "(");
-                                                                    sText = sText.Replace("data-scroll", "");
-                                                                    sText = sText.Replace(".observe", "");
-                                                                    sText = sText.Replace("scroll-", "");
-                                                                    sText = sText.Replace("scrollPosition", "");*/
+                                                                    sText = ReplaceRegex("sticky", "", sText);
+                                                                    sText = ReplaceRegex("calc(\\s*?)\\(", "(",sText);
+                                                                    sText = ReplaceRegex("data-scroll", "", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)observe", "", sText);
+                                                                    sText = ReplaceRegex("scroll(\\s*?)\\-", "", sText);
+                                                                    sText = ReplaceRegex("scrollPosition", "", sText);
                                                                 }
 
                                                             }
@@ -868,10 +861,7 @@ namespace Secuvox_2._0
                                                         if (!Form1.pageSettings.settings.ContainsKey(host) ||
                                                             !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
                                                         {
-                                                            sText = sText.Replace("\"on\"+", "\"no\"+");
-                                                            sText = sText.Replace("\"on\" +", "\"no\" +");
-                                                            sText = sText.Replace("'on'+", "\"no\"+");
-                                                            sText = sText.Replace("'on' +", "\"no\" +");
+                                                            sText = ReplaceRegex("[\"'](\\s*?)" + "on" + "(\\s*?)[\"']", "\"no\"", sText);
                                                         }
 
 
@@ -883,9 +873,9 @@ namespace Secuvox_2._0
 
                                                     }
                                                 sText = sText.Replace("crossorigin", "anonymous");
-                                                    if (cdet.Charset == "UTF-8")
+                                                    if (cdet.Charset == "ASCII")
                                                     {
-                                                        sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
+                                                        sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
                                                     }
                                                     else if (cdet.Charset == "windows-1252")
                                                     {
@@ -899,7 +889,7 @@ namespace Secuvox_2._0
                                                     }
                                                     else
                                                     {
-                                                        sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
+                                                        sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
                                                     }
                                                 }
 
@@ -909,7 +899,10 @@ namespace Secuvox_2._0
                                         }
                                         else
                                         {
-                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                            try
+                                            {
+                                                await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                            }catch { }
                                             return;
                                             //Text = Convert.ToBase64String(stream.ToArray());
                                         }
@@ -1011,6 +1004,24 @@ namespace Secuvox_2._0
 
                 }
            
+            }
+
+            private static String ReplaceRegex(String replace, String with, String page)
+            {
+                try
+                {
+                    Regex rg = new Regex(replace);
+                    MatchCollection matchedAuthors = rg.Matches(page);
+                    foreach (Match match in matchedAuthors)
+                    {                     
+                        page = page.Replace(match.Value, with);
+                        
+                    }
+                }catch { 
+                
+                }
+                return page;
+
             }
 
             public CustomTabControl()
@@ -1270,7 +1281,10 @@ namespace Secuvox_2._0
                 pageSettings.settings[host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
                 pageSettings.settings[host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
                 saveData();
-                await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage|CoreWebView2BrowsingDataKinds.ServiceWorkers);
+                try
+                {
+                    await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage | CoreWebView2BrowsingDataKinds.ServiceWorkers);
+                }catch { }
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
                 
             }catch { }
