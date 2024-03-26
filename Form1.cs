@@ -282,7 +282,7 @@ namespace Secuvox_2._0
 
                                                           
 
-                    var op = new CoreWebView2EnvironmentOptions("--disable-web-security");
+                    var op = new CoreWebView2EnvironmentOptions(/*"--disable-web-security"*/);
                     op.AreBrowserExtensionsEnabled = true;
                     
                     var env = CoreWebView2Environment.CreateAsync(null, null, op);
@@ -339,7 +339,10 @@ namespace Secuvox_2._0
                 {
                     try
                     {
-                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+                        try
+                        {
+                            await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+                        } catch { } 
                         devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Network.enable", "{}");
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.enable", "{\"patterns\":[{\"urlPattern\":\"*\"}]}");
@@ -679,9 +682,9 @@ namespace Secuvox_2._0
                                     {
                                         await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
                                     }catch {
-                                        return;
+                                       
                                     }
-                                    return;
+                                 
                                 }
 
 
@@ -711,225 +714,239 @@ namespace Secuvox_2._0
                                     }
                                 }
                                 catch { }
-                                Ude.CharsetDetector cdet = new Ude.CharsetDetector();
-                                cdet.Feed(strmText);
-                                cdet.DataEnd();
-
-                                if (url.Contains("jquery"))
-                                {
-                                    sText = System.IO.File.ReadAllText(".\\jquery.js");
-                                    sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
-
-                                }
-
-                                /*      byte[] buffer = new byte[strmText.Length];
-                                      using (MemoryStream ms = new MemoryStream())
-                                      {
-                                          int read;
-                                          while ((read = strmText.Read(buffer, 0, buffer.Length)) > 0)
-                                          {
-                                              ms.Write(buffer, 0, read);
-                                          }
-                                         bytes= ms.ToArray();
-                                      }
-                                      sText = Encoding.UTF8.GetString(bytes);
-                                      }*/
-
                                 try
                                 {
-                                    if (url.StartsWith("http") && !url.Contains("jquery"))
+                                    Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+                                    cdet.Feed(strmText);
+                                    cdet.DataEnd();
+
+                                    if (url.Contains("jquery"))
                                     {
+                                        sText = System.IO.File.ReadAllText(".\\jquery.js");
+                                        sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
 
+                                    }
 
+                                    /*      byte[] buffer = new byte[strmText.Length];
+                                          using (MemoryStream ms = new MemoryStream())
+                                          {
+                                              int read;
+                                              while ((read = strmText.Read(buffer, 0, buffer.Length)) > 0)
+                                              {
+                                                  ms.Write(buffer, 0, read);
+                                              }
+                                             bytes= ms.ToArray();
+                                          }
+                                          sText = Encoding.UTF8.GetString(bytes);
+                                          }*/
 
-
-
-                                        if (cdet.Charset != null && type != "Image" && !url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))
-
+                                    try
+                                    {
+                                        if (url.StartsWith("http") && !url.Contains("jquery"))
                                         {
 
 
 
-                                            if (!sText.StartsWith("<svg "))
+
+
+                                            if (cdet.Charset != null && type != "Image" && !url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))
+
                                             {
-                                                sText.Replace("_blank", "_self");
-                                                sText.Replace("_blank", "_top");
-
-                                                if (!new Uri(url).Host.Contains("googe.com"))
-                                                    sText.Replace("<a ", "<a rel=\"noreferrer\" referrerpolicy=\"no-referrer\"");
-
-                                                bool found = false;
-                                                foreach (String s in toReplaceHover)
-                                                    if (sText.Contains(s))
-                                                        found = true;
-
-                                                foreach (String s in toReplaceScroll)
-                                                    if (sText.Contains(s))
-                                                        found = true;
-
-                                                if (sText.Contains("\"on\""))
-                                                    found = true;
-                                                if (sText.Contains("'on'"))
-                                                    found = true;
-
-                                                if (sText.Contains("scrollTop"))
-                                                    found = true;
-
-                                                if (sText.Contains("pageYOffset"))
-                                                    found = true;
-                                                if (sText.Contains("scrollY"))
-                                                    found = true;
 
 
-                                                if (sText.Contains("scrollArea"))
-                                                    found = true;
 
-                                                if (sText.Contains("getBoundingClientRect"))
-                                                    found = true;
-
-                                                if (sText.Contains("offsetTop"))
-                                                    found = true;
-
-
-                                                if (sText.Contains("scroll\"+"))
-                                                    found = true;
-                                                if (sText.Contains("scroll\" +"))
-                                                    found = true;
-                                                if (sText.Contains("scrollHeight"))
-                                                    found = true;
-                                                if (sText.Contains("clientHeight"))
-                                                    found = true;
-
+                                                if (!sText.StartsWith("<svg "))
                                                 {
-                                                    try
+                                                    sText.Replace("_blank", "_self");
+                                                    sText.Replace("_blank", "_top");
+
+                                                    if (!new Uri(url).Host.Contains("googe.com"))
+                                                        sText.Replace("<a ", "<a rel=\"noreferrer\" referrerpolicy=\"no-referrer\"");
+
+                                                    bool found = false;
+                                                    foreach (String s in toReplaceHover)
+                                                        if (sText.Contains(s))
+                                                            found = true;
+
+                                                    foreach (String s in toReplaceScroll)
+                                                        if (sText.Contains(s))
+                                                            found = true;
+
+                                                    if (sText.Contains("\"on\""))
+                                                        found = true;
+                                                    if (sText.Contains("'on'"))
+                                                        found = true;
+
+                                                    if (sText.Contains("scrollTop"))
+                                                        found = true;
+
+                                                    if (sText.Contains("pageYOffset"))
+                                                        found = true;
+                                                    if (sText.Contains("scrollY"))
+                                                        found = true;
+
+
+                                                    if (sText.Contains("scrollArea"))
+                                                        found = true;
+
+                                                    if (sText.Contains("getBoundingClientRect"))
+                                                        found = true;
+
+                                                    if (sText.Contains("offsetTop"))
+                                                        found = true;
+
+
+                                                    if (sText.Contains("scroll\"+"))
+                                                        found = true;
+                                                    if (sText.Contains("scroll\" +"))
+                                                        found = true;
+                                                    if (sText.Contains("scrollHeight"))
+                                                        found = true;
+                                                    if (sText.Contains("clientHeight"))
+                                                        found = true;
+
                                                     {
-                                                        if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                            !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doHover)
+                                                        try
                                                         {
-                                                            foreach (String s in toReplaceHover)
+                                                            if (!Form1.pageSettings.settings.ContainsKey(host) ||
+                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doHover)
                                                             {
-                                                                sText = ReplaceRegex("[\"'])(\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);                            
-                                                                sText = ReplaceRegex(s + "(\\s*?)=", "onload=",sText);
-                                                                sText = ReplaceRegex("\\.(\\s*?)"+s + "(\\s*?)=", "onload=", sText);
-
-                                                                sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
-                                                                sText = ReplaceRegex("\\.(\\s*?)" + "screenY", "", sText);
-                                                                sText = ReplaceRegex("\\.(\\s*?)" + "offsetY", "", sText);
-                                                                sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
-                                                                sText = ReplaceRegex("\\.(\\s*?)" + "pageY", "", sText);
-                                                            }
-                                                        }
-
-                                                        if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                            !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doScroll)
-                                                        {
-                                                            foreach (String s in toReplaceScroll)
-                                                            {
-                                                                sText = ReplaceRegex("[\"'](\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
-                                                                sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", ".onload=", sText);
-                                                                sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
-                                                                
-
-                                                                sText = ReplaceRegex("scrollTop", "top", sText);
-                                                                sText = ReplaceRegex("pageYOffset", "top", sText);
-                                                                sText = ReplaceRegex("scrollArea", "", sText);
-                                                                sText = ReplaceRegex("getBoundingClientRect\\(\\)", "getPosition()", sText);
-                                                                sText = ReplaceRegex("getClientRects\\(\\)", "getPosition()", sText);
-
-                                                                sText = ReplaceRegex("offsetTop", "top", sText);
-                                                                sText = ReplaceRegex("scrollY", "top", sText);
-                                                                sText = ReplaceRegex("scroll(\\s*?)[\"']\\+", "on\"+", sText);
-                                                                sText = ReplaceRegex("scrollHeight", "top", sText);
-                                                                sText = ReplaceRegex("clientHeight", "top", sText);
-                                                                sText = ReplaceRegex("scrollTop", "top", sText);
-                                                                sText = ReplaceRegex("\\#scrollArea", "", sText);
-                                                                if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                    Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
+                                                                foreach (String s in toReplaceHover)
                                                                 {
-                                                                    sText = ReplaceRegex("sticky", "", sText);
-                                                                    sText = ReplaceRegex("calc(\\s*?)\\(", "(",sText);
-                                                                    sText = ReplaceRegex("data-scroll", "", sText);
-                                                                    sText = ReplaceRegex("\\.(\\s*?)observe", "", sText);
-                                                                    sText = ReplaceRegex("scroll(\\s*?)\\-", "", sText);
-                                                                    sText = ReplaceRegex("scrollPosition", "", sText);
+                                                                    sText = ReplaceRegex("[\"'])(\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
+                                                                    sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", "onload=", sText);
+
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "screenY", "", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "offsetY", "", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "pageY", "", sText);
+                                                                }
+                                                            }
+
+                                                            if (!Form1.pageSettings.settings.ContainsKey(host) ||
+                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doScroll)
+                                                            {
+                                                                foreach (String s in toReplaceScroll)
+                                                                {
+                                                                    sText = ReplaceRegex("[\"'](\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", ".onload=", sText);
+                                                                    sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
+
+
+                                                                    sText = ReplaceRegex("scrollTop", "top", sText);
+                                                                    sText = ReplaceRegex("pageYOffset", "top", sText);
+                                                                    sText = ReplaceRegex("scrollArea", "", sText);
+                                                                    sText = ReplaceRegex("getBoundingClientRect\\(\\)", "getPosition()", sText);
+                                                                    sText = ReplaceRegex("getClientRects\\(\\)", "getPosition()", sText);
+
+                                                                    sText = ReplaceRegex("offsetTop", "top", sText);
+                                                                    sText = ReplaceRegex("scrollY", "top", sText);
+                                                                    sText = ReplaceRegex("scroll(\\s*?)[\"']\\+", "on\"+", sText);
+                                                                    sText = ReplaceRegex("scrollHeight", "top", sText);
+                                                                    sText = ReplaceRegex("clientHeight", "top", sText);
+                                                                    sText = ReplaceRegex("scrollTop", "top", sText);
+                                                                    sText = ReplaceRegex("\\#scrollArea", "", sText);
+                                                                    if (!Form1.pageSettings.settings.ContainsKey(host) ||
+                                                                        Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
+                                                                    {
+                                                                        sText = ReplaceRegex("sticky", "", sText);
+                                                                        sText = ReplaceRegex("calc(\\s*?)\\(", "(", sText);
+                                                                        sText = ReplaceRegex("data-scroll", "", sText);
+                                                                        sText = ReplaceRegex("\\.(\\s*?)observe", "", sText);
+                                                                        sText = ReplaceRegex("scroll(\\s*?)\\-", "", sText);
+                                                                        sText = ReplaceRegex("scrollPosition", "", sText);
+                                                                    }
+
                                                                 }
 
                                                             }
 
-                                                        }
+                                                            if (!Form1.pageSettings.settings.ContainsKey(host) ||
+                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
+                                                            {
+                                                                sText = ReplaceRegex("[\"'](\\s*?)" + "on" + "(\\s*?)[\"']", "\"no\"", sText);
+                                                            }
 
-                                                        if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                            !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
+
+
+
+                                                        }
+                                                        catch
                                                         {
-                                                            sText = ReplaceRegex("[\"'](\\s*?)" + "on" + "(\\s*?)[\"']", "\"no\"", sText);
+                                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+
                                                         }
+                                                        // sText = sText.Replace("crossorigin", "anonymous");
+                                                        if (cdet.Charset == "ASCII")
+                                                        {
+                                                            sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
+                                                        }
+                                                        else if (cdet.Charset == "windows-1252")
+                                                        {
+                                                            Encoding wind1252 = Encoding.GetEncoding(1252);
+                                                            Encoding utf8 = Encoding.UTF8;
+                                                            byte[] wind1252Bytes = wind1252.GetBytes(sText);
+                                                            byte[] utf8Bytes = Encoding.Convert(wind1252, utf8, wind1252Bytes);
+                                                            sText = Convert.ToBase64String(utf8Bytes);
 
 
-
-
+                                                        }
+                                                        else
+                                                        {
+                                                            sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
+                                                        }
                                                     }
-                                                    catch {
-                                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
 
-                                                    }
-                                                sText = sText.Replace("crossorigin", "anonymous");
-                                                    if (cdet.Charset == "ASCII")
-                                                    {
-                                                        sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
-                                                    }
-                                                    else if (cdet.Charset == "windows-1252")
-                                                    {
-                                                        Encoding wind1252 = Encoding.GetEncoding(1252);
-                                                        Encoding utf8 = Encoding.UTF8;
-                                                        byte[] wind1252Bytes = wind1252.GetBytes(sText);
-                                                        byte[] utf8Bytes = Encoding.Convert(wind1252, utf8, wind1252Bytes);
-                                                        sText = Convert.ToBase64String(utf8Bytes);
-
-
-                                                    }
-                                                    else
-                                                    {
-                                                        sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
-                                                    }
                                                 }
 
+
+                                            }
+                                            else
+                                            {
+                                                try
+                                                {
+                                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                                }
+                                                catch { }
+
+                                                //Text = Convert.ToBase64String(stream.ToArray());
                                             }
 
+                                            //sText = Base64UrlEncoder.Encode(sText);
+                                            /*        if(sText.ToLower().Contains("<html"))
+                                                         sText = HtmlEncode(sText);
+                                            */
+                                            // sText =  Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
 
                                         }
-                                        else
+
+
+                                        else if (!url.Contains("jquery"))
                                         {
-                                            try
-                                            {
-                                                await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
-                                            }catch { }
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                             return;
-                                            //Text = Convert.ToBase64String(stream.ToArray());
                                         }
 
-                                        //sText = Base64UrlEncoder.Encode(sText);
-                                        /*        if(sText.ToLower().Contains("<html"))
-                                                     sText = HtmlEncode(sText);
-                                        */
-                                        // sText =  Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
-
                                     }
 
 
-                                    else if (!url.Contains("jquery"))
+                                    catch
                                     {
-                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
-                                        return;
+                                        try
+                                        {
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            return;
+                                        }catch { }
                                     }
-                           
-                            }
-
-                            catch
-                            {
-                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
-                                    return;
-                            }
-
+                                }catch {
+                                    try
+                                    {
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                        return;
+                                    } catch { } 
+                                }
                              /* {
                                     byte[] ret = new byte[sText.Length];
                                     for (int i = 0; i < sText.Length; i++)
@@ -965,6 +982,7 @@ namespace Secuvox_2._0
                                     try
                                     {
                                         await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                        return;
                                     }
                                     catch { }
                                 }
@@ -974,11 +992,12 @@ namespace Secuvox_2._0
                                 try
                                 {
                                     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                    return;
                                 }
                                 catch (Exception ex1)
                                 { 
                                 }
-                                return;
+                              
                             }
 
 
@@ -988,8 +1007,10 @@ namespace Secuvox_2._0
                             try
                             {
                                 await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
-                            }catch { }
-                            return;
+                                return;
+                            }
+                            catch { }
+                           
                             //sText = Convert.ToBase64String(stream.ToArray());
                         }
                         
@@ -997,12 +1018,23 @@ namespace Secuvox_2._0
                     }
                     else
                     {
-                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                        try
+                        {
+                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                            return;
+                        }
+                        catch { }
 
                     }
 
+                    try
+                    {
+                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                    }
+                    catch { }
 
                 }
+
            
             }
 
@@ -1114,7 +1146,7 @@ namespace Secuvox_2._0
 
 
 
-                        var op = new CoreWebView2EnvironmentOptions("--disable-web-security");
+                        var op = new CoreWebView2EnvironmentOptions(/*"--disable-web-security"*/);
                         op.AreBrowserExtensionsEnabled = true;
 
                         var env = CoreWebView2Environment.CreateAsync(null, null, op);
@@ -1397,7 +1429,7 @@ namespace Secuvox_2._0
 
 
 
-            var op = new CoreWebView2EnvironmentOptions("--disable-web-security");
+            var op = new CoreWebView2EnvironmentOptions(/*"--disable-web-security"*/);
             op.AreBrowserExtensionsEnabled = true;
 
             var env = CoreWebView2Environment.CreateAsync(null, null, op);
