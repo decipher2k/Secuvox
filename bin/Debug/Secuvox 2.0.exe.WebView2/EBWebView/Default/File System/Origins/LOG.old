@@ -1,2 +1,3 @@
-2024/03/26-01:55:41.630 836c Creating DB D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\File System\Origins__tmp_for_rebuild since it was missing.
-2024/03/26-01:55:41.633 836c Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\File System\Origins__tmp_for_rebuild/MANIFEST-000001
+2024/03/27-14:36:08.510 5628 Reusing MANIFEST D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\File System\Origins/MANIFEST-000001
+2024/03/27-14:36:08.510 5628 Recovering log #3
+2024/03/27-14:36:08.511 5628 Reusing old log D:\Secuvox\bin\Debug\Secuvox 2.0.exe.WebView2\EBWebView\Default\File System\Origins/000003.log 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Core.DevToolsProtocolExtension;
@@ -20,10 +21,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web.UI;
 using System.Windows;
@@ -35,6 +38,7 @@ using System.Windows.Markup;
 using System.Xml.Linq;
 using WebView2.DevTools.Dom;
 using WebView2.DevTools.Dom.Input;
+using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.Autofill;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.CSS;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.FedCm;
 using static Microsoft.Web.WebView2.Core.DevToolsProtocolExtension.Network;
@@ -110,6 +114,26 @@ namespace Secuvox_2._0
             public new async Task<string> DownloadStringTaskAsync(Uri address)
             {
                 var t = base.DownloadStringTaskAsync(address);
+                if (await Task.WhenAny(t, Task.Delay(Timeout)) != t) //time out!
+                {
+                    CancelAsync();
+                }
+                return await t;
+            }
+
+            public new async Task<byte[]> DownloadDataAsync(Uri address)
+            {
+                var t = base.DownloadDataTaskAsync(address);
+                if (await Task.WhenAny(t, Task.Delay(Timeout)) != t) //time out!
+                {
+                    CancelAsync();
+                }
+                return await t;
+            }
+
+            public new async Task<byte[]> UploadDataAsync(Uri address, byte[] data)
+            {
+                var t = base.UploadDataTaskAsync(address, data);
                 if (await Task.WhenAny(t, Task.Delay(Timeout)) != t) //time out!
                 {
                     CancelAsync();
@@ -521,6 +545,47 @@ namespace Secuvox_2._0
                     return result;
 
                 }
+
+                private Uri MyUri(string url)
+                {
+                    Uri uri = new Uri(url);
+                    System.Reflection.MethodInfo getSyntax = typeof(UriParser).GetMethod("GetSyntax", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+                    System.Reflection.FieldInfo flagsField = typeof(UriParser).GetField("m_Flags", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                    if (getSyntax != null && flagsField != null)
+                    {
+                        foreach (string scheme in new[] { "http", "https" })
+                        {
+                            UriParser parser = (UriParser)getSyntax.Invoke(null, new object[] { scheme });
+                            if (parser != null)
+                            {
+                                int flagsValue = (int)flagsField.GetValue(parser);
+                                // Clear the CanonicalizeAsFilePath attribute
+                                if ((flagsValue & 0x1000000) != 0)
+                                    flagsField.SetValue(parser, flagsValue & ~0x1000000);
+                            }
+                        }
+                    }
+                    uri = new Uri(url);
+                    return uri;
+                }
+                private static int GetStatusCode(WebClient client, out string statusDescription)
+                {
+                    FieldInfo responseField = client.GetType().GetField("m_WebResponse", BindingFlags.Instance | BindingFlags.NonPublic);
+
+                    if (responseField != null)
+                    {
+                        HttpWebResponse response = responseField.GetValue(client) as HttpWebResponse;
+
+                        if (response != null)
+                        {
+                            statusDescription = response.StatusDescription;
+                            return (int)response.StatusCode;
+                        }
+                    }
+
+                    statusDescription = null;
+                    return 0;
+                }
                 async void WebView2_FetchRequestPaused(object sender, CoreWebView2DevToolsProtocolEventReceivedEventArgs e)
                 {
                     var doc = JsonDocument.Parse(e.ParameterObjectAsJson);
@@ -528,7 +593,8 @@ namespace Secuvox_2._0
                     string type = doc.RootElement.GetProperty("resourceType").ToString();
                     string url = doc.RootElement.GetProperty("request").GetProperty("url").ToString();
                     string method = doc.RootElement.GetProperty("request").GetProperty("method").ToString();
-                    string payload = "{\"requestId\":\"" + id + "\"}";
+                    String statusCode = "";
+                       string payload = "{\"requestId\":\"" + id + "\"}";
                     bool blocked=false;
                     String host = "";
                     try
@@ -618,65 +684,159 @@ namespace Secuvox_2._0
 
 
                                 Stream strmText = null;
-
+                                WebHeaderCollection responseHeaders = null;
+                                System.Net.Http.Headers.HttpResponseHeaders responseHeaders1 = null;
+                                
                                 try
                                 {
                                     if (method == "GET")
                                     {
                                         HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Get, url);
-
+                                        WebHeaderCollection webHeaderCollection = new WebHeaderCollection();
                                         foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
                                         {
-
-                                            String name = header.Name;
-                                            String value = header.Value.ToString();
-                                            if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
-                                                httpreq.Headers.Add(name, value);
+                                            try
+                                            {
+                                                String name = header.Name;
+                                                String value = header.Value.ToString();
+                                                // if(name=="Content-Type")
+                                                //   if(value == "application/x-www-form-urlencoded")
+                                                //     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                                if (name != "Referer" || new Uri(url).Host.Contains("google"))
+                                                {
+                                                    /*  try
+                                                      {
+                                                          httpreq.Content.Headers.Add(name, value);
+                                                      }catch (Exception ex) { }
+                                                      httpreq.Headers.Add(name, value);*/
+                                                    webHeaderCollection.Add(name, value);
+                                                }
+                                            }
+                                            catch { }
 
                                         }
                                         httpreq.Headers.Add("DNT", "1");
-                                        var client = new HttpClient();
-                                        var response = await client.SendAsync(httpreq);
+                                        WebClient wc = new WebClient();
 
-                                        sText = await response.Content.ReadAsStringAsync();
-                                        strmText = await response.Content.ReadAsStreamAsync();
+                                        wc.Headers = webHeaderCollection;
+
+
+                                        var t = wc.DownloadDataTaskAsync(new Uri(url));
+                                        if (await Task.WhenAny(t, Task.Delay(500)) != t) //time out!
+                                        {
+                                            wc.CancelAsync();
+                                        }
+                                        bytes= await t;
+
+                                       
+
+
+
+                                        HtmlResult=Encoding.UTF8.GetString(bytes);
+                                        responseHeaders = wc.ResponseHeaders;
+                                        String status = "";
+                                        statusCode = GetStatusCode(wc, out status).ToString();
+
                                     }
                                     else if (method == "POST")
                                     {
-                                        HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Post, url);
+                                      
+                                        JsonElement e1 = doc.RootElement.GetProperty("request").GetProperty("postData");
                                         String s = doc.RootElement.GetProperty("request").GetProperty("postData").ToString();
-                                        httpreq.Content = new StringContent(s);
-                                        foreach (JsonProperty postdata in doc.RootElement.GetProperty("request").GetProperty("postData").EnumerateObject())
+
+                                        
+                                        //httpreq.Content = new StringContent(s);
+
+                                        List<KeyValuePair<string, string>> content = new List<KeyValuePair<string, string>>();
+                                        String[] parts=s.Split(',');
+                                        foreach(String part in parts)
                                         {
-
-                                            String name = postdata.Name;
-                                            String value = postdata.Value.ToString();
-                                            httpreq.Properties.Add(name, value);
-
+                                            string name = part.Split('=')[0];
+                                            string value = part.Split('=')[1];
+                                            KeyValuePair<string,string> keyValuePair = new KeyValuePair<string,string>(name, value);
+                                            content.Add(keyValuePair);
                                         }
+                     
+                                        WebHeaderCollection webHeaderCollection = new WebHeaderCollection();
                                         foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
                                         {
-
-                                            String name = header.Name;
-                                            String value = header.Value.ToString();
-                                            if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
-                                                httpreq.Headers.Add(name, value);
+                                            try
+                                            {
+                                                String name = header.Name;
+                                                String value = header.Value.ToString();
+                                                // if(name=="Content-Type")
+                                                //   if(value == "application/x-www-form-urlencoded")
+                                                //     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                                if (name != "Referer" || new Uri(url).Host.Contains("google"))
+                                                {
+                                                  /*  try
+                                                    {
+                                                        httpreq.Content.Headers.Add(name, value);
+                                                    }catch (Exception ex) { }
+                                                    httpreq.Headers.Add(name, value);*/
+                                                webHeaderCollection.Add(name,value);
+                                                }
+                                            }
+                                            catch { }
 
                                         }
-                                        httpreq.Headers.Add("DNT", "1");
+                                        webHeaderCollection.Add("DNT", "1");
+                                       
 
-                                        var client = new HttpClient();
-                                        var response = await client.SendAsync(httpreq);
 
-                                        sText = await response.Content.ReadAsStringAsync();
-                                        strmText = await response.Content.ReadAsStreamAsync();
+                                        //     var client = new HttpClient();
+                                        //    var response = await client.SendAsync(httpreq);
+
+
+                                        // string URI = "http://www.myurl.com/post.php";
+                                        string myParameters = s;
+
+                                        WebClient wc = new WebClient();
+                                        
+                                            wc.Headers=webHeaderCollection;
+                                        wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                                        var t = wc.UploadDataTaskAsync(new Uri(url),Encoding.UTF8.GetBytes(s));
+                                        if (await Task.WhenAny(t, Task.Delay(500)) != t) //time out!
+                                        {
+                                            wc.CancelAsync();
+                                        }
+                                        bytes = await t;
+
+
+                                        HtmlResult = Encoding.UTF8.GetString(bytes);
+                                        String status = "";
+                                        statusCode = GetStatusCode(wc, out status).ToString();
+
+                                        responseHeaders = wc.ResponseHeaders;
+                                        //     responseHeaders1=response.Headers;
+
+                                        /*     foreach(var header in responseHeaders1)
+                                             {
+                                                 foreach (String val in header.Value)
+                                                 {
+                                                     if (header.Key == "Set-Cookie")
+                                                         webView2.CoreWebView2.CookieManager.AddOrUpdateCookie(webView2.CoreWebView2.CookieManager.CreateCookie(header.Key, val, new Uri(url).Host, "/"));
+                                                 }
+                                             }
+
+                                             foreach (var header in responseHeaders)
+                                             {
+                                                 foreach (String val in header.Value)
+                                                 {
+                                                     if (header.Key == "Set-Cookie")
+                                                         webView2.CoreWebView2.CookieManager.AddOrUpdateCookie(webView2.CoreWebView2.CookieManager.CreateCookie(header.Key, val, new Uri(url).Host, "/"));
+                                                 }
+                                             }
+                                        */
+                                        
+                                       // strmText = await response.Content.ReadAsStreamAsync();
                                     }
                                     else
                                     {
                                         await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                     }
                                 }
-                                catch 
+                                catch (Exception ex)
                                 {
                                     try
                                     {
@@ -686,9 +846,10 @@ namespace Secuvox_2._0
                                     }
                                  
                                 }
-
-
-
+                                sText = HtmlResult;
+                                sText = sText.Replace("\"use strict\"", "");
+                                sText=sText.Replace("'use strict'", "");
+                                
                                 //String bodyResponse = 
 
 
@@ -698,7 +859,7 @@ namespace Secuvox_2._0
                                 try
                                 {
                                     if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                        Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].ExtraAdblock)
+                                        Form1.pageSettings.settings[host].ExtraAdblock)
                                     {
                                         String[] parts = new Uri(url).Host.Split('.');
                                         if (parts.Length > 1)
@@ -716,15 +877,14 @@ namespace Secuvox_2._0
                                 catch { }
                                 try
                                 {
-                                    Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+                                  /*  Ude.CharsetDetector cdet = new Ude.CharsetDetector();
                                     cdet.Feed(strmText);
                                     cdet.DataEnd();
-
+                                  */
                                     if (url.Contains("jquery"))
                                     {
                                         sText = System.IO.File.ReadAllText(".\\jquery.js");
-                                        sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
-
+                                        //sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
                                     }
 
                                     /*      byte[] buffer = new byte[strmText.Length];
@@ -746,10 +906,12 @@ namespace Secuvox_2._0
                                         {
 
 
+                                            Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+                                            cdet.Feed(new MemoryStream(bytes));
+                                            cdet.DataEnd();
 
 
-
-                                            if (cdet.Charset != null && type != "Image" && !url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))
+                                            if (((bytes.Length>0&&cdet.Charset!=null) ||bytes.Length==0 ) && type != "Image" && !url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))
 
                                             {
 
@@ -757,10 +919,10 @@ namespace Secuvox_2._0
 
                                                 if (!sText.StartsWith("<svg "))
                                                 {
-                                                    sText.Replace("_blank", "_self");
-                                                    sText.Replace("_blank", "_top");
 
-                                                    if (!new Uri(url).Host.Contains("googe.com"))
+                                    
+
+                                                    if (!new Uri(url).Host.Contains("google"))
                                                         sText.Replace("<a ", "<a rel=\"noreferrer\" referrerpolicy=\"no-referrer\"");
 
                                                     bool found = false;
@@ -808,25 +970,31 @@ namespace Secuvox_2._0
                                                     {
                                                         try
                                                         {
-                                                            if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doHover)
+                                                            if (!Form1.pageSettings.settings.ContainsKey(host)
+                                                                || !Form1.pageSettings.settings[host].doHover)
                                                             {
                                                                 foreach (String s in toReplaceHover)
                                                                 {
                                                                     sText = ReplaceRegex("[\"'])(\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
                                                                     sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
                                                                     sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", "onload=", sText);
+                                                                        sText = ReplaceRegex("\\.(\\s*?)" + "clientYOffset", "top", sText);
+                                                                        sText = ReplaceRegex("\\.(\\s*?)" + "screenYOffset", "top", sText);
+                                                                        sText = ReplaceRegex("\\.(\\s*?)" + "offsetYOffset", "top", sText);
+                                                                        sText = ReplaceRegex("\\.(\\s*?)" + "clientYOffset", "top", sText);
+                                                                        sText = ReplaceRegex("\\.(\\s*?)" + "pageYOffset", "top", sText);
 
-                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
-                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "screenY", "", sText);
-                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "offsetY", "", sText);
-                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "", sText);
-                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "pageY", "", sText);
+                                                                     sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "top", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "screenY", "top", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "offsetY", "top", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "clientY", "top", sText);
+                                                                    sText = ReplaceRegex("\\.(\\s*?)" + "pageY", "top", sText);
                                                                 }
-                                                            }
+                                                                }
+                                                               
 
-                                                            if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doScroll)
+                                                            if (!Form1.pageSettings.settings.ContainsKey(host)||
+                                                                !Form1.pageSettings.settings[host].doScroll)
                                                             {
                                                                 foreach (String s in toReplaceScroll)
                                                                 {
@@ -834,24 +1002,29 @@ namespace Secuvox_2._0
                                                                     sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", ".onload=", sText);
                                                                     sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
 
-
-                                                                    sText = ReplaceRegex("scrollTop", "top", sText);
+                                                                        sText = ReplaceRegex("scrollTopOffset", "", sText);
+                                                                        sText = ReplaceRegex("scrollTop", "top", sText);
                                                                     sText = ReplaceRegex("pageYOffset", "top", sText);
-                                                                    sText = ReplaceRegex("scrollArea", "", sText);
-                                                                    sText = ReplaceRegex("getBoundingClientRect\\(\\)", "getPosition()", sText);
-                                                                    sText = ReplaceRegex("getClientRects\\(\\)", "getPosition()", sText);
+                                                                        sText = ReplaceRegex("scrollAreaOffset", "", sText);
+                                                                        sText = ReplaceRegex("scrollArea", "", sText);
+                                                                    sText = ReplaceRegex(".getBoundingClientRect\\(\\)", "", sText);
+                                                                    sText = ReplaceRegex(".getClientRects\\(\\)", "", sText);
 
                                                                     sText = ReplaceRegex("offsetTop", "top", sText);
                                                                     sText = ReplaceRegex("scrollY", "top", sText);
                                                                     sText = ReplaceRegex("scroll(\\s*?)[\"']\\+", "on\"+", sText);
-                                                                    sText = ReplaceRegex("scrollHeight", "top", sText);
+                                                                        sText = ReplaceRegex("scrollHeightOffset", "top", sText);
+                                                                        sText = ReplaceRegex("clientHeightOffset", "top", sText);
+                                                                        sText = ReplaceRegex("scrollHeight", "top", sText);
                                                                     sText = ReplaceRegex("clientHeight", "top", sText);
                                                                     sText = ReplaceRegex("scrollTop", "top", sText);
-                                                                    sText = ReplaceRegex("\\#scrollArea", "", sText);
+                                                                        sText = ReplaceRegex("scrollTopOffset", "top", sText);
+                                                                        sText = ReplaceRegex("\\#scrollArea", "sdfsdfdsf", sText);
+
                                                                     if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                        Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
+                                                                        Form1.pageSettings.settings[host].blockCSS)
                                                                     {
-                                                                        sText = ReplaceRegex("sticky", "", sText);
+                                                                        sText = ReplaceRegex("sticky", "fixed", sText);
                                                                         sText = ReplaceRegex("calc(\\s*?)\\(", "(", sText);
                                                                         sText = ReplaceRegex("data-scroll", "", sText);
                                                                         sText = ReplaceRegex("\\.(\\s*?)observe", "", sText);
@@ -862,12 +1035,14 @@ namespace Secuvox_2._0
                                                                 }
 
                                                             }
+                                                           
 
-                                                            if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
+                                                            if (!Form1.pageSettings.settings.ContainsKey(host)||
+                                                                !Form1.pageSettings.settings[host].doGeneric)
                                                             {
                                                                 sText = ReplaceRegex("[\"'](\\s*?)" + "on" + "(\\s*?)[\"']", "\"no\"", sText);
                                                             }
+                                                           
 
 
 
@@ -879,24 +1054,7 @@ namespace Secuvox_2._0
 
                                                         }
                                                         // sText = sText.Replace("crossorigin", "anonymous");
-                                                        if (cdet.Charset == "ASCII")
-                                                        {
-                                                            sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
-                                                        }
-                                                        else if (cdet.Charset == "windows-1252")
-                                                        {
-                                                            Encoding wind1252 = Encoding.GetEncoding(1252);
-                                                            Encoding utf8 = Encoding.UTF8;
-                                                            byte[] wind1252Bytes = wind1252.GetBytes(sText);
-                                                            byte[] utf8Bytes = Encoding.Convert(wind1252, utf8, wind1252Bytes);
-                                                            sText = Convert.ToBase64String(utf8Bytes);
-
-
-                                                        }
-                                                        else
-                                                        {
-                                                            sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
-                                                        }
+                                                       
                                                     }
 
                                                 }
@@ -955,21 +1113,102 @@ namespace Secuvox_2._0
                                     sText = Convert.ToBase64String(ret);
                                 }*/
                                 String headers = "[";
-                                foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                if (responseHeaders != null)
                                 {
+                                    
+                                    for(int i = 0; i < responseHeaders.Count; i++)
+                                    {
+                                              // if (responseHeaders.GetKey(i) .Value.Count() > 1)
+                                               {
+                                                String name = responseHeaders.GetKey(i);
+;
+                                                  
+                                                       headers = headers + "{\"name\":\"" + name + "\",\"value\":";
 
-                                    String name = header.Name;
-                                    String value = header.Value.ToString();
-                                    headers = headers + "{\"name\":\"" + name + "\",\"value\":\"" + value.Replace("\"", "\\\"") + "\"},";                                    
+                                                       if (name != "Referer" || new Uri(url).Host.Contains("google"))
+                                                       {
+                                                           headers = headers + "\"" + responseHeaders.Get(i).Replace("\"", "\\\"") + "\"";
+                                                       }
+                                                       headers = headers + "},";
+                                                  
 
-                                }
-                                headers = headers + "{\"Access-Control-Allow-Origin\":\"" + "*" + "\",\"value\":\"" + "TRUE" + "\"},";
+
+                                               }
+                                               /*else
+                                               {
+                                                   String name = header.Key;
+                                                   String value = header.Value.First().Replace("\"", "\\\"");
+                                                   headers = headers + "{\"name\":\"" + name + "\",\"value\":\"" + value + "\"},";
+                                               }*/
+                                           }
+                                    }
+                                
+                                //headers = headers + "{\"Access-Control-Allow-Origin\":\"" + "*" + "\",\"value\":\"" + "TRUE" + "\"},"
+
+                                //headers = headers + "{\"name\":\"" + "Access-Control-Allow-Origin" + "\",\"value\":\"" + new Uri(url).Host + "\"},";;
+                                // headers = headers + "{\"Access-Control-Allow-Origin\":\"" + host + "\",\"value\":\"" + "TRUE" + "\"},";
+
+                                
+
+
+                           /*           if (responseHeaders1 != null)
+                                      {
+                                        foreach (var header in responseHeaders1)
+                                        {
+                                            if (header.Value.Count() > 1)
+                                            {
+                                                String name = header.Key;
+
+                                                foreach (String value in header.Value)
+                                                {
+                                                    headers = headers + "{\"name\":\"" + name + "\",\"value\":";
+
+                                                    if (name != "Referer" || new Uri(url).Host.Contains("google.com"))
+                                                    {
+                                                        headers = headers + "\"" + value.Replace("\"", "\"") + "\"";
+                                                    }
+                                                    headers = headers + "},";
+                                                }
+                                               
+
+                                            }
+                                            else
+                                            {
+                                                String name = header.Key;
+                                                String value = header.Value.First().Replace("\"", "\\\"");
+                                                headers = headers + "{\"name\":\"" + name + "\",\"value\":\"" + value + "\"},";
+                                            }
+                                    }
+                                }*/
+
+                             //   headers = headers + "{\"name\":\"Access-Control-Allow-Origin\",\"value\":\"*\"},";
+
+                                /*   if (cdet.Charset == "ASCII")
+                                   {
+                                       sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
+                                   }
+                                   else if (cdet.Charset == "windows-1252")
+                                   {
+                                       Encoding wind1252 = Encoding.GetEncoding(1252);
+                                       Encoding utf8 = Encoding.UTF8;
+                                       byte[] wind1252Bytes = wind1252.GetBytes(sText);
+                                       byte[] utf8Bytes = Encoding.Convert(wind1252, utf8, wind1252Bytes);
+                                       sText = Convert.ToBase64String(utf8Bytes);
+
+
+                                   }
+                                   else
+                                   {*/
+                                sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
+                                //}
+
+
                                 headers = headers.Substring(0, headers.Length - 1);
-                                headers = headers + "]";
-
-
+                                if(headers.Length > 1)
+                                    headers = headers + "]";
+                                //headers = Convert.ToBase64String(Encoding.UTF8.GetBytes(headers));
                                 // string payload1 = "{\"requestId\":\"" + id.Split('-')[id.Split('-').Length-1] + "\",\"responseCode\":200,\"responseHeaders\":" + header + ",\"body\":\"" + bodyResponse + "\"}";
-                                string payload1 = "{\"requestId\":\"" + id + "\",\"responseCode\":200,\"body\":\"" + sText + "\",\"headers\":" + headers + "}";
+                                string payload1 = "{\"requestId\":\"" + id + "\",\"responseCode\":"+statusCode+",\"body\":\"" + sText + "\",\"responseHeaders\":" + headers + "}";
 
                                 try
                                 {
@@ -977,7 +1216,7 @@ namespace Secuvox_2._0
                                     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.fulfillRequest", payload1);
                                     return;
                                 }
-                                catch
+                                catch(Exception e2)
                                 {
                                     try
                                     {
@@ -1042,7 +1281,8 @@ namespace Secuvox_2._0
             {
                 try
                 {
-                    Regex rg = new Regex(replace);
+                    //Regex rg = new Regex("[A-Za-z]*"+replace+ "[A-Za-z]*");
+                    Regex rg = new Regex( replace);
                     MatchCollection matchedAuthors = rg.Matches(page);
                     foreach (Match match in matchedAuthors)
                     {                     
