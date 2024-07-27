@@ -19,7 +19,7 @@ First of all, some webpages may display badly. That's due to the nature of webde
 To solve this, you can select specifically which profiling features you want to block per webpage.<br><br>
 Second of all, social media can't be blocked. That's due to the nature of it being relying on endless scrolling. As soon as a page relies on endless scrolling, it is dependant of monitoring scroll behaviour.<br>
 Thus, the blocking features are disabled for most social media pages.<br><br>
-And finally, it is not possible to log in to webpages. Log ins would break privacy, so they are not possible.<br>
+And finally, it is not possible to log in to webpages. Logins would break privacy, so they are not possible.<br>
 <br>
 <b><font size="4">FAQ:</font></b><br>
 =============================================<br>
