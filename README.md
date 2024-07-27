@@ -48,23 +48,23 @@ The engine does get updated by Windows update. Thus, Secuvox will not be obsolet
 ("Settings" referes to the gear icon at the left of the URL field)<br>
 Please note that disabling any of the features may break the privacy protection.<br>
 <br>
+<b>Hovering over the menu items of a webpage does not open the submenu:</b><br>
+Disable Settings->Block Hover<br>
+<br>
+<b>A webpages seems to be cut at the end, not allowing me to scroll further:</b><br>
+Disable Settings->Block Scroll<br>
+<br>
 <b>Pictures are not being displayed:</b><br>
 Disable Settings->Block Scroll->CSS Scroll Block<br>
 <br>
 <b>A webpage blocks me completely from displaying it:</b><br>
 Disable Settins->Fake Google Bot<br>
-If the page does still block you, you will most likely have to clear browsing data after disabling Google Bot and reload the page.<br>
 <br>
 <b>A webpage does not open due to an adblocker having been installed:</b><br>
-Disable Settings->Extra Adblocker<br>
+Disable Settings->Addons<br>
 <br>
-<b>A webpages seems to be cut at the end, not allowing me to scroll further:</b><br>
-Disable Settings->Block Scroll<br>
+If the page does still block you, you will most likely have to clear browsing data after disabling Google Bot and reload the page.<br>
 <br>
-<b>Hovering over the menu items of a webpage does not open the submenu:</b><br>
-Disable Settings->Block Hover<br>
-<br>
-
 <b><font size="4">Credits:</font></b><br>
 =============================================<br>
 <b>Addons implemented by Secuvox:</b><br>
