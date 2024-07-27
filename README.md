@@ -15,8 +15,8 @@ Referer data (that's information about what webpage has led you to another webpa
 Sevuvox does have two kinds of adblockers implemented: UblockOrigin as well as a host based filter list to provide even more privacy!<br>
 <br>
 <b>All this comes with a small cost, as allways in life:</b><br>
-First of all, some webpages may display badly. That's due to the nature of webdesign, and which techniques ad companies do use.<br><br>
-To solve this, you can select specifically which profiling features you want to block per webpage.<br>
+First of all, some webpages may display badly. That's due to the nature of webdesign, and which techniques ad companies do use.<br>
+To solve this, you can select specifically which profiling features you want to block per webpage.<br><br>
 Second of all, social media can't be blocked. That's due to the nature of it being relying on endless scrolling. As soon as a page relies on endless scrolling, it is dependant of monitoring scroll behaviour.<br>
 Thus, the blocking features are disabled for most social media pages.<br><br>
 And finally, it is not possible to log in to webpages. Log ins would break privacy, so they are not possible.<br>
