@@ -1,7 +1,7 @@
 <img src="secuvox.png"></img><br><br>
 <b><font size="4">Secuvox Browser is a webbrower on steroids!</font></b><br>
 =============================================<br>
-Secuvox blocks functions which ad networks do use to track your surfing behaviour and to create profiles of your person.<br>
+<b>Secuvox blocks functions which ad networks do use to track your surfing behaviour and to create profiles of your person.</b><br>
 Did you ever wonder why those ads do know your preferences? You scroll to an article in the news, read it - and bam, you get contextual ads.<br>
 They can't read your mind, if you're worried about that. All they do is to monitor your scrolling- and mouse movement behaviour.<br>
 <br>
@@ -14,11 +14,12 @@ Referer data (that's information about what webpage has led you to another webpa
 <br>
 Sevuvox does have two kinds of adblockers implemented: UblockOrigin as well as a host based filter list to provide even more privacy!<br>
 <br>
-All this comes with a small cost, as allways in life:<br>
-First of all, some webpages may be display badly. That's due to the nature of webdesign, and which techniques ad companies do use.<br>
-To solve this, you can select specifically which tracking features you want to block per webpage.<br>
-Second of all, second media can't be blocked. That's due to the nature of it being relying on endless scrolling. As soon as a page relies on endless scrolling, it is dependant of monitoring scroll behaviour.<br>
-Thus, the blocking features are disabled for most social media pages.<br>
+<b>All this comes with a small cost, as allways in life:</b><br>
+First of all, some webpages may display badly. That's due to the nature of webdesign, and which techniques ad companies do use.<br><br>
+To solve this, you can select specifically which profiling features you want to block per webpage.<br>
+Second of all, social media can't be blocked. That's due to the nature of it being relying on endless scrolling. As soon as a page relies on endless scrolling, it is dependant of monitoring scroll behaviour.<br>
+Thus, the blocking features are disabled for most social media pages.<br><br>
+And finally, it is not possible to log in to webpages. Log ins would break privacy, so they are not possible.<br>
 <br>
 <b><font size="4">FAQ:</font></b><br>
 =============================================<br>
