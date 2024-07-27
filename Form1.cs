@@ -473,7 +473,9 @@ namespace Secuvox_2._0
                     if(Form1.instance.tabControl.SelectedTab==((CustomTabControl.CustomTabPage) ((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent))
                     {
                         Form1.instance.toolStripTextBox1.Text = ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Source;
-                    
+                      
+
+
                     }
                     ((CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).Text = ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.DocumentTitle;
                  
@@ -550,7 +552,7 @@ namespace Secuvox_2._0
                         Form1.instance.optOutThisPageToolStripMenuItem.Checked = true;
                     else
                         Form1.instance.optOutThisPageToolStripMenuItem.Checked = false;
-
+                    Form1.instance.tabControl.Refresh();
                 }
                 public static string HtmlEncode(string text)
                 {
