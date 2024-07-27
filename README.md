@@ -9,7 +9,7 @@ This is where Secuvox comes into play. It keeps ad networks from being able to p
 You can select what kinds of information to block per page: Mouse movement, scrolling, or generic events.<br>
 <br>
 In adition, Secuvox pretends to be the Google bot. Thus, many cookie banners and tracking function will vanish.<br>
-It does also send "Do not track" headers and block ads as well as most cookie banners.<br>
+It does also send "Do not track" headers and blocks ads as well as most cookie banners.<br>
 Referer data (that's information about what webpage has led you to another webpage) is also being blocked.<br>
 <br>
 Sevuvox does have two adblockers implemented: UblockOrigin as well as a host based filter list to provide even more privacy!<br>
