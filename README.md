@@ -6,7 +6,7 @@ Did you ever wonder why those ads do know your preferences? You scroll to an art
 They can't read your mind, if you're worried about that. All they do is to monitor your scrolling- and mouse movement behaviour.<br>
 <br>
 This is where Secuvox comes into play. It keeps ad networks from being able to programatically track your surfing behaviour.<br>
-You can select what kinds of information to block per page: Mouse movement, scrolling, or generic events.<br>
+You can select what kind of information to block per page: Mouse movement, scrolling, or generic events.<br>
 <br>
 In adition, Secuvox pretends to be the Google bot. Thus, many cookie banners and tracking function will vanish.<br>
 It does also send "Do not track" headers and blocks ads as well as most cookie banners.<br>
