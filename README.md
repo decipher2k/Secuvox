@@ -12,7 +12,7 @@ In adition, Secuvox pretends to be the Google bot. Thus, many cookie banners and
 It does also send "Do not track" headers and block ads as well as most cookie banners.<br>
 Referer data (that's information about what webpage has led you to another webpage) is also being blocked.<br>
 <br>
-Sevuvox does have two kinds of adblockers implemented: UblockOrigin as well as a host based filter list to provide even more privacy!<br>
+Sevuvox does have two adblockers implemented: UblockOrigin as well as a host based filter list to provide even more privacy!<br>
 <br>
 <b>All this comes with a small cost, as allways in life:</b><br>
 First of all, some webpages may display badly. That's due to the nature of webdesign, and which techniques ad companies do use.<br>
