@@ -45,7 +45,7 @@ The engine does get updated by Windows update. Thus, Secuvox will not be obsolet
 <br>
 <b><font size="4">Most common errors:</font></b><br>
 =============================================<br>
-("Settings" referes to the gear icon right of the URL field)<br>
+("Settings" referes to the gear icon at the left of the URL field)<br>
 Please note that disabling any of the features may break the privacy protection.<br>
 <br>
 <b>Pictures are not being displayed:</b><br>
