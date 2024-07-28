@@ -259,6 +259,9 @@ namespace Secuvox_2._0
                 private static long maxId = 0;
                 public Microsoft.Web.WebView2.WinForms.WebView2 webView2;
                 WebView2DevToolsContext devToolsContext;
+
+                bool loaded = false;
+
                 public CustomTabPage()
                 {
                     this.Text = "https://google.com";
@@ -325,8 +328,10 @@ namespace Secuvox_2._0
 "onscrolled"
                      };
           
-                private void WebView21_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
+                private async void WebView21_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
                 {
+                    loaded = false;
+                   
                     CurrentUri = e.Uri.ToString();
                     //pictureBox1.Visible = false;
                     // webView21.Visible = false;
@@ -342,12 +347,13 @@ namespace Secuvox_2._0
                     {
                         try
                         {
-                            await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+                            await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync();
                         } catch { } 
-                        devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
+                        //devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
+                        
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Network.enable", "{}");
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.enable", "{\"patterns\":[{\"urlPattern\":\"*\"}]}");
-
+                        
 
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.GetDevToolsProtocolEventReceiver("Fetch.requestPaused").DevToolsProtocolEventReceived += WebView2_FetchRequestPaused;
 
@@ -400,7 +406,7 @@ namespace Secuvox_2._0
                     //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0";
                     ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsGeneralAutofillEnabled = false;
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
-                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Balanced;
+                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.PreferredTrackingPreventionLevel = CoreWebView2TrackingPreventionLevel.Strict;
 
                         if (Form1.pageSettings.settings.ContainsKey(host))
                         {
@@ -470,6 +476,16 @@ namespace Secuvox_2._0
 
                 async void CustomTabPage_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
                 {
+                    /*Form1.instance.toolStripButton1.Enabled = true;
+                    Form1.instance.toolStripButton2.Enabled = true;
+                    Form1.instance.toolStripButton3.Enabled = true;
+                    Form1.instance.toolStripButton4.Enabled = true;
+                    Form1.instance.toolStripButton5.Enabled = true;*/
+                    if (!loaded)
+                    {                        
+                        Form1.instance.startNavigate();
+                        return;
+                    }
                     if(Form1.instance.tabControl.SelectedTab==((CustomTabControl.CustomTabPage) ((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent))
                     {
                         Form1.instance.toolStripTextBox1.Text = ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Source;
@@ -566,8 +582,10 @@ namespace Secuvox_2._0
                     return result;
 
                 }
+                public bool called = false;
                 async void WebView2_FetchRequestPaused(object sender, CoreWebView2DevToolsProtocolEventReceivedEventArgs e)
                 {
+                    loaded= true;   
                     var doc = JsonDocument.Parse(e.ParameterObjectAsJson);
                     var id = doc.RootElement.GetProperty("requestId").ToString();
                     string type = doc.RootElement.GetProperty("resourceType").ToString();
@@ -681,9 +699,13 @@ namespace Secuvox_2._0
                                         }
                                         httpreq.Headers.Add("DNT", "1");
                                         var client = new HttpClient();
-                                        client.Timeout = TimeSpan.FromMilliseconds(200);
+                                        client.Timeout = TimeSpan.FromMilliseconds(1000);
                                         var response = await client.SendAsync(httpreq);
-
+                                        if(!response.IsSuccessStatusCode)
+                                        {
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            return;
+                                        }
                                         sText = await response.Content.ReadAsStringAsync();
                                         strmText = await response.Content.ReadAsStreamAsync();
                                     }
@@ -714,7 +736,11 @@ namespace Secuvox_2._0
                                         var client = new HttpClient();
                                         client.Timeout = TimeSpan.FromMilliseconds(200);
                                         var response = await client.SendAsync(httpreq);
-
+                                        if (!response.IsSuccessStatusCode)
+                                        {
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            return;
+                                        }
                                         sText = await response.Content.ReadAsStringAsync();
                                         strmText = await response.Content.ReadAsStreamAsync();
                                     }
@@ -1139,16 +1165,19 @@ namespace Secuvox_2._0
             }
         }
 
-
+        
         public async void startNavigate()
         {
+        
+        
+            ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).called = false;
             if (toolStripTextBox1.Text == "")
                 toolStripTextBox1.Text = "https://google.com";
             if (!toolStripTextBox1.Text.StartsWith("http"))
                 toolStripTextBox1.Text = "https://" + toolStripTextBox1.Text;
             try
             {
-                await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+                await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync();
                 String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
                 String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
                 if (host.Split('.').Length > 1)
@@ -1208,7 +1237,7 @@ namespace Secuvox_2._0
                 {
                     ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://google.com/?q=" + toolStripTextBox1.Text);
                 }
-                Form1.instance.tabControl.SelectedTab.Text= toolStripTextBox1.Text;
+                Form1.instance.tabControl.SelectedTab.Text = toolStripTextBox1.Text;
                 Form1.instance.tabControl.Refresh();
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Focus();
             } catch { ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://google.com/?q=" + toolStripTextBox1.Text); }
@@ -1275,8 +1304,9 @@ namespace Secuvox_2._0
 
         private async void toolStripButton2_Click(object sender, EventArgs e)
         {
-            await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
-            ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
+            //await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+            //((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
+            startNavigate();
         }
 
         private void toolStripTextBox1_Click(object sender, EventArgs e)
