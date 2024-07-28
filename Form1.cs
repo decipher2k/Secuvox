@@ -681,8 +681,13 @@ namespace Secuvox_2._0
                                         }
                                         httpreq.Headers.Add("DNT", "1");
                                         var client = new HttpClient();
-                                        client.Timeout = TimeSpan.FromMilliseconds(200);
+                                        client.Timeout = TimeSpan.FromMilliseconds(1000);
                                         var response = await client.SendAsync(httpreq);
+                                        if (!response.IsSuccessStatusCode)
+                                        {
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            return;
+                                        }
 
                                         sText = await response.Content.ReadAsStringAsync();
                                         strmText = await response.Content.ReadAsStreamAsync();
@@ -712,8 +717,13 @@ namespace Secuvox_2._0
                                         httpreq.Headers.Add("DNT", "1");
 
                                         var client = new HttpClient();
-                                        client.Timeout = TimeSpan.FromMilliseconds(200);
+                                        client.Timeout = TimeSpan.FromMilliseconds(1000);
                                         var response = await client.SendAsync(httpreq);
+                                        if (!response.IsSuccessStatusCode)
+                                        {
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            return;
+                                        }
 
                                         sText = await response.Content.ReadAsStringAsync();
                                         strmText = await response.Content.ReadAsStreamAsync();
