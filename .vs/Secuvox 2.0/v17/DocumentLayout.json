@@ -3,11 +3,11 @@
   "WorkspaceRootPath": "D:\\Secuvox\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|d:\\secuvox\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|d:\\secuvox\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -29,24 +29,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "D:\\Secuvox\\Form1.cs",
-              "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "D:\\Secuvox\\Form1.cs",
-              "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAANECAAAAAAAAAAAkwOYCAAApAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-22T07:44:54.885Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -59,6 +46,19 @@
               "ViewState": "AQIAABIAAAAAAAAAAAAAABIAAABWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-27T12:08:39.711Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "D:\\Secuvox\\Form1.cs",
+              "RelativeDocumentMoniker": "Form1.cs",
+              "ToolTip": "D:\\Secuvox\\Form1.cs",
+              "RelativeToolTip": "Form1.cs",
+              "ViewState": "AQIAABMCAAAAAAAAAAArwCkCAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-22T07:44:54.885Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -93,8 +93,7 @@
               "RelativeToolTip": "Form1.Designer.cs",
               "ViewState": "AQIAABYBAAAAAAAAAAArwCsBAABfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-24T01:40:09.428Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-24T01:40:09.428Z"
             }
           ]
         }
