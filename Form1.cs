@@ -503,6 +503,8 @@ namespace Secuvox_2._0
                                 CustomTabControl.CustomTabPage tabPage = (CustomTabControl.CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent;
                                 ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(tabPage);
                                 tabPage.Dispose();
+                                if (((CustomTabControl)Form1.instance.tabControl).TabPages.Count == 0)
+                                    Form1.instance.Close();
                             }
                             if (args.WebMessageAsJson.Contains("PressedT"))
                             {
@@ -1444,6 +1446,8 @@ namespace Secuvox_2._0
                     {
                         ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(tabPage);
                         tabPage.Dispose();
+                        if (((CustomTabControl)Form1.instance.tabControl).TabPages.Count == 0)
+                            this.Close();
                     }
                 }
                 else if (e.Control && e.KeyCode == Keys.N)
@@ -1561,6 +1565,8 @@ namespace Secuvox_2._0
             TabPage page = ((CustomTabControl)Form1.instance.tabControl).SelectedTab;
             ((CustomTabControl)Form1.instance.tabControl).TabPages.Remove(page);
             page.Dispose();
+            if (((CustomTabControl)Form1.instance.tabControl).TabPages.Count == 0)
+                Form1.instance.Close();
         }
 
         private void toolStripButton5_Click(object sender, EventArgs e)
