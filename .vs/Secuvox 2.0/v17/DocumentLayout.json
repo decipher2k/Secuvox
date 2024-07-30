@@ -44,7 +44,7 @@
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "D:\\Secuvox\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAAM4AAAAAAAAAAADgv+QAAAAzAAAA",
+              "ViewState": "AQIAAAcDAAAAAAAAAAAswCADAAA8AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-22T07:44:54.885Z",
               "EditorCaption": ""
@@ -70,7 +70,8 @@
               "ToolTip": "D:\\Secuvox\\Form1.resx",
               "RelativeToolTip": "Form1.resx",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2024-07-30T02:33:24.773Z"
+              "WhenOpened": "2024-07-30T02:33:24.773Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -92,9 +93,10 @@
               "RelativeDocumentMoniker": "Form1.Designer.cs",
               "ToolTip": "D:\\Secuvox\\Form1.Designer.cs",
               "RelativeToolTip": "Form1.Designer.cs",
-              "ViewState": "AQIAABYAAAAAAAAAAAAAABYAAAAIAAAA",
+              "ViewState": "AQIAAAMAAAAAAAAAAAArwFIBAAAvAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-24T01:40:09.428Z"
+              "WhenOpened": "2024-03-24T01:40:09.428Z",
+              "EditorCaption": ""
             }
           ]
         }
