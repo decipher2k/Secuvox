@@ -391,10 +391,13 @@ namespace Secuvox_2._0
                                 {
                                     if (Form1.pageSettings.settings[host].googleBot)
                                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                                    else
+                                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Secuvox/0.3)";
                                 }
                                 else
                                 {
-                                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+                                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Secuvox/0.3)";
+                                    //   ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
                                 }
                             }
                             catch (Exception ex)
@@ -1311,7 +1314,7 @@ namespace Secuvox_2._0
 
         private void toolStripTextBox1_Click(object sender, EventArgs e)
         {
-
+            toolStripTextBox1.SelectAll();
         }
 
         private void toolStripTextBox1_KeyPress(object sender, KeyPressEventArgs e)

@@ -152,9 +152,7 @@
             // 
             // fakeGoogleBotToolStripMenuItem
             // 
-            this.fakeGoogleBotToolStripMenuItem.Checked = true;
             this.fakeGoogleBotToolStripMenuItem.CheckOnClick = true;
-            this.fakeGoogleBotToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.fakeGoogleBotToolStripMenuItem.Name = "fakeGoogleBotToolStripMenuItem";
             this.fakeGoogleBotToolStripMenuItem.Size = new System.Drawing.Size(368, 44);
             this.fakeGoogleBotToolStripMenuItem.Text = "Fake Google Bot";
@@ -199,7 +197,7 @@
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 50);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripButton1
             // 
@@ -207,7 +205,7 @@
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(46, 44);
+            this.toolStripButton1.Size = new System.Drawing.Size(46, 33);
             this.toolStripButton1.Text = "toolStripButton1";
             this.toolStripButton1.ToolTipText = "Back";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
@@ -218,7 +216,7 @@
             this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
             this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(46, 44);
+            this.toolStripButton3.Size = new System.Drawing.Size(46, 33);
             this.toolStripButton3.Text = "toolStripButton3";
             this.toolStripButton3.ToolTipText = "Forward";
             this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
@@ -226,7 +224,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 50);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripButton2
             // 
@@ -234,7 +232,7 @@
             this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
             this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(46, 44);
+            this.toolStripButton2.Size = new System.Drawing.Size(46, 33);
             this.toolStripButton2.Text = "toolStripButton2";
             this.toolStripButton2.ToolTipText = "Reload";
             this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
@@ -254,7 +252,7 @@
             this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(46, 44);
+            this.toolStripButton4.Size = new System.Drawing.Size(46, 33);
             this.toolStripButton4.Text = "toolStripButton4";
             this.toolStripButton4.ToolTipText = "Open URL";
             this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
@@ -263,7 +261,7 @@
             // 
             this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(70, 0, 0, 0);
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 50);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
             // 
             // toolStripButton5
             // 
@@ -271,7 +269,7 @@
             this.toolStripButton5.Image = global::Secuvox_2._0.Properties.Resources.question;
             this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(46, 44);
+            this.toolStripButton5.Size = new System.Drawing.Size(46, 33);
             this.toolStripButton5.ToolTipText = "Help";
             this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
             // 
