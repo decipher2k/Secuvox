@@ -225,6 +225,8 @@ namespace Secuvox_2._0
                     {
 
                         this.TabPages.RemoveAt(idx);
+                        if(this.TabPages.Count==0)
+                            Form1.instance.Close();
                     }
                 }
             }
