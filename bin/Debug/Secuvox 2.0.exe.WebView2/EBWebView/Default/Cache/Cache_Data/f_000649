@@ -1,0 +1,124 @@
+diff name:ublock-annoyances lines:3 checksum:3975a48eda
+d4 1
+a4 1
+! Diff-Path: ../patches/2024.7.29.1401.patch#ublock-annoyances
+diff name:ublock-badware lines:3 checksum:abfa5b0423
+d4 1
+a4 1
+! Diff-Path: ../patches/2024.7.29.1401.patch#ublock-badware
+diff name:ublock-filters lines:66 checksum:1bffebbae1
+d3 2
+a4 2
+! Last modified: Mon, 29 Jul 2024 20:15:12 +0000
+! Diff-Path: ../patches/2024.7.29.1401.patch#ublock-filters
+a10358 1
+al.com,cleveland.com,mlive.com,nj.com,oregonlive.com##+js(rmnt, script, admiral)
+d10362 8
+a10369 8
+@@*$ghide,domain=gplinks.*|techreviewhere.com|djrkmusicjaunpur.in|cmsarkariyojana.com|apkeclipse.com|decidewhy.com|odiaalbumsong.com|insurelist.online|recipenames.com|filmfliqz.com|morestate.pro|puresports.pro|funkeykida.com|oriyaremix.com|freegadgets24.com|odisharemix.link|rajgarhsamachar.com|djrachit.com|120fpsconfig.com|sololevelinghindi.online|pharmastudyaid.com|sarkisozleri.pro|jobsparky.com|techglobo.com|mytastyrecipe.in|tmtaz.com|syllabusdownload.com|babamp3.in|djbarmanmusic.com|dheerajrock.com|bgmiipadview.com|bmkmafiya.com
+@@*$script,xhr,to=googlesyndication.com|doubleclick.net,from=techreviewhere.com|djrkmusicjaunpur.in|cmsarkariyojana.com|apkeclipse.com|decidewhy.com|odiaalbumsong.com|insurelist.online|recipenames.com|filmfliqz.com|morestate.pro|puresports.pro|funkeykida.com|oriyaremix.com|freegadgets24.com|odisharemix.link|rajgarhsamachar.com|djrachit.com|120fpsconfig.com|sololevelinghindi.online|pharmastudyaid.com|sarkisozleri.pro|jobsparky.com|techglobo.com|mytastyrecipe.in|tmtaz.com|syllabusdownload.com|babamp3.in|djbarmanmusic.com|dheerajrock.com|bgmiipadview.com|bmkmafiya.com
+@@||gplinks.in/track/$script,xhr,domain=gplinks.*|techreviewhere.com|djrkmusicjaunpur.in|cmsarkariyojana.com|apkeclipse.com|decidewhy.com|odiaalbumsong.com|insurelist.online|recipenames.com|filmfliqz.com|morestate.pro|puresports.pro|funkeykida.com|oriyaremix.com|freegadgets24.com|odisharemix.link|rajgarhsamachar.com|djrachit.com|120fpsconfig.com|sololevelinghindi.online|pharmastudyaid.com|sarkisozleri.pro|jobsparky.com|techglobo.com|mytastyrecipe.in|tmtaz.com|syllabusdownload.com|babamp3.in|djbarmanmusic.com|dheerajrock.com|bgmiipadview.com|bmkmafiya.com
+bmkmafiya.com,bgmiipadview.com,dheerajrock.com,djbarmanmusic.com,babamp3.in,syllabusdownload.com,tmtaz.com,mytastyrecipe.in,techglobo.com,jobsparky.com,sarkisozleri.pro,pharmastudyaid.com,sololevelinghindi.online,120fpsconfig.com,djrachit.com,rajgarhsamachar.com,odisharemix.link,freegadgets24.com,oriyaremix.com,funkeykida.com,puresports.pro,morestate.pro,filmfliqz.com,recipenames.com,insurelist.online,odiaalbumsong.com,decidewhy.com,apkeclipse.com,cmsarkariyojana.com,djrkmusicjaunpur.in,techreviewhere.com##center:others()
+bmkmafiya.com,bgmiipadview.com,dheerajrock.com,djbarmanmusic.com,babamp3.in,syllabusdownload.com,tmtaz.com,mytastyrecipe.in,techglobo.com,jobsparky.com,sarkisozleri.pro,pharmastudyaid.com,sololevelinghindi.online,120fpsconfig.com,djrachit.com,rajgarhsamachar.com,odisharemix.link,freegadgets24.com,oriyaremix.com,funkeykida.com,puresports.pro,morestate.pro,filmfliqz.com,recipenames.com,insurelist.online,odiaalbumsong.com,decidewhy.com,apkeclipse.com,cmsarkariyojana.com,djrkmusicjaunpur.in,techreviewhere.com###SmileyBanner:remove()
+bmkmafiya.com,bgmiipadview.com,dheerajrock.com,djbarmanmusic.com,babamp3.in,syllabusdownload.com,tmtaz.com,mytastyrecipe.in,techglobo.com,jobsparky.com,sarkisozleri.pro,pharmastudyaid.com,sololevelinghindi.online,120fpsconfig.com,djrachit.com,rajgarhsamachar.com,odisharemix.link,freegadgets24.com,oriyaremix.com,funkeykida.com,puresports.pro,morestate.pro,filmfliqz.com,recipenames.com,insurelist.online,odiaalbumsong.com,decidewhy.com,apkeclipse.com,cmsarkariyojana.com,djrkmusicjaunpur.in,techreviewhere.com##+js(aopw, AdBDetected)
+bmkmafiya.com,bgmiipadview.com,dheerajrock.com,djbarmanmusic.com,babamp3.in,syllabusdownload.com,tmtaz.com,mytastyrecipe.in,techglobo.com,jobsparky.com,sarkisozleri.pro,pharmastudyaid.com,sololevelinghindi.online,120fpsconfig.com,djrachit.com,rajgarhsamachar.com,odisharemix.link,freegadgets24.com,oriyaremix.com,funkeykida.com,puresports.pro,morestate.pro,filmfliqz.com,recipenames.com,insurelist.online,odiaalbumsong.com,decidewhy.com,apkeclipse.com,cmsarkariyojana.com,djrkmusicjaunpur.in,techreviewhere.com##+js(set, count, 0)
+bmkmafiya.com,bgmiipadview.com,dheerajrock.com,djbarmanmusic.com,babamp3.in,syllabusdownload.com,tmtaz.com,mytastyrecipe.in,techglobo.com,jobsparky.com,sarkisozleri.pro,pharmastudyaid.com,sololevelinghindi.online,120fpsconfig.com,djrachit.com,rajgarhsamachar.com,odisharemix.link,freegadgets24.com,oriyaremix.com,funkeykida.com,puresports.pro,morestate.pro,filmfliqz.com,recipenames.com,insurelist.online,odiaalbumsong.com,decidewhy.com,apkeclipse.com,cmsarkariyojana.com,djrkmusicjaunpur.in,techreviewhere.com##[id*="iframe"], [id*="gpt_unit"], [id*="div-gpt-"]:style(height:0.0001px !important;)
+d19230 7
+a19236 7
+||07c225f3.online^$~css,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com
+||content-loader.com^$~css,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com
+||css-load.com^$~css,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com
+||html-load.com^$~css,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com
+||img-load.com^$~css,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com
+@@/loader.min.js$xhr,script,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|etnewskorea.com|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com
+/loader.min.js$xhr,script,domain=loawa.com|ygosu.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|dogdrip.net|worldhistory.org|bamgosu.site|thestar.co.uk|yorkshirepost.co.uk|raenonx.cc|indiatimes.com,replace=/;return [a-z0-9]{1,2}\(\)\[.*?\]\(\(function\([a-z0-9]{1,2}\){for\(var/;return; return whocare()[nobodycare(111)]((function(){for(var/g
+d19240 10
+a19249 11
+*$doc,csp=script-src-attr 'none',domain=flatpanelshd.com|sportsrec.com|badmouth1.com|picrew.me|lamire.jp
+||html-load.com/loader.min.js$domain=lamire.jp|picrew.me|mydaily.co.kr|badmouth1.com|taxguru.in|sportsrec.com|reportera.co.kr|fourfourtwo.co.kr|flatpanelshd.com|wfmz.com|videogamemods.com|thestar.co.uk|yorkshirepost.co.uk|carscoops.com|dziennik.pl|eurointegration.com.ua|tweaksforgeeks.com
+mydaily.co.kr,taxguru.in,reportera.co.kr,fourfourtwo.co.kr,wfmz.com,videogamemods.com,thestar.co.uk,yorkshirepost.co.uk,carscoops.com,dziennik.pl,eurointegration.com.ua,tweaksforgeeks.com##script[onerror*="error-report.com"]:watch-attr(onerror):remove-attr(onerror)
+loawa.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,inven.co.kr,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,etnews.com,iusm.co.kr,dogdrip.net,worldhistory.org,text-compare.com,bamgosu.site,etnewskorea.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,gadgets360.com,logicieleducatif.fr,motorbikecatalog.com,jjang0u.com,raenonx.cc##+js(no-fetch-if, /ad\.doubleclick\.net|static\.dable\.io/)
+loawa.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,inven.co.kr,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,etnews.com,iusm.co.kr,dogdrip.net,worldhistory.org,text-compare.com,bamgosu.site,etnewskorea.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,gadgets360.com,logicieleducatif.fr,motorbikecatalog.com,jjang0u.com,raenonx.cc##+js(no-fetch-if, adsbygoogle, war:googlesyndication_adsbygoogle.js)
+@@||static.criteo.net/js/ld/publishertag.prebid.js|$xhr,domain=loawa.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|etnews.com|iusm.co.kr|dogdrip.net|worldhistory.org|text-compare.com|bamgosu.site|etnewskorea.com|automobile-catalog.com|maketecheasier.com|thesaurus.net|gadgets360.com|logicieleducatif.fr|motorbikecatalog.com|jjang0u.com|raenonx.cc
+@@||securepubads.g.doubleclick.net/tag/js/gpt.js$script,domain=loawa.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|etnews.com|iusm.co.kr|dogdrip.net|worldhistory.org|text-compare.com|bamgosu.site|etnewskorea.com|automobile-catalog.com|maketecheasier.com|thesaurus.net|gadgets360.com|logicieleducatif.fr|motorbikecatalog.com|jjang0u.com|raenonx.cc
+*$frame,redirect-rule=noopframe,domain=loawa.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|etnews.com|iusm.co.kr|dogdrip.net|worldhistory.org|text-compare.com|bamgosu.site|etnewskorea.com|automobile-catalog.com|maketecheasier.com|thesaurus.net|gadgets360.com|logicieleducatif.fr|motorbikecatalog.com|jjang0u.com|raenonx.cc
+*$script,xhr,redirect-rule=noopjs,domain=loawa.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|etnews.com|iusm.co.kr|dogdrip.net|worldhistory.org|text-compare.com|bamgosu.site|etnewskorea.com|maketecheasier.com|thesaurus.net|gadgets360.com|logicieleducatif.fr|motorbikecatalog.com|jjang0u.com|raenonx.cc
+*$image,redirect-rule=1x1.gif,domain=loawa.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|etnews.com|iusm.co.kr|dogdrip.net|worldhistory.org|bamgosu.site|etnewskorea.com|automobile-catalog.com|maketecheasier.com|thesaurus.net|gadgets360.com|logicieleducatif.fr|motorbikecatalog.com|jjang0u.com|raenonx.cc
+@@*$ghide,domain=loawa.com|sportalkorea.com|edaily.co.kr|economist.co.kr|etoday.co.kr|isplus.com|inven.co.kr|honkailab.com|genshinlab.com|thestockmarketwatch.com|thephoblographer.com|issuya.com|etnews.com|iusm.co.kr|dogdrip.net|worldhistory.org|text-compare.com|bamgosu.site|etnewskorea.com|automobile-catalog.com|maketecheasier.com|thesaurus.net|gadgets360.com|logicieleducatif.fr|motorbikecatalog.com|jjang0u.com|raenonx.cc
+d19277 1
+a19277 1
+||07c225f3.online^$font,ping,media
+d19279 1
+a19279 1
+||content-loader.com^$font,ping,media
+d19281 1
+a19281 1
+||css-load.com^$font,ping,media
+d19283 1
+a19283 1
+||img-load.com^$font,ping,media
+d19285 1
+a19285 1
+||html-load.com^$font,ping,media
+d19287 1
+a19287 1
+||html-load.cc^$font,ping,media
+a19293 2
+hometownstation.com##+js(rpnt, script, window.dataLayer =, '/*start*/(function(){let link=document.createElement("link");link.rel="stylesheet";link.href="/wp-content/themes/hts_v2/style.css";document.head.appendChild(link)})();document.currentScript.textContent=document.currentScript.textContent.replace(/\/\*start\*\/(.*)\/\*end\*\//g,"");/*end*/window.dataLayer =')
+||07c225f3.online^$domain=hometownstation.com
+d19296 2
+a19297 2
+interfootball.co.kr,a-ha.io,cboard.net,jjang0u.com,joongdo.co.kr,viva100.com,thephoblographer.com,gamingdeputy.com,thesaurus.net,alle-tests.nl,maketecheasier.com,automobile-catalog.com,allthekingz.com,motorbikecatalog.com,tweaksforgeeks.com##^script:has-text(KCgpPT57bGV0IGU)
+worldhistory.org,etnews.com,iusm.co.kr,lamire.jp,picrew.me,text-compare.com,etnewskorea.com,gadgets360.com,mydaily.co.kr,ndtvprofit.com,badmouth1.com,logicieleducatif.fr,taxguru.in,sportsrec.com,reportera.co.kr,tweaksforgeeks.com,fourfourtwo.co.kr,flatpanelshd.com,wfmz.com,videogamemods.com,dziennik.pl,eurointegration.com.ua##^script[onload*="error-report.com"]
+d19301 1
+a19301 1
+interfootball.co.kr,a-ha.io,cboard.net,jjang0u.com,joongdo.co.kr,viva100.com,thephoblographer.com,gamingdeputy.com,thesaurus.net,alle-tests.nl,maketecheasier.com,automobile-catalog.com,allthekingz.com,motorbikecatalog.com,tweaksforgeeks.com##+js(rmnt, script, KCgpPT57bGV0IGU)
+diff name:ublock-privacy lines:11 checksum:050f026020
+d3 2
+a4 2
+! Last modified: Mon, 29 Jul 2024 16:37:50 +0000
+! Diff-Path: ../patches/2024.7.29.1401.patch#ublock-privacy
+d122 5
+a126 5
+loawa.com,ygosu.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,hometownstation.com,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,worldhistory.org,etnews.com,iusm.co.kr,dogdrip.net,etoland.co.kr,picrew.me,text-compare.com,fntimes.com,javatpoint.com,lamire.jp,bamgosu.site,etnewskorea.com,allthekingz.com,gadgets360.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,wfmz.com,thestar.co.uk,yorkshirepost.co.uk,mydaily.co.kr,raenonx.cc,ndtvprofit.com,badmouth1.com,logicieleducatif.fr,taxguru.in,islamicfinder.org,aikatu.jp,secure-signup.net,globalrph.com,sportsrec.com,reportera.co.kr,slobodnadalmacija.hr,flatpanelshd.com,videogamemods.com,adintrend.tv,ark-unity.com,cool-style.com.tw,dziennik.pl,eurointegration.com.ua##+js(set-local-storage-item, adshield-analytics-uuid, $remove$)
+loawa.com,ygosu.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,hometownstation.com,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,worldhistory.org,etnews.com,iusm.co.kr,dogdrip.net,etoland.co.kr,picrew.me,text-compare.com,fntimes.com,javatpoint.com,lamire.jp,bamgosu.site,etnewskorea.com,allthekingz.com,gadgets360.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,wfmz.com,thestar.co.uk,yorkshirepost.co.uk,mydaily.co.kr,raenonx.cc,ndtvprofit.com,badmouth1.com,logicieleducatif.fr,taxguru.in,islamicfinder.org,aikatu.jp,secure-signup.net,globalrph.com,sportsrec.com,reportera.co.kr,slobodnadalmacija.hr,flatpanelshd.com,videogamemods.com,adintrend.tv,ark-unity.com,cool-style.com.tw,dziennik.pl,eurointegration.com.ua##+js(set-local-storage-item, /_fa_dXVpZA==$/, $remove$)
+loawa.com,ygosu.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,hometownstation.com,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,worldhistory.org,etnews.com,iusm.co.kr,dogdrip.net,etoland.co.kr,picrew.me,text-compare.com,fntimes.com,javatpoint.com,lamire.jp,bamgosu.site,etnewskorea.com,allthekingz.com,gadgets360.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,wfmz.com,thestar.co.uk,yorkshirepost.co.uk,mydaily.co.kr,raenonx.cc,ndtvprofit.com,badmouth1.com,logicieleducatif.fr,taxguru.in,islamicfinder.org,aikatu.jp,secure-signup.net,globalrph.com,sportsrec.com,reportera.co.kr,slobodnadalmacija.hr,flatpanelshd.com,videogamemods.com,adintrend.tv,ark-unity.com,cool-style.com.tw,dziennik.pl,eurointegration.com.ua##+js(set-local-storage-item, /_fa_Y2FjaGVfaXNfYmxvY2tpbmdfYWNjZXB0YWJsZV9hZHM=$/, $remove$)
+loawa.com,ygosu.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,hometownstation.com,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,worldhistory.org,etnews.com,iusm.co.kr,dogdrip.net,etoland.co.kr,picrew.me,text-compare.com,fntimes.com,javatpoint.com,lamire.jp,bamgosu.site,etnewskorea.com,allthekingz.com,gadgets360.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,wfmz.com,thestar.co.uk,yorkshirepost.co.uk,mydaily.co.kr,raenonx.cc,ndtvprofit.com,badmouth1.com,logicieleducatif.fr,taxguru.in,islamicfinder.org,aikatu.jp,secure-signup.net,globalrph.com,sportsrec.com,reportera.co.kr,slobodnadalmacija.hr,flatpanelshd.com,videogamemods.com,adintrend.tv,ark-unity.com,cool-style.com.tw,dziennik.pl,eurointegration.com.ua##+js(set-local-storage-item, /_fa_Y2FjaGVfaXNfYmxvY2tpbmdfYWRz$/, $remove$)
+loawa.com,ygosu.com,sportalkorea.com,edaily.co.kr,economist.co.kr,etoday.co.kr,isplus.com,hometownstation.com,honkailab.com,genshinlab.com,thestockmarketwatch.com,thephoblographer.com,issuya.com,worldhistory.org,etnews.com,iusm.co.kr,dogdrip.net,etoland.co.kr,picrew.me,text-compare.com,fntimes.com,javatpoint.com,lamire.jp,bamgosu.site,etnewskorea.com,allthekingz.com,gadgets360.com,automobile-catalog.com,maketecheasier.com,thesaurus.net,wfmz.com,thestar.co.uk,yorkshirepost.co.uk,mydaily.co.kr,raenonx.cc,ndtvprofit.com,badmouth1.com,logicieleducatif.fr,taxguru.in,islamicfinder.org,aikatu.jp,secure-signup.net,globalrph.com,sportsrec.com,reportera.co.kr,slobodnadalmacija.hr,flatpanelshd.com,videogamemods.com,adintrend.tv,ark-unity.com,cool-style.com.tw,dziennik.pl,eurointegration.com.ua##+js(set-local-storage-item, /_fa_Y2FjaGVfYWRibG9ja19jaXJjdW12ZW50X3Njb3Jl$/, $remove$)
+diff name:ublock-quick-fixes lines:7 checksum:af9157f501
+d3 2
+a4 2
+! Last modified: Mon, 29 Jul 2024 13:33:37 +0000
+! Diff-Path: ../patches/2024.7.29.1401.patch#ublock-quick-fixes
+d87 1
+a87 1
+japscan.lol##+js(aeld, DOMContentLoaded, /\(\)=>\{.{10\,50}===.{10\,50}\(\);\}/)
+diff name:ublock-unbreak lines:3 checksum:b89e8055a0
+d4 1
+a4 1
+! Diff-Path: ../patches/2024.7.29.1401.patch#ublock-unbreak
+diff name:easylist lines:20 checksum:6613d0b7dc
+d4 2
+a5 2
+! Last modified: Mon, 29 Jul 2024 20:12:31 +0000
+! Diff-Path: ../patches/2024.7.29.1401.patch#easylist
+a15164 1
+##a[href^="https://123-stream.org/"]
+a17060 1
+||a35e803f21.com^
+a17421 1
+||acrobaticdesire.com^
+a25242 1
+||designernoise.com^
+a32559 1
+||illustrious-challenge.pro^
+a33602 1
+||jaqxaqoxwhce.com^
+a61641 1
+||123-stream.org^
+a63174 1
+||123-stream.org^$popup
+diff name:easyprivacy lines:3 checksum:aab14cf8d5
+d5 1
+a5 1
+! Diff-Path: ../patches/2024.7.29.1401.patch#easyprivacy

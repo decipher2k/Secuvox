@@ -136,8 +136,7 @@ namespace Secuvox_2._0
 
         public class CustomTabControl : System.Windows.Forms.TabControl
         {
-            public CustomTabPage newTabPage;
-
+               
 
 
 
@@ -259,9 +258,12 @@ namespace Secuvox_2._0
                 private static long maxId = 0;
                 public Microsoft.Web.WebView2.WinForms.WebView2 webView2;
                 WebView2DevToolsContext devToolsContext;
-                public CustomTabPage()
+                public String url = "https://google.com";
+
+                public CustomTabPage(String _url="")
                 {
-                    this.Text = "https://google.com";
+                    url= _url;
+                    this.Text = url;
                     maxId++;
                     this.id = maxId;
                     webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
@@ -328,6 +330,9 @@ namespace Secuvox_2._0
                 private void WebView21_NavigationStarting(object sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs e)
                 {
                     CurrentUri = e.Uri.ToString();
+                    Form1.instance.toolStripTextBox1.Text=CurrentUri;
+                    ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).Text = CurrentUri;
+                    ((CustomTabControl)((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).Parent).Refresh();
                     //pictureBox1.Visible = false;
                     // webView21.Visible = false;
                     // pictureBox1.Visible = true;
@@ -357,8 +362,9 @@ namespace Secuvox_2._0
 
                         //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
-
                         
+
+
                         String host = "";
                         try
                         {
@@ -420,15 +426,20 @@ namespace Secuvox_2._0
 
 
 
-
-                        if (Form1.instance.toolStripTextBox1.Text == "")
-                            ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate("https://google.com");
-                        else
-                            ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate(Form1.instance.toolStripTextBox1.Text);
                         ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).webView2.Focus();
+                        //if (Form1.instance.toolStripTextBox1.Text == "")
+                        String url = ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).url;
+                        if(url != "")
+                            ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate(url);
+                        //else
+                        //    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate(Form1.instance.toolStripTextBox1.Text);
+                        
 
                     }
-                    catch { }
+                    catch 
+                    {
+                        
+                    }
 
                     //webView21.CoreWebView2.Profile.ClearBrowsingDataAsync();
                 }
@@ -459,12 +470,12 @@ namespace Secuvox_2._0
                     }
 
 
-                    CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)Form1.instance.tabControl.newTabPage;
+                    CustomTabControl.CustomTabPage page = new CustomTabControl.CustomTabPage();
+                    page.url=e.Uri.ToString();
                     Form1.instance.tabControl.TabPages.Add(page);
-                    Form1.instance.tabControl.SelectedTab= page;
-                    page.webView2.CoreWebView2.Navigate(e.Uri);
-                    Form1.instance.tabControl.newTabPage = new CustomTabPage();
-                   
+                    Form1.instance.tabControl.SelectedTab= page;                    
+   
+                  
 
                 }
 
@@ -517,11 +528,11 @@ namespace Secuvox_2._0
                                 }
 
 
-                                CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)Form1.instance.tabControl.newTabPage;
+                                CustomTabControl.CustomTabPage page = new CustomTabControl.CustomTabPage();
                                 Form1.instance.tabControl.TabPages.Add(page);
                                 Form1.instance.tabControl.SelectedTab = page;
                                 page.webView2.CoreWebView2.Navigate("https://google.de");
-                                Form1.instance.tabControl.newTabPage = new CustomTabPage();
+                    
                             }
                             if (args.WebMessageAsJson.Contains("PressedN"))
                             {
@@ -675,13 +686,14 @@ namespace Secuvox_2._0
 
                                             String name = header.Name;
                                             String value = header.Value.ToString();
-                                            if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
+                                            if (name != "Referer" || new Uri(url).Host.Contains("google.com") || new Uri(url).Host.Contains("heise.de"))
                                                 httpreq.Headers.Add(name, value);
 
                                         }
                                         httpreq.Headers.Add("DNT", "1");
                                         var client = new HttpClient();
                                         client.Timeout = TimeSpan.FromMilliseconds(1000);
+                                        
                                         var response = await client.SendAsync(httpreq);
                                         if (!response.IsSuccessStatusCode)
                                         {
@@ -710,7 +722,7 @@ namespace Secuvox_2._0
 
                                             String name = header.Name;
                                             String value = header.Value.ToString();
-                                            if (name != "Referer" || new Uri(url).Host.Contains("googe.com"))
+                                            if (name != "Referer" || new Uri(url).Host.Contains("google.com"))
                                                 httpreq.Headers.Add(name, value);
 
                                         }
@@ -819,7 +831,7 @@ namespace Secuvox_2._0
                                                     sText.Replace("_blank", "_self");
                                                     sText.Replace("_blank", "_top");
 
-                                                    if (!new Uri(url).Host.Contains("googe.com"))
+                                                    if (!new Uri(url).Host.Contains("google.com"))
                                                         sText.Replace("<a ", "<a rel=\"noreferrer\" referrerpolicy=\"no-referrer\"");
 
                                                     bool found = false;
@@ -1128,7 +1140,7 @@ namespace Secuvox_2._0
                 //SetStyle(ControlStyles.UserPaint, true);
                 this.DrawMode = TabDrawMode.OwnerDrawFixed;
                 TabPages.Add(customTabPage);
-                newTabPage = new CustomTabPage();
+                
             }
 
             private void CustomTabControl_Selected(object sender, TabControlEventArgs e)
@@ -1152,76 +1164,84 @@ namespace Secuvox_2._0
 
         public async void startNavigate()
         {
-            if (toolStripTextBox1.Text == "")
-                toolStripTextBox1.Text = "https://google.com";
-            if (!toolStripTextBox1.Text.StartsWith("http"))
-                toolStripTextBox1.Text = "https://" + toolStripTextBox1.Text;
+            String url = "";
+            url = toolStripTextBox1.Text;
+            if (url == "")
+                url = "https://google.com";
+            if (!url.StartsWith("http"))
+                url = "https://" + toolStripTextBox1.Text;
+
             try
             {
+                
+                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).url = toolStripTextBox1.Text;
                 await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
                 String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
                 String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
-                if (host.Split('.').Length > 1)
+                if (host.Split('.').Length < 1)
                 {
-                    //if (Form1.pageSettings.settings.ContainsKey(host))
-                    if (Form1.pageSettings.settings.ContainsKey(host))
-                    {
-                        adblockerToolStripMenuItem.Checked = Form1.pageSettings.settings[host].ExtraAdblock;
-                        featuresGeneric.Checked= !Form1.pageSettings.settings[host].doGeneric;
-                        featuresHover.Checked = !Form1.pageSettings.settings[host].doHover;
-                        featuresScroll.Checked = !Form1.pageSettings.settings[host].doScroll;                        
-                        paranoidToolStripMenuItem.Checked = Form1.pageSettings.settings[host].blockCSS;
-                        fakeGoogleBotToolStripMenuItem.Checked = Form1.pageSettings.settings[host].googleBot;
-                    }
-                    else
-                    {
-                        adblockerToolStripMenuItem.Checked = true;
-                        featuresGeneric.Checked = true;
-                        featuresHover.Checked = true;
-                        featuresScroll.Checked = true;                        
-                        paranoidToolStripMenuItem.Checked = true;
-                        fakeGoogleBotToolStripMenuItem.Checked = true;  
-                    }
+                    url = "https://google.com/?q=" + toolStripTextBox1.Text;
+                }
+               
 
-                 
-                        CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)this.tabControl.SelectedTab;
+                toolStripTextBox1.Text = url;
 
-                        page.webView2.Dispose();
-                        page.webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
-
-
-                        page.Controls.Add(page.webView2);
-                        ((System.ComponentModel.ISupportInitialize)(page.webView2)).BeginInit();
-                        page.webView2.AllowExternalDrop = true;
-                        page.webView2.CreationProperties = null;
-                        page.webView2.DefaultBackgroundColor = System.Drawing.Color.White;
-                        page.webView2.Dock = System.Windows.Forms.DockStyle.Fill;
-                        page.webView2.Location = new System.Drawing.Point(3, 3);
-                        page.webView2.Name = "webView21";
-                        page.webView2.Size = new System.Drawing.Size(2110, 1288);
-                        page.webView2.TabIndex = 4;
-
-                        ((System.ComponentModel.ISupportInitialize)(page.webView2)).EndInit();
-                        page.webView2.CoreWebView2InitializationCompleted += page.WebView21_CoreWebView2InitializationCompleted;
-
-
-
-                        var op = new CoreWebView2EnvironmentOptions(/*"--disable-web-security"*/);
-                        op.AreBrowserExtensionsEnabled = true;
-
-                        var env = CoreWebView2Environment.CreateAsync(null, null, op);
-
-                        await page.webView2.EnsureCoreWebView2Async(env.Result);
-                    
+                //if (Form1.pageSettings.settings.ContainsKey(host))
+                if (Form1.pageSettings.settings.ContainsKey(host))
+                {
+                    adblockerToolStripMenuItem.Checked = Form1.pageSettings.settings[host].ExtraAdblock;
+                    featuresGeneric.Checked = !Form1.pageSettings.settings[host].doGeneric;
+                    featuresHover.Checked = !Form1.pageSettings.settings[host].doHover;
+                    featuresScroll.Checked = !Form1.pageSettings.settings[host].doScroll;
+                    paranoidToolStripMenuItem.Checked = Form1.pageSettings.settings[host].blockCSS;
+                    fakeGoogleBotToolStripMenuItem.Checked = Form1.pageSettings.settings[host].googleBot;
                 }
                 else
                 {
-                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://google.com/?q=" + toolStripTextBox1.Text);
+                    adblockerToolStripMenuItem.Checked = true;
+                    featuresGeneric.Checked = true;
+                    featuresHover.Checked = true;
+                    featuresScroll.Checked = true;
+                    paranoidToolStripMenuItem.Checked = true;
+                    fakeGoogleBotToolStripMenuItem.Checked = true;
                 }
-                Form1.instance.tabControl.SelectedTab.Text= toolStripTextBox1.Text;
-                Form1.instance.tabControl.Refresh();
+
+
+                CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)this.tabControl.SelectedTab;
+                page.url = url;
+                page.webView2.Dispose();
+                page.webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
+
+
+                page.Controls.Add(page.webView2);
+                ((System.ComponentModel.ISupportInitialize)(page.webView2)).BeginInit();
+                page.webView2.AllowExternalDrop = true;
+                page.webView2.CreationProperties = null;
+                page.webView2.DefaultBackgroundColor = System.Drawing.Color.White;
+                page.webView2.Dock = System.Windows.Forms.DockStyle.Fill;
+                page.webView2.Location = new System.Drawing.Point(3, 3);
+                page.webView2.Name = "webView21";
+                page.webView2.Size = new System.Drawing.Size(2110, 1288);
+                page.webView2.TabIndex = 4;
+
+                ((System.ComponentModel.ISupportInitialize)(page.webView2)).EndInit();
+                page.webView2.CoreWebView2InitializationCompleted += page.WebView21_CoreWebView2InitializationCompleted;
+
+
+
+                var op = new CoreWebView2EnvironmentOptions();
+                op.AreBrowserExtensionsEnabled = true;
+                Form1.instance.tabControl.SelectedTab.Text = url;
+
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Focus();
-            } catch { ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate("https://google.com/?q=" + toolStripTextBox1.Text); }
+                var env = CoreWebView2Environment.CreateAsync(null, null, op);
+
+                await page.webView2.EnsureCoreWebView2Async(env.Result);
+                
+                //page.webView2.CoreWebView2.Navigate(url);
+            }
+            catch (Exception ex) {
+                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(url); }
         }
 
         private String genBodyTag(String bodyTag,  string javascript)
@@ -1303,11 +1323,9 @@ namespace Secuvox_2._0
                 {
                     CustomTabControl.CustomTabPage tabPage = new CustomTabControl.CustomTabPage();
                     ((CustomTabControl)tabControl).TabPages.Add(tabPage);
-                }
-                else
-                {                    
-                    startNavigate();
-                }
+                }                
+                                    
+                startNavigate();                
                 e.Handled = true;                
             }
         }
@@ -1526,11 +1544,13 @@ namespace Secuvox_2._0
             }
 
 
-            CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)Form1.instance.tabControl.newTabPage;
+            // CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)Form1.instance.tabControl.newTabPage;
+            CustomTabControl.CustomTabPage page = new CustomTabControl.CustomTabPage();
+            page.url = "https://google.de";
             Form1.instance.tabControl.TabPages.Add(page);
             Form1.instance.tabControl.SelectedTab = page;
-            page.webView2.CoreWebView2.Navigate("https://google.de");
-            Form1.instance.tabControl.newTabPage = new CustomTabPage();
+            //page.webView2.CoreWebView2.Navigate("https://google.de");
+           
         }
 
         private void closeTabToolStripMenuItem_Click(object sender, EventArgs e)
