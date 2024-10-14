@@ -434,11 +434,8 @@ namespace Secuvox_2._0
                         ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).webView2.Focus();
                         //if (Form1.instance.toolStripTextBox1.Text == "")
                         String url = ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).url;
-                        if (url != "")
-                        {
-                            ((CustomTabPage)((Microsoft.Web.WebView2.WinForms.WebView2)sender).Parent).url="";
+                        if(url != "")
                             ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate(url);
-                        }
                         //else
                         //    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Navigate(Form1.instance.toolStripTextBox1.Text);
                         
@@ -705,7 +702,7 @@ namespace Secuvox_2._0
                                         client.Timeout = TimeSpan.FromMilliseconds(1000);
                                         
                                         var response = await client.SendAsync(httpreq);
-                                        if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.Redirect) ;
+                                        if (!response.IsSuccessStatusCode)
                                         {
                                             await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
                                             return;
@@ -741,7 +738,7 @@ namespace Secuvox_2._0
                                         var client = new HttpClient();
                                         client.Timeout = TimeSpan.FromMilliseconds(1000);
                                         var response = await client.SendAsync(httpreq);
-                                        if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.Redirect)
+                                        if (!response.IsSuccessStatusCode)
                                         {
                                             await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
                                             return;
@@ -1219,9 +1216,6 @@ namespace Secuvox_2._0
 
                 CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)this.tabControl.SelectedTab;
                 page.url = url;
-                page.webView2.CoreWebView2.Navigate(url);
-
-                /*
                 page.webView2.Dispose();
                 page.webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
 
@@ -1250,7 +1244,7 @@ namespace Secuvox_2._0
                 var env = CoreWebView2Environment.CreateAsync(null, null, op);
 
                 await page.webView2.EnsureCoreWebView2Async(env.Result);
-                */
+                
                 //page.webView2.CoreWebView2.Navigate(url);
             }
             catch (Exception ex) {

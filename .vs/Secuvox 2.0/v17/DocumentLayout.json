@@ -1,25 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Secuvox\\",
+  "WorkspaceRootPath": "D:\\Secuvox1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|d:\\secuvox\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|d:\\secuvox1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox1\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox1\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox1\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|D:\\Secuvox1\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{303F6349-8B2F-418C-9BE8-3D5AEA1F642D}|Secuvox 2.0.csproj|solutionrelative:properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -30,21 +30,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Form1.cs",
-              "DocumentMoniker": "D:\\Secuvox\\Form1.cs",
+              "DocumentMoniker": "D:\\Secuvox1\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
-              "ToolTip": "D:\\Secuvox\\Form1.cs",
+              "ToolTip": "D:\\Secuvox1\\Form1.cs",
               "RelativeToolTip": "Form1.cs",
-              "ViewState": "AQIAAAcDAAAAAAAAAAAswCADAAA8AAAA",
+              "ViewState": "AgIAAM4AAAAAAAAAAADgv+QAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-22T07:44:54.885Z",
               "EditorCaption": ""
@@ -53,33 +49,31 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Form1.cs [Entwurf]",
-              "DocumentMoniker": "D:\\Secuvox\\Form1.cs",
+              "DocumentMoniker": "D:\\Secuvox1\\Form1.cs",
               "RelativeDocumentMoniker": "Form1.cs",
               "ToolTip": "D:\\Secuvox\\Form1.cs [Entwurf]",
-              "RelativeToolTip": "Form1.cs [Entwurf]",
+              "RelativeToolTip": "..\\Secuvox\\Form1.cs [Entwurf]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-22T07:42:15.189Z",
-              "EditorCaption": " [Entwurf]"
+              "WhenOpened": "2024-03-22T07:42:15.189Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "Form1.resx",
-              "DocumentMoniker": "D:\\Secuvox\\Form1.resx",
+              "DocumentMoniker": "D:\\Secuvox1\\Form1.resx",
               "RelativeDocumentMoniker": "Form1.resx",
-              "ToolTip": "D:\\Secuvox\\Form1.resx",
+              "ToolTip": "D:\\Secuvox1\\Form1.resx",
               "RelativeToolTip": "Form1.resx",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2024-07-30T02:33:24.773Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-30T02:33:24.773Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "AssemblyInfo.cs",
-              "DocumentMoniker": "D:\\Secuvox\\Properties\\AssemblyInfo.cs",
+              "DocumentMoniker": "D:\\Secuvox1\\Properties\\AssemblyInfo.cs",
               "RelativeDocumentMoniker": "Properties\\AssemblyInfo.cs",
-              "ToolTip": "D:\\Secuvox\\Properties\\AssemblyInfo.cs",
+              "ToolTip": "D:\\Secuvox1\\Properties\\AssemblyInfo.cs",
               "RelativeToolTip": "Properties\\AssemblyInfo.cs",
               "ViewState": "AQIAABIAAAAAAAAAAAAAABIAAABWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -89,14 +83,13 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "D:\\Secuvox\\Form1.Designer.cs",
+              "DocumentMoniker": "D:\\Secuvox1\\Form1.Designer.cs",
               "RelativeDocumentMoniker": "Form1.Designer.cs",
-              "ToolTip": "D:\\Secuvox\\Form1.Designer.cs",
+              "ToolTip": "D:\\Secuvox1\\Form1.Designer.cs",
               "RelativeToolTip": "Form1.Designer.cs",
-              "ViewState": "AQIAAAMAAAAAAAAAAAArwFIBAAAvAAAA",
+              "ViewState": "AQIAABYAAAAAAAAAAAAAABYAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-24T01:40:09.428Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-03-24T01:40:09.428Z"
             }
           ]
         }
