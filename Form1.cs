@@ -285,15 +285,37 @@ namespace Secuvox_2._0
                     ((System.ComponentModel.ISupportInitialize)(webView2)).EndInit();
                     webView2.CoreWebView2InitializationCompleted += WebView21_CoreWebView2InitializationCompleted;
 
-                                                          
+                                                           
 
-                    var op = new CoreWebView2EnvironmentOptions(/*"--disable-web-security"*/);
-                    op.AreBrowserExtensionsEnabled = true;
-                    
-                    var env = CoreWebView2Environment.CreateAsync(null, null, op).Result;
-                    
-                    webView2.EnsureCoreWebView2Async(env);
-                 
+                    // In CustomTabPage constructor, protect environment creation
+                    try
+                    {
+                        var op = new CoreWebView2EnvironmentOptions(/*"--disable-web-security"*/);
+                        op.AreBrowserExtensionsEnabled = true;
+                        var env = CoreWebView2Environment.CreateAsync(null, null, op).Result;
+                        webView2.EnsureCoreWebView2Async(env);
+                    }
+                    catch (System.AggregateException aex)
+                    {
+                        var ex = aex.InnerException ?? aex;
+                        if (ex is COMException || (ex.InnerException is COMException))
+                        {
+                            Form1.NotifyMissingWebView2(ex);
+                        }
+                        else
+                        {
+                            Form1.NotifyMissingWebView2(ex);
+                        }
+                    }
+                    catch (COMException cex)
+                    {
+                        Form1.NotifyMissingWebView2(cex);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Fallback info
+                        Form1.NotifyMissingWebView2(ex);
+                    }
                 }
 
 
@@ -340,6 +362,26 @@ namespace Secuvox_2._0
                     // pictureBox1.Visible = true;
 
 
+                    // Ensure proper UA for Google login flows to avoid 404 on WebLiteSignIn
+                    try
+                    {
+                        var wv = (Microsoft.Web.WebView2.WinForms.WebView2)sender;
+                        string navUrl = e.Uri ?? string.Empty;
+                        string h = string.Empty;
+                        try { h = new Uri(navUrl).Host; } catch { }
+                        bool isGoogleLogin = (!string.IsNullOrEmpty(h) && (h.Contains("accounts.google.com") || h.Contains("mail.google.com")))
+                                             || navUrl.IndexOf("/signin", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || navUrl.IndexOf("ServiceLogin", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || navUrl.IndexOf("WebLiteSignIn", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || navUrl.IndexOf("/v3/signin", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || navUrl.IndexOf("/identifier", StringComparison.OrdinalIgnoreCase) >= 0;
+                        if (isGoogleLogin)
+                        {
+                            wv.CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+                        }
+                    }
+                    catch { }
+
                 }
 
 
@@ -349,11 +391,12 @@ namespace Secuvox_2._0
                     {
                         try
                         {
-                            await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+                            // Remove this line that clears all cookies when initializing the browser
+                            // await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
                         } catch { } 
                         devToolsContext = await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CreateDevToolsContextAsync();
                         await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Network.enable", "{}");
-                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.enable", "{\"patterns\":[{\"urlPattern\":\"*\"}]}");
+                        await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.enable", "{\"patterns\":[{\"urlPattern\":\"*\"}]} ");
 
 
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.GetDevToolsProtocolEventReceiver("Fetch.requestPaused").DevToolsProtocolEventReceived += WebView2_FetchRequestPaused;
@@ -365,7 +408,9 @@ namespace Secuvox_2._0
                         //((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.AddWebResourceRequestedFilter("*", 0);
                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
                         
-
+                        // Enable cookie handling
+                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.IsPinchZoomEnabled = true;
+                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = true;
 
                         String host = "";
                         try
@@ -389,16 +434,24 @@ namespace Secuvox_2._0
                         {
                             try
                             {
-                                if (Form1.pageSettings.settings.ContainsKey(host))
+                                // Force a modern desktop UA for Google properties to avoid WebLite/404 flows
+                                string lowerHost = (host ?? string.Empty).ToLowerInvariant();
+                                bool isGoogleOwned = lowerHost.EndsWith("google.com") || lowerHost.EndsWith("gmail.com");
+                                if (isGoogleOwned)
+                                {
+                                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent =
+                                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+                                }
+                                else if (Form1.pageSettings.settings.ContainsKey(host))
                                 {
                                     if (Form1.pageSettings.settings[host].googleBot)
                                         ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
                                     else
-                                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Secuvox/0.3)";
+                                        ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
                                 }
                                 else
                                 {
-                                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Secuvox/0.3)";
+                                    ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
                                     //   ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Settings.UserAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
                                 }
                             }
@@ -417,8 +470,14 @@ namespace Secuvox_2._0
                         {
                             if (Form1.pageSettings.settings[host].ExtraAdblock)
                             {
-                                await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\ublockOrigin\\1.56.0_0\\");
-                                await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\NinjaCookies\\0.7.0_0\\");
+                                // Do not inject adblock extensions on Google properties to avoid breaking sign-in
+                                string lowerHost = (host ?? string.Empty).ToLowerInvariant();
+                                bool isGoogleOwned = lowerHost.EndsWith("google.com") || lowerHost.EndsWith("gmail.com");
+                                if (!isGoogleOwned)
+                                {
+                                    await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\ublockOrigin\\1.56.0_0\\");
+                                    await ((Microsoft.Web.WebView2.WinForms.WebView2)sender).CoreWebView2.Profile.AddBrowserExtensionAsync(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + ".\\NinjaCookies\\0.7.0_0\\");
+                                }
                             }
                         }
 
@@ -454,6 +513,10 @@ namespace Secuvox_2._0
                     e.Handled= true;    
                     String host = new Uri(e.Uri).Host;
                     Form1.instance.toolStripTextBox1.Text = e.Uri;
+                    
+                    // Use the same environment for new windows to share cookies
+                    var environment = ((CoreWebView2)sender).Environment;
+                    
                     //if (Form1.pageSettings.settings.ContainsKey(host))
                     if (Form1.pageSettings.settings.ContainsKey(host))
                     {
@@ -474,14 +537,10 @@ namespace Secuvox_2._0
                         Form1.instance.fakeGoogleBotToolStripMenuItem.Checked = true;
                     }
 
-
                     CustomTabControl.CustomTabPage page = new CustomTabControl.CustomTabPage();
-                    page.url=e.Uri.ToString();
+                    page.url = e.Uri.ToString();
                     Form1.instance.tabControl.TabPages.Add(page);
-                    Form1.instance.tabControl.SelectedTab= page;                    
-   
-                  
-
+                    Form1.instance.tabControl.SelectedTab = page;                    
                 }
 
                 async void CustomTabPage_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
@@ -600,6 +659,39 @@ namespace Secuvox_2._0
                         host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
                     }
                     catch { }
+
+                    // Bypass interception for Google-owned domains and login endpoints to avoid breaking Gmail sign-in
+                    try
+                    {
+                        string reqHostAll = string.Empty;
+                        try { reqHostAll = new Uri(url).Host.ToLowerInvariant(); } catch { }
+                        bool isGoogleOwned = !string.IsNullOrEmpty(reqHostAll) && (
+                            reqHostAll == "google.com" || reqHostAll.EndsWith(".google.com") ||
+                            reqHostAll == "gmail.com" || reqHostAll.EndsWith(".gmail.com") ||
+                            reqHostAll.EndsWith(".gstatic.com") || reqHostAll.EndsWith(".googleusercontent.com") ||
+                            reqHostAll.EndsWith(".googleapis.com") || reqHostAll.EndsWith(".ggpht.com")
+                        );
+                        bool isGoogleLogin = (!string.IsNullOrEmpty(reqHostAll) && (reqHostAll.Contains("accounts.google.com") || reqHostAll.Contains("mail.google.com")))
+                                             || url.IndexOf("/signin", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || url.IndexOf("/v3/signin", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || url.IndexOf("/identifier", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || url.IndexOf("ServiceLogin", StringComparison.OrdinalIgnoreCase) >= 0
+                                             || url.IndexOf("WebLiteSignIn", StringComparison.OrdinalIgnoreCase) >= 0;
+                        if (isGoogleOwned || isGoogleLogin)
+                        {
+                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                            return;
+                        }
+                    }
+                    catch { }
+                    
+                    // Always let POST/other non-GET requests flow to preserve original semantics and cookies
+                    if (method == "POST" || method == "PUT" || method == "PATCH" || method == "DELETE")
+                    {
+                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                        return;
+                    }
+
                     if (Form1.instance.toolStripTextBox1.Text != "")
                     {
                         foreach (String op in Form1.instance.optList)
@@ -626,121 +718,77 @@ namespace Secuvox_2._0
                     
                     if (!blocked)
                     {
-                     
-
                         url = url.Replace("http://", "https://");
 
                         //string code = doc.RootElement.GetProperty("responseStatusCode").ToString();
                         string HtmlResult = "";
-                        if (!url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))/* && !string.IsNullOrWhiteSpace(code) && code == "200"*/
+                        if (!url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))
                         {
-
                             try
                             {
                                 byte[] bytes = { };
-                                /*        if (method == "GET")
-                                        {
-                                            WebClient wc = new WebClient();
-                                            foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
-                                            {
-
-                                                String name = header.Name;
-                                                String value = header.Value.ToString();
-                                                wc.Headers.Add(name, value);
-
-                                            }
-                                            HtmlResult = wc.DownloadString(url);
-                                            bytes = wc.DownloadData(url);
-
-                                        }
-                                        else if (method == "POST")
-                                        {
-                                            string myParameters = doc.RootElement.GetProperty("request").GetProperty("postData").ToString();
-                                            string URI = url;
-
-
-                                            WebClient wc = new WebClient();
-                                            foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
-                                            {
-
-                                                String name = header.Name;
-                                                String value = header.Value.ToString();
-                                                wc.Headers.Add(name, value);
-
-                                            }
-                                            //wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-
-                                            HtmlResult = wc.UploadString(URI, myParameters);
-                                            bytes = wc.UploadData(URI, Encoding.ASCII.GetBytes(myParameters));
-
-
-                                        }*/
-
-
                                 String sText = "";
-
-
                                 Stream strmText = null;
+                                HttpResponseMessage response = null;
 
                                 try
                                 {
                                     if (method == "GET")
                                     {
-                                        HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Get, url);
+                                        var httpreq = new HttpRequestMessage(HttpMethod.Get, url);
 
+                                        // Forward headers except User-Agent (we will set it explicitly)
                                         foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
                                         {
 
                                             String name = header.Name;
                                             String value = header.Value.ToString();
-                                            if (name != "Referer" || new Uri(url).Host.Contains("google.com") || new Uri(url).Host.Contains("heise.de"))
-                                                httpreq.Headers.Add(name, value);
-
+                                            // Forward all request headers to keep cookie/referer semantics
+                                            if (name.Equals("User-Agent", StringComparison.OrdinalIgnoreCase))
+                                                continue;
+                                            try { httpreq.Headers.TryAddWithoutValidation(name, value); } catch { }
                                         }
+
+                                        // Decide UA per request (avoid Googlebot UA for Google login endpoints)
+                                        string reqHost = string.Empty;
+                                        try { reqHost = new Uri(url).Host; } catch { }
+                                        bool isGoogleLogin = (!string.IsNullOrEmpty(reqHost) && (reqHost.Contains("accounts.google.com") || reqHost.Contains("mail.google.com")))
+                                                            || url.IndexOf("/signin", StringComparison.OrdinalIgnoreCase) >= 0
+                                                            || url.IndexOf("/v3/signin", StringComparison.OrdinalIgnoreCase) >= 0
+                                                            || url.IndexOf("/identifier", StringComparison.OrdinalIgnoreCase) >= 0
+                                                            || url.IndexOf("ServiceLogin", StringComparison.OrdinalIgnoreCase) >= 0
+                                                            || url.IndexOf("WebLiteSignIn", StringComparison.OrdinalIgnoreCase) >= 0;
+                                        string ua;
+                                        if (isGoogleLogin)
+                                        {
+                                            ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+                                        }
+                                        else
+                                        {
+                                            bool useBot = false;
+                                            try
+                                            {
+                                                if (Form1.pageSettings.settings.ContainsKey(host) && Form1.pageSettings.settings[host].googleBot)
+                                                    useBot = true;
+                                            }
+                                            catch { }
+                                            ua = useBot ? "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+                                                        : "Mozilla/5.0 (compatible; Secuvox/0.3)";
+                                        }
+                                        try { httpreq.Headers.TryAddWithoutValidation("User-Agent", ua); } catch { }
+
                                         httpreq.Headers.Add("DNT", "1");
-                                        var client = new HttpClient();
-                                        client.Timeout = TimeSpan.FromMilliseconds(1000);
+
+                                        var handler = new HttpClientHandler();
+                                        handler.AllowAutoRedirect = true;
+                                        handler.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+                                        var client = new HttpClient(handler);
+                                        client.Timeout = TimeSpan.FromMilliseconds(10000);
                                         
-                                        var response = await client.SendAsync(httpreq);
+                                        response = await client.SendAsync(httpreq);
                                         if (!response.IsSuccessStatusCode)
                                         {
-                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
-                                            return;
-                                        }
-
-                                        sText = await response.Content.ReadAsStringAsync();
-                                        strmText = await response.Content.ReadAsStreamAsync();
-                                    }
-                                    else if (method == "POST")
-                                    {
-                                        HttpRequestMessage httpreq = new HttpRequestMessage(HttpMethod.Post, url);
-                                        String s = doc.RootElement.GetProperty("request").GetProperty("postData").ToString();
-                                        httpreq.Content = new StringContent(s);
-                                        foreach (JsonProperty postdata in doc.RootElement.GetProperty("request").GetProperty("postData").EnumerateObject())
-                                        {
-
-                                            String name = postdata.Name;
-                                            String value = postdata.Value.ToString();
-                                            httpreq.Properties.Add(name, value);
-
-                                        }
-                                        foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
-                                        {
-
-                                            String name = header.Name;
-                                            String value = header.Value.ToString();
-                                            if (name != "Referer" || new Uri(url).Host.Contains("google.com"))
-                                                httpreq.Headers.Add(name, value);
-
-                                        }
-                                        httpreq.Headers.Add("DNT", "1");
-
-                                        var client = new HttpClient();
-                                        client.Timeout = TimeSpan.FromMilliseconds(1000);
-                                        var response = await client.SendAsync(httpreq);
-                                        if (!response.IsSuccessStatusCode)
-                                        {
-                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                             return;
                                         }
 
@@ -750,27 +798,18 @@ namespace Secuvox_2._0
                                     else
                                     {
                                         await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                        return;
                                     }
                                 }
                                 catch 
                                 {
                                     try
                                     {
-                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
-                                    }catch {
-                                       
-                                    }
-                                 
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                        return;
+                                    } catch {}
                                 }
-
-
-
-                                //String bodyResponse = 
-
-
-
-
-
+                                
                                 try
                                 {
                                     if (!Form1.pageSettings.settings.ContainsKey(host) ||
@@ -802,44 +841,21 @@ namespace Secuvox_2._0
                                     {
                                         sText = System.IO.File.ReadAllText(".\\jquery.js");
                                         sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
-
                                     }
-
-                                    /*      byte[] buffer = new byte[strmText.Length];
-                                          using (MemoryStream ms = new MemoryStream())
-                                          {
-                                              int read;
-                                              while ((read = strmText.Read(buffer, 0, buffer.Length)) > 0)
-                                              {
-                                                  ms.Write(buffer, 0, read);
-                                              }
-                                             bytes= ms.ToArray();
-                                          }
-                                          sText = Encoding.UTF8.GetString(bytes);
-                                          }*/
 
                                     try
                                     {
                                         if (url.StartsWith("http") && !url.Contains("jquery"))
                                         {
-
-
-
-
-
                                             if (cdet.Charset != null && type != "Image" && !url.Contains(".png") && !url.Contains(".jpg") && !url.Contains(".jpeg") && !url.Contains(".gif"))
-
                                             {
-
-
-
                                                 if (!sText.StartsWith("<svg "))
                                                 {
-                                                    sText.Replace("_blank", "_self");
-                                                    sText.Replace("_blank", "_top");
+                                                    sText = sText.Replace("_blank", "_self");
+                                                    sText = sText.Replace("_blank", "_top");
 
                                                     if (!new Uri(url).Host.Contains("google.com"))
-                                                        sText.Replace("<a ", "<a rel=\"noreferrer\" referrerpolicy=\"no-referrer\"");
+                                                        sText = sText.Replace("<a ", "<a rel=\"noreferrer\" referrerpolicy=\"no-referrer\"");
 
                                                     bool found = false;
                                                     foreach (String s in toReplaceHover)
@@ -887,11 +903,11 @@ namespace Secuvox_2._0
                                                         try
                                                         {
                                                             if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doHover)
+                                                                !Form1.pageSettings.settings[host].doHover)
                                                             {
                                                                 foreach (String s in toReplaceHover)
                                                                 {
-                                                                    sText = ReplaceRegex("[\"'])(\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
+                                                                    sText = ReplaceRegex("[\\\"'](\\s*?)" + s + "(\\s*?)[\\\"']", "\"onload\"", sText);
                                                                     sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
                                                                     sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", "onload=", sText);
 
@@ -904,11 +920,11 @@ namespace Secuvox_2._0
                                                             }
 
                                                             if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doScroll)
+                                                                !Form1.pageSettings.settings[host].doScroll)
                                                             {
                                                                 foreach (String s in toReplaceScroll)
                                                                 {
-                                                                    sText = ReplaceRegex("[\"'](\\s*?)" + s + "(\\s*?)[\"']", "\"onload\"", sText);
+                                                                    sText = ReplaceRegex("[\\\"'](\\s*?)" + s + "(\\s*?)[\\\"']", "\"onload\"", sText);
                                                                     sText = ReplaceRegex("\\.(\\s*?)" + s + "(\\s*?)=", ".onload=", sText);
                                                                     sText = ReplaceRegex(s + "(\\s*?)=", "onload=", sText);
 
@@ -921,13 +937,13 @@ namespace Secuvox_2._0
 
                                                                     sText = ReplaceRegex("offsetTop", "top", sText);
                                                                     sText = ReplaceRegex("scrollY", "top", sText);
-                                                                    sText = ReplaceRegex("scroll(\\s*?)[\"']\\+", "on\"+", sText);
+                                                                    sText = ReplaceRegex("scroll(\\s*?)[\\\"']\\+", "on\"+", sText);
                                                                     sText = ReplaceRegex("scrollHeight", "top", sText);
                                                                     sText = ReplaceRegex("clientHeight", "top", sText);
                                                                     sText = ReplaceRegex("scrollTop", "top", sText);
                                                                     sText = ReplaceRegex("\\#scrollArea", "", sText);
                                                                     if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                        Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].blockCSS)
+                                                                        Form1.pageSettings.settings[host].blockCSS)
                                                                     {
                                                                         sText = ReplaceRegex("sticky", "", sText);
                                                                         sText = ReplaceRegex("calc(\\s*?)\\(", "(", sText);
@@ -936,27 +952,20 @@ namespace Secuvox_2._0
                                                                         sText = ReplaceRegex("scroll(\\s*?)\\-", "", sText);
                                                                         sText = ReplaceRegex("scrollPosition", "", sText);
                                                                     }
-
                                                                 }
-
                                                             }
 
                                                             if (!Form1.pageSettings.settings.ContainsKey(host) ||
-                                                                !Form1.pageSettings.settings[new Uri(Form1.instance.toolStripTextBox1.Text).Host].doGeneric)
+                                                                !Form1.pageSettings.settings[host].doGeneric)
                                                             {
-                                                                sText = ReplaceRegex("[\"'](\\s*?)" + "on" + "(\\s*?)[\"']", "\"no\"", sText);
+                                                                sText = ReplaceRegex("[\\\"'](\\s*?)" + "on" + "(\\s*?)[\\\"']", "\"no\"", sText);
                                                             }
-
-
-
-
                                                         }
                                                         catch
                                                         {
-                                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
-
+                                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                                         }
-                                                        // sText = sText.Replace("crossorigin", "anonymous");
+                                                        
                                                         if (cdet.Charset == "ASCII")
                                                         {
                                                             sText = Convert.ToBase64String(Encoding.ASCII.GetBytes(sText));
@@ -968,90 +977,89 @@ namespace Secuvox_2._0
                                                             byte[] wind1252Bytes = wind1252.GetBytes(sText);
                                                             byte[] utf8Bytes = Encoding.Convert(wind1252, utf8, wind1252Bytes);
                                                             sText = Convert.ToBase64String(utf8Bytes);
-
-
                                                         }
                                                         else
                                                         {
                                                             sText = Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
                                                         }
                                                     }
-
                                                 }
-
-
                                             }
                                             else
                                             {
                                                 try
                                                 {
                                                     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
+                                                    return;
                                                 }
                                                 catch { }
-
-                                                //Text = Convert.ToBase64String(stream.ToArray());
                                             }
-
-                                            //sText = Base64UrlEncoder.Encode(sText);
-                                            /*        if(sText.ToLower().Contains("<html"))
-                                                         sText = HtmlEncode(sText);
-                                            */
-                                            // sText =  Convert.ToBase64String(Encoding.UTF8.GetBytes(sText));
-
                                         }
-
-
                                         else if (!url.Contains("jquery"))
                                         {
                                             await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                             return;
                                         }
-
                                     }
-
-
                                     catch
                                     {
                                         try
                                         {
-                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                             return;
                                         }catch { }
                                     }
-                                }catch {
+                               }catch {
                                     try
                                     {
-                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                         return;
                                     } catch { } 
                                 }
-                             /* {
-                                    byte[] ret = new byte[sText.Length];
-                                    for (int i = 0; i < sText.Length; i++)
-                                        ret[i] = (byte)sText[i];
-
-                                    sText = Convert.ToBase64String(ret);
-                                }*/
-                                String headers = "[";
-                                foreach (JsonProperty header in doc.RootElement.GetProperty("request").GetProperty("headers").EnumerateObject())
+                                
+                                // Build response headers from the actual server response to preserve Set-Cookie, Content-Type, etc.
+                                string headers = "[";
+                                if (response != null)
                                 {
-
-                                    String name = header.Name;
-                                    String value = header.Value.ToString();
-                                    headers = headers + "{\"name\":\"" + name + "\",\"value\":\"" + value.Replace("\"", "\\\"") + "\"},";                                    
-
+                                    // Response headers
+                                    foreach (var header in response.Headers)
+                                    {
+                                        foreach (var value in header.Value)
+                                        {
+                                            headers += "{\"name\":\"" + JsonEncodedText.Encode(header.Key).ToString() + "\",\"value\":\"" + JsonEncodedText.Encode(value).ToString() + "\"},";
+                                        }
+                                    }
+                                    // Content headers
+                                    if (response.Content != null)
+                                    {
+                                        foreach (var ch in response.Content.Headers)
+                                        {
+                                            foreach (var value in ch.Value)
+                                            {
+                                                headers += "{\"name\":\"" + JsonEncodedText.Encode(ch.Key).ToString() + "\",\"value\":\"" + JsonEncodedText.Encode(value).ToString() + "\"},";
+                                            }
+                                        }
+                                    }
                                 }
-                                headers = headers + "{\"Access-Control-Allow-Origin\":\"" + "*" + "\",\"value\":\"" + "TRUE" + "\"},";
-                                headers = headers.Substring(0, headers.Length - 1);
-                                headers = headers + "]";
+                                else
+                                {
+                                    // Fallback minimal headers
+                                    headers += "{\"name\":\"Content-Type\",\"value\":\"text/html; charset=utf-8\"},";
+                                }
 
-
-                                // string payload1 = "{\"requestId\":\"" + id.Split('-')[id.Split('-').Length-1] + "\",\"responseCode\":200,\"responseHeaders\":" + header + ",\"body\":\"" + bodyResponse + "\"}";
-                                string payload1 = "{\"requestId\":\"" + id + "\",\"responseCode\":200,\"body\":\"" + sText + "\",\"headers\":" + headers + "}";
+                                // CORS safety
+                                headers += "{\"name\":\"Access-Control-Allow-Origin\",\"value\":\"*\"},";
+                                headers += "{\"name\":\"Access-Control-Allow-Credentials\",\"value\":\"true\"},";
+                                
+                                if (headers.EndsWith(","))
+                                    headers = headers.Substring(0, headers.Length - 1);
+                                headers += "]";
+                                
+                                // Fulfill with proper responseHeaders so WebView2 can store cookies
+                                string payload1 = "{\"requestId\":\"" + id + "\",\"responseCode\":200,\"body\":\"" + sText + "\",\"responseHeaders\":" + headers + "}";
 
                                 try
                                 {
-                                    //String payload2 = "{\"requestId\":\"" + id + "\",\"headers\":" + headers + ",\"url\":\"" + url + "\",\"method\":\"GET\",\"interceptResponse\":false}";
                                     await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.fulfillRequest", payload1);
                                     return;
                                 }
@@ -1059,7 +1067,7 @@ namespace Secuvox_2._0
                                 {
                                     try
                                     {
-                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                         return;
                                     }
                                     catch { }
@@ -1069,16 +1077,13 @@ namespace Secuvox_2._0
                             {
                                 try
                                 {
-                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                                    await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                                     return;
                                 }
                                 catch (Exception ex1)
                                 { 
                                 }
-                              
                             }
-
-
                         }
                         else
                         {
@@ -1088,32 +1093,24 @@ namespace Secuvox_2._0
                                 return;
                             }
                             catch { }
-                           
-                            //sText = Convert.ToBase64String(stream.ToArray());
                         }
-                        
-
                     }
                     else
                     {
                         try
                         {
-                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                            await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                             return;
                         }
                         catch { }
-
                     }
 
                     try
                     {
-                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.failRequest", payload);
+                        await webView2.CoreWebView2.CallDevToolsProtocolMethodAsync("Fetch.continueRequest", payload);
                     }
                     catch { }
-
                 }
-
-           
             }
 
             private static String ReplaceRegex(String replace, String with, String page)
@@ -1180,16 +1177,17 @@ namespace Secuvox_2._0
 
             try
             {
-                
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).url = toolStripTextBox1.Text;
-                await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+
+                // Don't clear cookies/browsing data when navigating to new pages
+                // await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage);
+
                 String[] stlHost = new Uri(Form1.instance.toolStripTextBox1.Text).Host.Split('.');
                 String host = stlHost[stlHost.Length - 2] + "." + stlHost[stlHost.Length - 1];
                 if (host.Split('.').Length < 1)
                 {
                     url = "https://google.com/?q=" + toolStripTextBox1.Text;
                 }
-               
 
                 toolStripTextBox1.Text = url;
 
@@ -1213,12 +1211,10 @@ namespace Secuvox_2._0
                     fakeGoogleBotToolStripMenuItem.Checked = true;
                 }
 
-
                 CustomTabControl.CustomTabPage page = (CustomTabControl.CustomTabPage)this.tabControl.SelectedTab;
                 page.url = url;
                 page.webView2.Dispose();
                 page.webView2 = new Microsoft.Web.WebView2.WinForms.WebView2();
-
 
                 page.Controls.Add(page.webView2);
                 ((System.ComponentModel.ISupportInitialize)(page.webView2)).BeginInit();
@@ -1234,21 +1230,39 @@ namespace Secuvox_2._0
                 ((System.ComponentModel.ISupportInitialize)(page.webView2)).EndInit();
                 page.webView2.CoreWebView2InitializationCompleted += page.WebView21_CoreWebView2InitializationCompleted;
 
-
-
                 var op = new CoreWebView2EnvironmentOptions();
                 op.AreBrowserExtensionsEnabled = true;
-                Form1.instance.tabControl.SelectedTab.Text = url;
+                // Form1.instance.tabControl.SelectedTab.Text = url;
 
                 ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Focus();
-                var env = CoreWebView2Environment.CreateAsync(null, null, op);
-
-                await page.webView2.EnsureCoreWebView2Async(env.Result);
-                
-                //page.webView2.CoreWebView2.Navigate(url);
+                try
+                {
+                    var env = CoreWebView2Environment.CreateAsync(null, null, op);
+                    await page.webView2.EnsureCoreWebView2Async(env.Result);
+                }
+                catch (System.AggregateException aex)
+                {
+                    var ex2 = aex.InnerException ?? aex;
+                    if (ex2 is COMException || (ex2.InnerException is COMException))
+                        NotifyMissingWebView2(ex2);
+                    else
+                        NotifyMissingWebView2(ex2);
+                    return;
+                }
+                catch (COMException cex)
+                {
+                    NotifyMissingWebView2(cex);
+                    return;
+                }
             }
-            catch (Exception ex) {
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(url); }
+            catch (Exception ex)
+            {
+                try
+                {
+                    ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate(url);
+                }
+                catch (Exception ex1) { }
+            }
         }
 
         private String genBodyTag(String bodyTag,  string javascript)
@@ -1370,7 +1384,7 @@ namespace Secuvox_2._0
 
         public List<String> optList = new List<String>()
         {
-            "facebook.com",
+            /*"facebook.com",
             "x.com",
             "twitter.com",
             "instagram.com",
@@ -1378,7 +1392,7 @@ namespace Secuvox_2._0
             "discord.com",
             "discordapp.com",
             "threads.com",
-            "snapchat.com"
+            "snapchat.com"*/
         };
 
         private async void setSettings()
@@ -1398,12 +1412,15 @@ namespace Secuvox_2._0
                 pageSettings.settings[host].ExtraAdblock = adblockerToolStripMenuItem.Checked;
                 pageSettings.settings[host].googleBot = fakeGoogleBotToolStripMenuItem.Checked;
                 saveData();
+                
+                // Only clear service workers, not cookies or DOM storage
                 try
                 {
-                    await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage | CoreWebView2BrowsingDataKinds.ServiceWorkers);
+                    // await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.AllDomStorage | CoreWebView2BrowsingDataKinds.ServiceWorkers);
+                    await ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Profile.ClearBrowsingDataAsync(CoreWebView2BrowsingDataKinds.ServiceWorkers);
                 }catch { }
-                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
                 
+                ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.Reload();
             }catch { }
         }
         public bool tabctlBlocked = false;
@@ -1608,6 +1625,32 @@ namespace Secuvox_2._0
             }
              ((CustomTabControl.CustomTabPage)tabControl.SelectedTab).webView2.CoreWebView2.Navigate( toolStripTextBox1.Text);
             saveData();
+        }
+
+        // Add helper methods inside Form1 class
+        private static bool IsWebView2Available()
+        {
+            try { return !string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString()); }
+            catch { return false; }
+        }
+
+        private static void NotifyMissingWebView2(Exception ex = null)
+        {
+            try
+            {
+                var msg = "Microsoft Edge WebView2 Runtime ist nicht installiert oder nicht verfügbar.\r\n" +
+                          "Bitte installieren Sie die WebView2 Runtime und starten Sie die Anwendung neu.\r\n\r\n" +
+                          "Download: https://go.microsoft.com/fwlink/p/?LinkId=2124703";
+                if (ex != null) msg += "\r\n\r\n" + ex.Message;
+                System.Windows.Forms.MessageBox.Show(msg, "WebView2 Runtime fehlt", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                try
+                {
+                    var psi = new ProcessStartInfo("https://go.microsoft.com/fwlink/p/?LinkId=2124703") { UseShellExecute = true };
+                    Process.Start(psi);
+                }
+                catch { }
+            }
+            catch { }
         }
     }
 }
